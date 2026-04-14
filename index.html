@@ -420,9 +420,9 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);display:flex;justif
 .vis-cue-text{font-size:12px;color:#2C2C3A;line-height:1.5;}
 .vis-close{width:100%;padding:13px;background:#FAF8F5;border:1.5px solid #EDE8E3;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#7A7A8C;cursor:pointer;}
 
-/* See Visual button */
-.see-visual-btn{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:7px 14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;}
-.see-visual-btn:active{transform:scale(0.97);}
+
+
+
 
 /* Avatar pose animations */
 @keyframes squat-anim{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(6px) scaleY(0.96)}}
@@ -1273,7 +1273,7 @@ function renderEl(){
         <div style="margin-top:8px;">
           <div class="el-cues"><div class="el-ct">Coaching Cues</div>${(e.c||[]).map(c=>'<div class="el-cue"><div class="el-cd"></div><div class="el-cx">'+c+'</div></div>').join('')}</div>
         </div>
-        <button class="see-visual-btn" onclick="event.stopPropagation();showVisual(this,'${e.n}','${e.m}','${e.cat}')">👀 See Visual</button>
+        
       </div>
     </div>`).join('');
 }
@@ -1474,61 +1474,10 @@ window.addEventListener('DOMContentLoaded',function(){
   },1800);
 });
 
-var POSE_DATA={
-  squat:{x:0,y:0,desc:'Feet shoulder-width, chest up, knees out, drive through heels.',tip:'Keep weight in your heels. If heels lift, widen your stance.'},
-  hinge:{x:-140,y:-160,desc:'Hinge at hips, soft knees, back flat, squeeze glutes at top.',tip:'Push hips BACK not down. Feel the hamstrings load.'},
-  lunge:{x:0,y:0,desc:'Front shin vertical, back knee controlled, push through front heel.',tip:'Front knee stays above ankle, not caving in or shooting forward.'},
-  hpush:{x:0,y:-160,desc:'Body rigid, elbows at 45 degrees, full range of motion.',tip:'Retract shoulder blades before pressing. Protects the joint.'},
-  vpush:{x:0,y:-160,desc:'Press straight up, core braced, control the descent.',tip:'Brace your core like you are about to get punched. Every rep.'},
-  hpull:{x:-140,y:0,desc:'Pull with elbows, squeeze shoulder blades together at top.',tip:'Lead with elbows not hands. Squeeze a pencil between shoulder blades.'},
-  vpull:{x:-140,y:0,desc:'Dead hang start, pull chest to bar, control all the way down.',tip:'Full dead hang between reps builds real strength. No half reps.'},
-  core:{x:0,y:-160,desc:'Lower back pressed down, breathe steadily, quality over speed.',tip:'Slow and controlled beats fast every time. Feel the muscle work.'}
-};
-function showVisual(btn,name,muscles,cat){
-  var d=POSE_DATA[cat]||{x:0,y:0,desc:'Focus on controlled movement.',tip:'Quality reps beat quantity.'};
-  var m=document.getElementById('vismod');
-  var img=document.getElementById('vis-img');
-  var t=document.getElementById('vis-title');
-  var mu=document.getElementById('vis-muscle');
-  var de=document.getElementById('vis-desc');
-  var ti=document.getElementById('vis-tip');
-  if(t)t.textContent=name;
-  if(mu)mu.textContent='Target: '+muscles;
-  if(de)de.textContent=d.desc;
-  if(ti)ti.textContent=d.tip;
-  if(img)img.style.objectPosition=d.x+'px '+d.y+'px';
-  if(m)m.style.display='flex';
-  document.body.style.overflow='hidden';
-}
-function closeVisual(){
-  var m=document.getElementById('vismod');
-  if(m)m.style.display='none';
-  document.body.style.overflow='';
-}
+
 </script>
 
-<div id="vismod" style="display:none;position:fixed;inset:0;background:rgba(44,44,58,0.4);z-index:200;align-items:flex-end;justify-content:center;">
-  <div style="background:white;border-radius:20px 20px 0 0;padding:16px 16px 32px;width:100%;max-width:430px;">
-    <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 13px;"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#2C2C3A;" id="vis-title">Exercise</div>
-        <div style="font-size:11px;color:#7A7A8C;margin-top:2px;" id="vis-muscle">Muscles</div>
-      </div>
-      <button onclick="closeVisual()" style="background:#FAF8F5;border:1.5px solid #EDE8E3;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;color:#7A7A8C;cursor:pointer;font-family:'Nunito',sans-serif;">X Close</button>
-    </div>
-    <div style="background:#FAF8F5;border-radius:18px;overflow:hidden;height:260px;border:1px solid #EDE8E3;position:relative;display:flex;align-items:center;justify-content:center;">
-      <img id="vis-img" src="/avatar.png" style="width:280px;height:320px;object-fit:cover;object-position:0px 0px;transition:object-position 0.4s ease;" alt="Exercise visual">
-      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(255,255,255,0.95));padding:14px;text-align:center;">
-        <div style="font-size:12px;color:#7A7A8C;font-style:italic;font-weight:600;" id="vis-desc">Focus on form.</div>
-      </div>
-    </div>
-    <div style="background:#EEF5F1;border-radius:12px;padding:12px;margin-top:12px;">
-      <div style="font-size:9px;font-weight:800;color:#5A8C72;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Form Tip</div>
-      <div style="font-size:12px;color:#2C2C3A;line-height:1.6;" id="vis-tip">Quality reps beat quantity.</div>
-    </div>
-  </div>
-</div>
+
 
 <script>
 if('serviceWorker' in navigator){
