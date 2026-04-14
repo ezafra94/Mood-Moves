@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mood Moves</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mood Moves">
+<link rel="apple-touch-icon" href="/6cfa3a26-b56c-43cf-9de8-1f302f7d4b37.jpg">
 <style>
 :root{
   --teal:#4BBFB5;--teal-l:#E8F7F5;--teal-d:#2D9E94;
@@ -1265,11 +1270,8 @@ function renderEl(){
       <div class="el-det" id="eld-${i}">
         <div class="el-ms">🎯 ${e.m}</div>
         <div class="el-lv">${e.l}</div>
-        <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px;">
-          <div style="overflow:hidden;width:60px;height:70px;border-radius:10px;flex-shrink:0;background:#FAF8F5;border:1px solid #EDE8E3;">
-            <img src="" class="mm-avatar" style="width:120px;height:140px;object-fit:cover;object-position:0 -140px;" alt="Trainer">
-          </div>
-          <div class="el-cues" style="flex:1;"><div class="el-ct">Coaching Cues</div>${(e.c||[]).map(c=>'<div class="el-cue"><div class="el-cd"></div><div class="el-cx">'+c+'</div></div>').join('')}</div>
+        <div style="margin-top:8px;">
+          <div class="el-cues"><div class="el-ct">Coaching Cues</div>${(e.c||[]).map(c=>'<div class="el-cue"><div class="el-cd"></div><div class="el-cx">'+c+'</div></div>').join('')}</div>
         </div>
         <button class="see-visual-btn" onclick="event.stopPropagation();showVisual(this,'${e.n}','${e.m}','${e.cat}')">👀 See Visual</button>
       </div>
@@ -1527,5 +1529,15 @@ function closeVisual(){
     </div>
   </div>
 </div>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg){ console.log('SW registered'); })
+      .catch(function(err){ console.log('SW failed: ', err); });
+  });
+}
+</script>
 </body>
 </html>
