@@ -1471,20 +1471,20 @@ const NP=[
 ];
 
 // NAV
-function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');const navS=['home','exercises','profile-tab','journal-screen','progress-screen'];document.getElementById('bnav').classList.toggle('hidden',!navS.includes(id));window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;setTimeout(function(){window.scrollTo(0,0);},10);}
+function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');const navS=['home','exercises','profile-tab','journal-screen','progress-screen'];document.getElementById('bnav').classList.toggle('hidden',!navS.includes(id));window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0;requestAnimationFrame(function(){window.scrollTo(0,0);document.documentElement.scrollTop=0;});}
 function setNav(k){
   document.querySelectorAll('.ni2').forEach(n=>n.classList.remove('on'));
   const m={home:'nav-home',exercises:'nav-exercises',profile:'nav-profile'};
   if(m[k])document.getElementById(m[k]).classList.add('on');
 }
-function goToMP(){
+function goToMP(){window.scrollTo(0,0);document.documentElement.scrollTop=0;
   Object.keys(MC).forEach(m=>{
     const el=document.getElementById('mp-'+m);
     var dn=Math.floor(new Date().getTime()/(1000*60*60*24));if(el)el.textContent=MC[m].ph[dn%MC[m].ph.length];
   });
   goTo('moodpicker');
 }
-function goToRD(){document.getElementById('rd-moods').style.display='flex';document.getElementById('rd-moods').style.flexDirection='column';document.getElementById('rd-acts').style.display='none';goTo('restday');}
+function goToRD(){window.scrollTo(0,0);document.documentElement.scrollTop=0;document.getElementById('rd-moods').style.display='flex';document.getElementById('rd-moods').style.flexDirection='column';document.getElementById('rd-acts').style.display='none';goTo('restday');}
 
 // AUTH
 function switchAuth(t){
