@@ -742,14 +742,17 @@ else{setAllLogos();setAllAvatars();}
 <div class="screen" id="home">
   <div class="h-hdr">
     <div class="h-row">
-      <div>
-        <div class="h-greet" id="h-greet">Good morning</div>
-        <div class="h-name" id="h-name">Hey there!</div>
-        <div class="h-badge" id="h-badge">⭐ Rookie Mover</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button id="av-icon-btn" onclick="openAvatarModal()" style="width:46px;height:46px;border-radius:50%;border:2px solid #4BBFB5;background:#E8F7F5;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌊</button>
+      <div style="display:flex;align-items:center;gap:10px;">
         <img src="" class="mm-logo" style="width:44px;height:44px;object-fit:contain;border-radius:12px;" alt="MM">
+        <div>
+          <div class="h-greet" id="h-greet">Good morning</div>
+          <div class="h-name" id="h-name">Hey there!</div>
+          <div class="h-badge" id="h-badge">⭐ Rookie Mover</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;" onclick="openAvatarModal()">
+        <button id="av-icon-btn" type="button" style="width:46px;height:46px;border-radius:50%;border:2px solid #4BBFB5;background:#E8F7F5;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌊</button>
+        <span style="font-size:8px;font-weight:800;color:#4BBFB5;letter-spacing:0.3px;">YOUR AVATAR</span>
       </div>
     </div>
   </div>
@@ -991,46 +994,64 @@ const BADGES=[
   {id:'happy',ic:'☀️',lb:'Good Vibes',hw:'Workout happy 3 times'},
   {id:'founder',ic:'👑',lb:'Founding Member',hw:'One of the first 100 — OG status'},
 ];
-const TIPS=[
-  {e:'💧',t:'Drinking water before a workout can boost performance by up to 25%. Hydrate first!'},
-  {e:'😴',t:'Your muscles grow WHILE you sleep — not during the workout. 7–9 hours is literally part of the plan.'},
-  {e:'🧠',t:'Exercise increases BDNF — your brain\'s growth hormone. Working out makes you smarter.'},
-  {e:'💪',t:'Muscle soreness peaks 24–48 hours after training. It means you\'re growing, not broken.'},
-  {e:'🎵',t:'Music you love can increase workout endurance by up to 15%. Build that playlist!'},
-  {e:'🌊',t:'Even on LOW energy days, showing up builds habits and improves mood. Always worth it.'},
-  {e:'🔥',t:'Your metabolism stays elevated for hours after strength training. Burning on the couch? Yes.'},
-  {e:'🧘',t:'Inhale 4 counts, hold 4, exhale 6 between sets. Speeds up recovery significantly.'},
-  {e:'😤',t:'Feeling stressed? Exercise drops cortisol levels within 20 minutes. Move it out.'},
-  {e:'📈',t:'Consistency beats perfection every time. 3 okay workouts a week beats 1 perfect workout.'},
-];
+const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration cuts performance by up to 25%.'},
+  {e:'😴',t:'Your muscles grow while you sleep. 7-9 hours is literally part of your training plan.'},
+  {e:'🧠',t:'Exercise increases BDNF — your brain growth hormone. Working out makes you sharper.'},
+  {e:'💪',t:'Muscle soreness peaks 24-48 hours after training. That feeling means you are growing.'},
+  {e:'🔥',t:'Your metabolism stays elevated for hours after strength training. You burn calories at rest.'},
+  {e:'😤',t:'Exercise drops cortisol within 20 minutes. Move it out — it actually works.'},
+  {e:'📈',t:'Consistency beats perfection. Three okay workouts beat one perfect one every time.'},
+  {e:'🌊',t:'Even low energy days build the habit. Showing up matters more than the intensity.'},
+  {e:'🥗',t:'Protein within 30 minutes after training helps muscle repair and growth.'},
+  {e:'⏱️',t:'Rest between sets is part of the workout. Skipping it reduces your performance by 20%.'},
+  {e:'🦵',t:'Never skip leg day. Your legs are 50% of your body and produce the most growth hormones.'},
+  {e:'🧘',t:'Stretching after a workout while muscles are warm improves flexibility twice as fast.'},
+  {e:'❄️',t:'Cold showers after training reduce muscle soreness and boost recovery speed.'},
+  {e:'🎵',t:'Music with 120-140 BPM increases workout performance by up to 15%. Playlist matters.'},
+  {e:'🌅',t:'Morning workouts set your circadian rhythm, improving sleep quality at night.'},
+  {e:'💊',t:'Magnesium helps muscle recovery and sleep quality. Most people are deficient.'},
+  {e:'🏃',t:'Walking 10,000 steps burns roughly 400-500 calories. It all adds up.'},
+  {e:'🤸',t:'Mobility work prevents injury and improves strength. Five minutes a day makes a difference.'},
+  {e:'📊',t:'Progressive overload — doing slightly more each week — is the secret to all fitness progress.'},
+  {e:'🫁',t:'Deep breathing during exercise delivers more oxygen to muscles, improving performance.'},
+  {e:'🌿',t:'Green tea before a workout increases fat burning by up to 17%.'},
+  {e:'🧊',t:'Ice baths are not just for athletes. 10 minutes at 50-59F dramatically reduces inflammation.'},
+  {e:'⚡',t:'Compound movements like squats and deadlifts burn more calories than isolation exercises.'},
+  {e:'🛌',t:'Sleeping less than 6 hours reduces muscle gain by up to 60%. Sleep is non-negotiable.'},
+  {e:'🥚',t:'Eggs are one of the most complete protein sources. The yolk has more nutrients than the white.'},
+  {e:'🔄',t:'Muscle confusion is a myth. Progressive overload is real. Keep adding weight gradually.'},
+  {e:'💉',t:'Your body releases endorphins during exercise. The runner high is real — and free.'},
+  {e:'🧂',t:'Electrolytes matter. Add a pinch of salt to your water during long or intense workouts.'},
+  {e:'🎯',t:'Setting a specific goal increases the chance of achieving it by 42%. Write yours down.'},
+  {e:'🌙',t:'Training in the evening can improve performance due to higher body temperature and testosterone.'}];
 const MC={
   low:{lb:'😞 Low Energy',co:'#4BBFB5',bg:'#E8F7F5',sets:'2',reps:'10-12',int:'Light',
-    ph:['"Low battery but still showing up"','"Gentle movement is still movement"','"You came. That\'s already a win."'],
-    pt:['You showed up on a hard day.','Low energy, high commitment.'],pm:['That\'s the hardest thing to do. We see you. 💙','Most people wouldn\'t have. You did. That\'s everything.'],
+    ph:["Low battery but still showing up","Gentle movement is still movement","You came. That is already a win.","Some days 10% is everything you have. Give it.","Not every day is a 100% day. This one counts too.","Tired and here. That is strength.","The hardest part was showing up. You did it.","Low energy, high character.","Even slow is forward.","Your body is here. That is enough to start.","Small effort today. Big habit forever.","You do not have to crush it. You just have to do it.","On hard days, showing up IS the workout.","Gentle is not weak. Gentle is wise.","Your future self thanks you for this moment.","Less than perfect still counts.","Progress does not require perfection.","One set at a time. One breath at a time.","The days you least want to move are the days it matters most.","Low energy day. High courage day.","You showed up tired. That is the whole point.","Soft day, strong soul.","Even embers keep the fire alive.","Rest if you must. But do not quit.","Slow and steady still laps everyone on the couch."],
+    pt:['You showed up on a hard day.','Low energy, high commitment.','That took more courage than a perfect day.','You came. You moved. You won.','The hardest workout is the one you almost skipped.'],pm:['That is the hardest thing to do. We see you. 💙','Most people would not have. You did.','Low day. High character. Remember this one.','You just proved something to yourself.','That version of you is the strongest version.'],
     hyd:'Drink slowly — gentle sips. Let your body reset.',slp:'Rest extra tonight. You showed up tired. You earned it.',ref:'Notice how you feel now vs when you started. Even 10% better counts.',
     sh:'"I showed up on a low energy day with Mood Moves. That\'s the real victory. 💙"',
     rs:{muscle:90,feelgood:60,losefat:50},re:{muscle:120,feelgood:75,losefat:75}},
   neutral:{lb:'😐 Neutral',co:'#8BB8A0',bg:'#EEF5F1',sets:'3',reps:'10-12',int:'Moderate',
-    ph:['"Nice and steady today"','"Right in the zone"','"Steady wins the race"'],
-    pt:['Solid work today.','Consistency at its finest.'],pm:['That\'s how habits are built. Rep by rep, day by day. ✅','Not flashy. Not perfect. Just consistent. That\'s the secret.'],
+    ph:["Nice and steady today","Right in the zone","Steady wins the race","Consistent beats intense. Every single time.","Today is a building day.","Not every session is a highlight reel. This one is real.","Neutral energy, full commitment.","Average effort compounded over time is extraordinary.","Show up steady. Results come steady.","No excuses. No shortcuts. Just work.","Today you train. Tomorrow you are stronger.","Boring consistency creates incredible results.","The grind does not have to be loud to be real.","One more rep. One more day. One more win.","Normal day. Real gains.","You are building something here. Brick by brick.","Discipline is choosing this over everything else.","No hype needed. Just work.","You chose this. Own it.","Quiet effort. Loud results.","Today is the foundation for tomorrow.","Middle of the week. Middle of the grind. Keep going.","The most important workout is the one you are doing now.","Steady hands build strong foundations.","Real progress looks boring from the outside."],
+    pt:['Solid work today.','Consistency at its finest.','Another one in the books.','Steady and strong.','No excuses. Just work. Just done.'],pm:['That is how habits are built. ✅','Not flashy. Just consistent. That is everything.','Boring consistency. Extraordinary results.','Day by day. Rep by rep. This is how it is done.','You showed up without needing to feel like it.'],
     hyd:'Drink 16–20 oz right now. Great workout, now rehydrate.',slp:'7–8 hours tonight. That\'s when the magic happens.',ref:'Take a deep breath. Feel your body. That was real work.',
     sh:'"Steady and consistent with Mood Moves. This is how it\'s done. ✅"',
     rs:{muscle:75,feelgood:60,losefat:40},re:{muscle:90,feelgood:75,losefat:60}},
   happy:{lb:'😊 Happy',co:'#D4847C',bg:'#FDF0EE',sets:'3',reps:'12-15',int:'High',
-    ph:['"Let\'s enjoy the movement"','"Good vibes = great workout"','"Today feels good. Let\'s use it."'],
-    pt:['Happy energy, happy workout!','You were absolutely glowing.'],pm:['Bottle that feeling. That\'s why we move. 😊','THIS is the version of you that shows up. Remember her.'],
+    ph:["Let us enjoy the movement","Good vibes = great workout","Today feels good. Let us use it.","Happy energy is a gift. Spend it well.","This is what peak performance feels like. Stay here.","Good mood activated. Let us make it count.","When you feel this good, the weights feel lighter.","Ride this wave all the way to the end.","Energy is high. Standards are higher.","Happy legs move faster. Happy minds lift heavier.","Today is one of those days. Do not waste it.","You woke up feeling good. The gym gets all of it.","This feeling right here is why we train.","High energy day. High effort day.","You are unstoppable on days like this.","Let your mood power your movement.","Smile and lift. It hits different.","Channel this joy into every rep.","Good energy is rare. Do not waste a drop.","This is your best self showing up.","Happy training is the best training.","Enjoy every single rep today.","The best workout of your life might be today.","Good vibes in. Great session out.","Today you are exactly where you need to be."],
+    pt:['Happy energy, happy workout!','You were absolutely glowing.','That is what peak performance looks like.','Best version of you just trained.','You rode that wave perfectly.'],pm:['Bottle that feeling. That is why we move. 😊','THIS is the version of you that shows up.','Remember this feeling for the harder days.','High energy in. Even higher confidence out.','You just set the bar for your next session.'],
     hyd:'Match your energy with good hydration. Drink up! 😊',slp:'Great workout + good sleep = results tomorrow.',ref:'Stay in this feeling a little longer. You earned it.',
     sh:'"Happy days + great workouts with Mood Moves. This app gets me. 😊"',
     rs:{muscle:60,feelgood:50,losefat:30},re:{muscle:75,feelgood:60,losefat:45}},
   angry:{lb:'😤 Angry',co:'#D4832A',bg:'#FEF3E8',sets:'4',reps:'8-10',int:'Intense',
-    ph:['"Okay... who hurt you? Let\'s move it out."','"Use that fire. Burn it all out."','"Anger is just unspent energy. Spend it."'],
-    pt:['You burned it all out.','That anger? Handled.','You chose iron over chaos.'],pm:['Whatever it was — you handled it the RIGHT way. 🔥','Honestly? That was impressive. You okay? (You look amazing though.)'],
+    ph:["Okay... who hurt you? Let us move it out.","Use that fire. Burn it all out.","Anger is just unspent energy. Spend it.","Every rep is a conversation with whatever is bothering you.","Turn it into fuel. Right now.","Angry energy is the most powerful kind. Use it.","You cannot control what happened. You can control this lift.","Channel it. All of it. Into every single rep.","Something got you fired up. Good. Use it.","Rage mode activated. Best workout incoming.","The gym is the healthiest place to be angry.","Whatever it is, leave it on the floor.","Controlled anger is controlled power.","Let the weights absorb what words cannot fix.","Every set is a release. Every rep is relief.","You walked in with anger. You will walk out lighter.","This is therapy. The legal kind.","Do not talk about it. Lift about it.","Your frustration just became your superpower.","Use it before you lose it.","Let it go. One rep at a time.","Angry and focused is a dangerous combination. Good.","The bar does not care about your problems. Lift anyway.","Your emotions are valid. Your reps will be powerful.","The louder the feeling, the stronger the lift."],
+    pt:['You burned it all out.','That anger? Handled.','Channeled perfectly.','All that energy went somewhere good.','Rage turned into reps. Masterclass.'],pm:['You handled it the RIGHT way. 🔥','Honestly? That was impressive.','Your anger made you stronger today.','Whatever it was, you left it on the floor.','The healthiest thing you could have done. And you did it.'],
     hyd:'Intense session = serious hydration. Drink 20+ oz now.',slp:'Your nervous system worked hard. Give it a full night\'s rest.',ref:'Feel the tension release? That\'s your body processing. Keep breathing.',
     sh:'"Had a MOMENT today but took it to Mood Moves. The weights felt it. 😤🔥"',
     rs:{muscle:60,feelgood:50,losefat:30},re:{muscle:90,feelgood:60,losefat:45}},
   stressed:{lb:'😵‍💫 Stressed',co:'#8B75C4',bg:'#F5F2FC',sets:'3',reps:'12-15',int:'Rhythmic',
-    ph:['"Let\'s reset and move through it"','"Breathe. Move. Reset."','"Movement is medicine for stress"'],
-    pt:['Reset complete.','You moved through it.'],pm:['You chose movement over spiraling. That\'s self-mastery. 💜','Stressed you started this. Stronger you finished it.'],
+    ph:["Let us reset and move through it","Breathe. Move. Reset.","Movement is medicine","Stress leaves the body through movement. Start moving.","Your nervous system needs this right now.","The cortisol drops the moment you start. Trust it.","One exercise at a time. One breath at a time.","The world is loud. This room is quiet. Stay here.","You cannot solve everything. But you can finish this workout.","Anxiety shrinks when you move your body.","Leave your stress at the door. Pick it up later if you want.","Sweat is just stress leaving the body.","The best thing you can do for your mind is move your body.","Stressed you walked in. Stronger you walks out.","Breathe in for four. Out for six. Now lift.","The rhythm of movement calms the chaos.","Focus on the rep. Not the rest.","This is your hour. Nothing else exists right now.","You chose movement over spiraling. That is wisdom.","Every exhale releases a little more tension.","Reset in progress. Please do not disturb.","Your problems will still be there after. But so will you - calmer.","This is not running away. This is running through.","Motion is lotion for the stressed mind.","Overwhelmed outside. Focused inside. That is the deal."],
+    pt:['Reset complete.','You moved through it.','Calmer. Stronger. Done.','Stress met its match today.','Mind cleared. Body worked.'],pm:['You chose movement over spiraling. 💜','Stressed you started. Stronger you finished.','Your cortisol just dropped. Feel that?','The best decision you made today was walking in here.','Movement healed what nothing else could today.'],
     hyd:'Stress depletes electrolytes. Add a pinch of salt to water if you can.',slp:'Stress + no sleep = spiral. Prioritize 8 hours. Non-negotiable.',ref:'Cortisol drops after exercise. Feel that? Biology working for you.',
     sh:'"Took my stress to Mood Moves and left it there. Highly recommend. 😵‍💫💜"',
     rs:{muscle:90,feelgood:60,losefat:50},re:{muscle:120,feelgood:75,losefat:75}},
