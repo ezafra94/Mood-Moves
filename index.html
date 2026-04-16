@@ -5,11 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mood Moves</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Mood Moves">
-<link rel="apple-touch-icon" href="/6cfa3a26-b56c-43cf-9de8-1f302f7d4b37.jpg">
 <style>
 :root{
   --teal:#4BBFB5;--teal-l:#E8F7F5;--teal-d:#2D9E94;
@@ -197,7 +192,9 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);display:flex;justif
 .wk-exs{padding:9px 14px;display:flex;flex-direction:column;gap:8px;}
 .ex-c{background:white;border-radius:var(--r);padding:13px 14px;border:1px solid var(--border);}
 .ex-c.done .ex-nm{text-decoration:line-through;}
-.ex-c.done{opacity:0.5;}
+.ex-c.done .ex-row{opacity:0.4;}
+.ex-c.done .ex-tags{opacity:0.4;}
+.ex-c.done{background:#FAFAFA;}
 .ex-row{display:flex;align-items:flex-start;gap:9px;}
 .ex-nb{width:25px;height:25px;border-radius:7px;background:var(--teal-l);color:var(--teal-d);font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ex-nm{font-weight:800;font-size:13px;color:var(--txt);}
@@ -225,8 +222,8 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);display:flex;justif
 .done-btn{margin:6px 14px 0;width:calc(100% - 28px);padding:15px;background:linear-gradient(135deg,var(--teal),var(--sage));color:white;border:none;border-radius:var(--r);font-weight:800;font-size:15px;cursor:pointer;}
 
 /* REST TIMER */
-.rtbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid var(--border);padding:10px 14px 20px;z-index:40;display:none;}
-.rtbar.on{display:flex;align-items:center;gap:10px;}
+.rtbar{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(135deg,#2C2C3A,#3D3D52);padding:12px 16px;z-index:100;display:none;border-radius:0 0 20px 20px;box-shadow:0 8px 32px rgba(44,44,58,0.35);}
+.rtbar.on{display:flex;align-items:center;gap:10px;} .rt-lbl{color:#4BBFB5!important;} .rt-ph{color:rgba(255,255,255,0.7)!important;} .rt-n{color:white!important;}
 .rt-circle{position:relative;width:46px;height:46px;flex-shrink:0;}
 .rt-circle svg{width:46px;height:46px;transform:rotate(-90deg);}
 .rt-bg{fill:none;stroke:var(--border);stroke-width:4;}
@@ -420,9 +417,9 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);display:flex;justif
 .vis-cue-text{font-size:12px;color:#2C2C3A;line-height:1.5;}
 .vis-close{width:100%;padding:13px;background:#FAF8F5;border:1.5px solid #EDE8E3;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#7A7A8C;cursor:pointer;}
 
-
-
-
+/* See Visual button */
+.see-visual-btn{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:7px 14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;cursor:pointer;transition:all 0.2s;}
+.see-visual-btn:active{transform:scale(0.97);}
 
 /* Avatar pose animations */
 @keyframes squat-anim{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(6px) scaleY(0.96)}}
@@ -434,6 +431,11 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);display:flex;justif
 .anim-wave{animation:wave-anim 2s ease-in-out infinite;}
 .anim-breathe{animation:breathe-anim 3s ease-in-out infinite;}
 
+
+@keyframes pulse-timer{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.sk-stat{background:var(--cream);border-radius:10px;padding:9px 7px;text-align:center;}
+.sk-sn{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);}
+.sk-sl{font-size:9px;color:var(--txt2);font-weight:700;margin-top:1px;}
 </style>
 </head>
 <body>
@@ -537,7 +539,21 @@ else{setAllLogos();setAllAvatars();}
       <div class="ob-em">🌊</div>
       <div class="ob-title">Welcome to Mood Moves</div>
       <div class="ob-sub">No matter how you feel, you still train. Just differently.</div>
-      <div class="ob-phil"><p>Think of it like <strong>building your own bowl 🌯</strong><br><br>You pick your goal. We build your plan. Every day you customize it based on your mood.<br><br><em>"Just meet yourself where you are. We'll take it from there."</em><br><br>No guilt. No pressure. Just movement that works for <strong>YOU.</strong></p></div>
+      <div class="ob-phil">
+        <p>Some days you give 100%. Some days you give 10%. <strong>Both count. Both build you.</strong><br><br>Mood Moves was built for those days too — because a 10% workout still beats zero. <strong>Every single time.</strong><br><br><em>"Just meet yourself where you are. We'll take it from there."</em><br><br>No guilt. No pressure. Just movement that works for <strong>YOU.</strong></p>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(139,184,160,0.3);">
+          <div style="font-size:10px;font-weight:800;color:var(--sage-d);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Here is how it works</div>
+          <p style="font-size:12px;color:var(--txt);line-height:1.8;margin-bottom:8px;">You pick your goal and fitness level. We build your plan.<br>Every day you tell us how you feel — we do the rest:</p>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😞 <span><strong>Low energy</strong> → gentle &amp; light</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😤 <span><strong>Angry</strong> → intense &amp; powerful</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😊 <span><strong>Happy</strong> → full energy, full effort</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😵‍💫 <span><strong>Stressed</strong> → rhythmic &amp; calming</span></div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😐 <span><strong>Neutral</strong> → steady &amp; strong</span></div>
+          </div>
+          <p style="font-size:12px;color:var(--sage-d);font-style:italic;margin-top:10px;font-weight:700;">Same goal. Different workout every day — because YOU are different every day.</p>
+        </div>
+      </div>
       <div class="ob-foot"><button class="bp" onclick="obNext()">See How It Works →</button></div>
     </div>
     <!-- Step 2 - Animated Feature Tour -->
@@ -594,6 +610,41 @@ else{setAllLogos();setAllAvatars();}
     </div>
     <!-- Step 4 - Level -->
     <div class="ob-step" id="ob-4">
+      <div class="ob-em">🏋️</div>
+      <div class="ob-title">Where do you train?</div>
+      <div class="ob-sub">We will match exercises to your setup.</div>
+      <div class="opts">
+        <div class="opt" onclick="selOpt(this,'location','home')">
+          <div class="opt-icon">🏠</div>
+          <div class="opt-tx">
+            <div class="opt-tt">At Home</div>
+            <div class="opt-ds">Bodyweight + dumbbells. No gym needed.</div>
+          </div>
+          <div class="opt-ck"></div>
+        </div>
+        <div class="opt" onclick="selOpt(this,'location','gym')">
+          <div class="opt-icon">🏋️</div>
+          <div class="opt-tx">
+            <div class="opt-tt">At the Gym</div>
+            <div class="opt-ds">Full equipment access. Barbells, cables, machines.</div>
+          </div>
+          <div class="opt-ck"></div>
+        </div>
+        <div class="opt" onclick="selOpt(this,'location','both')">
+          <div class="opt-icon">🔀</div>
+          <div class="opt-tx">
+            <div class="opt-tt">Both</div>
+            <div class="opt-ds">Mix it up. We show you all options.</div>
+          </div>
+          <div class="opt-ck"></div>
+        </div>
+      </div>
+      <div class="ob-hint"><p>You can always swap any exercise during your workout!</p></div>
+      <div class="ob-foot"><button class="bp" onclick="obNext()">Continue →</button></div>
+    </div>
+
+        <!-- Step 5 - Days -->
+    <div class="ob-step" id="ob-5">
       <div class="ob-em">📊</div>
       <div class="ob-title">Your fitness level?</div>
       <div class="ob-sub">Honest answers = better workouts. No judgment.</div>
@@ -604,8 +655,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <div class="ob-foot"><button class="bp" onclick="obNext()">Continue →</button></div>
     </div>
-    <!-- Step 5 - Days -->
-    <div class="ob-step" id="ob-5">
+    <div class="ob-step" id="ob-6">
       <div class="ob-em">🗓️</div>
       <div class="ob-title">Days per week?</div>
       <div class="ob-sub">We'll build the perfect split for your schedule.</div>
@@ -617,16 +667,73 @@ else{setAllLogos();setAllAvatars();}
       <div class="ob-hint"><p id="day-hint">Select how many days and we'll explain your split.</p></div>
       <div class="ob-foot"><button class="bp" onclick="obNext()">Continue →</button></div>
     </div>
-    <!-- Step 6 - Done -->
-    <div class="ob-step" id="ob-6">
+    <!-- Step 6 - Your 30 Day Plan -->
+    <div class="ob-step" id="ob-7">
+      <div class="ob-em">📅</div>
+      <div class="ob-title">Your Personal Plan</div>
+      <div class="ob-sub">Built around your goal, level and schedule.</div>
+
+      <!-- Dynamic plan card - filled by JS when step shows -->
+      <div id="plan-card" style="display:flex;flex-direction:column;gap:9px;margin-bottom:14px;overflow-y:auto;max-height:420px;">
+
+        <!-- YOUR PLAN summary -->
+        <div style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:16px;padding:16px;color:white;">
+          <div style="font-size:9px;font-weight:800;opacity:0.5;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Your Plan</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:4px;" id="plan-title">Loading...</div>
+          <div style="font-size:12px;opacity:0.7;line-height:1.6;" id="plan-desc">—</div>
+          <div style="display:flex;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
+            <div style="text-align:center;flex:1;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;" id="plan-sets">3</div>
+              <div style="font-size:9px;opacity:0.5;margin-top:2px;">Sets</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;" id="plan-reps">10-12</div>
+              <div style="font-size:9px;opacity:0.5;margin-top:2px;">Reps</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;" id="plan-rest">60s</div>
+              <div style="font-size:9px;opacity:0.5;margin-top:2px;">Rest</div>
+            </div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;" id="plan-days-num">3</div>
+              <div style="font-size:9px;opacity:0.5;margin-top:2px;">Days/wk</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HOW YOU PROGRESS -->
+        <div style="background:white;border-radius:14px;padding:13px;border:1.5px solid #EDE8E3;">
+          <div style="font-size:10px;font-weight:800;color:#2D9E94;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📈 How you progress</div>
+          <div id="plan-phases" style="display:flex;flex-direction:column;gap:7px;"></div>
+        </div>
+
+        <!-- MOOD MOVES DIFFERENCE -->
+        <div style="background:linear-gradient(135deg,#E8F7F5,#EEF5F1);border-radius:14px;padding:13px;border:1px solid rgba(75,191,181,0.3);">
+          <div style="font-size:10px;font-weight:800;color:#2D9E94;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;">🌊 The Mood Moves difference</div>
+          <p style="font-size:11px;color:#2C2C3A;line-height:1.7;">Every day your mood fine-tunes the workout within your phase. Low energy? Still your phase — just gentler. Angry? We push harder. <strong>Same goal. Always moving forward.</strong></p>
+        </div>
+
+      </div>
+      <div class="ob-foot"><button class="bp" onclick="obNext()">I am ready. Let us go →</button></div>
+    </div>
+    <!-- Step 7 - Done -->
+    <div class="ob-step" id="ob-8">
       <div class="ob-em">🎉</div>
       <div class="ob-title">Your plan is ready.</div>
-      <div class="ob-sub">Every day, just tell us how you feel — we handle the rest. Your bowl is built. 🌯</div>
+      <div class="ob-sub">Every day, just tell us how you feel — we handle the rest. Your bowl is built. 🥗</div>
       <div class="opts" style="pointer-events:none;">
         <div class="opt on"><div class="opt-icon" id="sum-gi">🎯</div><div><div class="opt-tt" id="sum-g">Your Goal</div><div class="opt-ds" id="sum-l">Your Level</div></div><div class="opt-ck" style="background:var(--teal);border-color:var(--teal);"></div></div>
         <div class="opt on"><div class="opt-icon">🗓️</div><div><div class="opt-tt" id="sum-d">Your Schedule</div><div class="opt-ds" id="sum-sp">Your Split</div></div><div class="opt-ck" style="background:var(--teal);border-color:var(--teal);"></div></div>
       </div>
-      <div class="ob-foot"><button class="bp" onclick="finishOb()">Start Moving 🚀</button></div>
+      <div class="ob-foot"><button class="bp" onclick="obNext()">Choose Your Avatar →</button></div>
+    </div>
+    <!-- OB-7 AVATAR -->
+    <div class="ob-step" id="ob-9">
+      <div class="ob-em">🌊</div>
+      <div class="ob-title">Who shows up today?</div>
+      <div class="ob-sub">Pick your avatar. Change it anytime from Home.</div>
+      <div id="av-ob-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;overflow-y:auto;max-height:380px;"></div>
+      <div class="ob-foot"><button class="bp" id="av-ob-btn" onclick="finishOb()">Start Moving 🚀</button></div>
     </div>
   </div>
 </div>
@@ -640,24 +747,54 @@ else{setAllLogos();setAllAvatars();}
         <div class="h-name" id="h-name">Hey there!</div>
         <div class="h-badge" id="h-badge">⭐ Rookie Mover</div>
       </div>
-      <img src="" class="mm-logo" style="width:52px;height:52px;object-fit:contain;border-radius:14px;" alt="MM">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="av-icon-btn" onclick="openAvatarModal()" style="width:46px;height:46px;border-radius:50%;border:2px solid #4BBFB5;background:#E8F7F5;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌊</button>
+        <img src="" class="mm-logo" style="width:44px;height:44px;object-fit:contain;border-radius:12px;" alt="MM">
+      </div>
     </div>
   </div>
   <div class="h-body">
     <div class="tip-card"><div class="tip-em" id="tip-em">💡</div><div class="tip-lbl">Daily Tip</div><div class="tip-tx" id="tip-tx">Loading your daily dose...</div></div>
     <button class="s-btn" onclick="goToMP()">▶ Start Today's Workout</button>
     <button class="r-btn" onclick="goToRD()">🛡️ Rest Day — Still Moving</button>
+
     <div class="card">
-      <div class="ct">🔥 Consistency</div>
-      <div class="sk-row"><div><div class="sk-n" id="sk-n">0</div><div class="sk-msg" id="sk-msg">Start your streak today!</div></div><div class="sk-fl">🔥</div></div>
-      <div class="st-row">
-        <div class="st"><div class="st-v" id="st-tot">0</div><div class="st-l">Workouts</div></div>
-        <div class="st"><div class="st-v" id="st-wk">0</div><div class="st-l">This Week</div></div>
-        <div class="st"><div class="st-v" id="st-md">😊</div><div class="st-l">Top Mood</div></div>
+      <div class="ct">🔥 Your Progress</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div>
+          <div class="sk-n" id="sk-n">0</div>
+          <div class="sk-msg" id="sk-msg">Start your streak today!</div>
+        </div>
+        <div style="font-size:32px;">🔥</div>
+      </div>
+      <div class="sk-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;">
+        <div class="sk-stat"><div class="sk-sn" id="st-tot">0</div><div class="sk-sl">Total</div></div>
+        <div class="sk-stat"><div class="sk-sn" id="st-wk">0</div><div class="sk-sl">This Week</div></div>
+        <div class="sk-stat"><div class="sk-sn" id="st-md">😊</div><div class="sk-sl">Top Mood</div></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:8px;">
+        <div style="font-size:11px;color:var(--txt2);line-height:1.6;" id="rc-m">Complete your first workout to unlock your recap.</div>
       </div>
     </div>
-    <div class="card"><div class="ct">📅 This Month</div><div class="cal" id="cal"></div></div>
-    <div class="rc"><div class="rc-t">📊 Weekly Recap</div><div class="rc-m" id="rc-m">Complete your first workout to unlock your recap.</div><div class="rc-s"><div class="rc-stat"><div class="rc-sn" id="rc-w">0</div><div class="rc-sl">Workouts</div></div><div class="rc-stat"><div class="rc-sn" id="rc-d">0</div><div class="rc-sl">Active Days</div></div><div class="rc-stat"><div class="rc-sn" id="rc-e">😊</div><div class="rc-sl">Top Mood</div></div></div></div>
+    <!-- WEEKLY CHALLENGE -->
+    <div style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">⚡ This Weeks Challenge</div>
+        <div style="font-size:10px;opacity:0.6;" id="ch-days">⏰ 4 days left</div>
+      </div>
+      <div style="font-size:24px;margin-bottom:4px;" id="ch-icon">💪</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
+      <div style="font-size:12px;opacity:0.7;margin-bottom:12px;font-style:italic;" id="ch-phrase">You vs You.</div>
+      <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
+        <div id="ch-bar" style="height:100%;background:linear-gradient(90deg,#4BBFB5,#F5A042);border-radius:20px;width:0%;transition:width 0.5s ease;"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:11px;opacity:0.7;" id="ch-prog">0 / 0 done</div>
+      </div>
+      <button onclick="logChallenge()" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">+ Log Reps</button>
+    </div>
+        <div class="card"><div class="ct">📅 This Month</div><div class="cal" id="cal"></div></div>
+    
     <div class="card"><div class="ct">🏅 Badges & Rewards</div><div class="bg-grid" id="bg-grid"></div></div>
     <div class="card">
       <div class="ct">📝 Journal</div>
@@ -706,7 +843,30 @@ else{setAllLogos();setAllAvatars();}
   <div class="wk-exs" id="wk-exs"></div>
   <div class="ex-tip" id="ex-tip"><div class="et-sug" id="et-sug">⏱ Suggested rest</div><div class="et-tx" id="et-tx">Move to your next exercise when ready.</div></div>
   <button class="add-ex" onclick="addExtraEx()">➕ Feeling better? Add one more move! 🔥</button>
-  <button class="done-btn" onclick="completeWk()">✓ Complete Workout</button>
+  
+    <button class="done-btn" id="done-btn" onclick="showCardio()">✓ Complete Workout</button>
+
+    <!-- CARDIO SUGGESTION -->
+    <div id="cardio-card" style="display:none;margin:8px 14px 0;background:linear-gradient(135deg,#FDF0EE,#FAF8F5);border-radius:18px;padding:16px;border:1.5px solid #F4C5C0;">
+      <div style="font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🏃 Optional Cardio</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#2C2C3A;margin-bottom:4px;" id="cardio-name">10 Min Walk</div>
+      <div style="font-size:12px;color:#7A7A8C;line-height:1.6;margin-bottom:12px;" id="cardio-desc">A brisk walk to finish strong.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button id="skip-btn" onclick="skipCardio()" style="width:100%;padding:12px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;">🏠 I am done, let me go home 😅</button>
+        <button id="do-btn" onclick="doCardio()" style="width:100%;padding:12px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">😤 I thought you were not gonna challenge me!</button>
+      </div>
+    </div>
+    <!-- CARDIO SUGGESTION -->
+    <div id="cardio-card" style="display:none;margin:0 14px 10px;background:linear-gradient(135deg,#FDF0EE,#FAF8F5);border-radius:18px;padding:16px;border:1.5px solid #F4C5C0;">
+      <div style="font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🏃 Optional Cardio</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#2C2C3A;margin-bottom:4px;" id="cardio-name">10 Min Walk</div>
+      <div style="font-size:12px;color:#7A7A8C;line-height:1.6;margin-bottom:12px;" id="cardio-desc">A brisk walk to finish strong.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="skipCardio()" style="width:100%;padding:12px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;">🏠 I'm done, let me go home 😅</button>
+        <button onclick="doCardio()" style="width:100%;padding:12px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">😤 I thought you weren't gonna challenge me!</button>
+      </div>
+    </div>
+
   <div style="height:20px;"></div>
   <!-- REST TIMER -->
   <div class="rtbar" id="rtbar">
@@ -815,7 +975,7 @@ else{setAllLogos();setAllAvatars();}
 
 </div>
 <script>
-const S={user:{name:'',goal:'',level:'',days:3},streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],currentMood:'',currentWorkout:[],phSlot:'',earnedBadges:[],onboarded:false,rtInterval:null,rtMax:0};
+const S={user:{name:'',goal:'',level:'',days:3,location:'both'},streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],currentMood:'',currentWorkout:[],phSlot:'',earnedBadges:[],onboarded:false,rtInterval:null,rtMax:0,challengeDone:0,challengeRound:0,challengeWeek:"",challengeComplete:false};
 const GL={muscle:'Build Muscle 💪',feelgood:'Feel Good ✨',losefat:'Lose Fat 🔥'};
 const GI={muscle:'💪',feelgood:'✨',losefat:'🔥'};
 const LL={new:'New to fitness 🌱',some:'Some experience ⚡',regular:'I train regularly 🏆'};
@@ -920,7 +1080,25 @@ const EX={
     {n:'Barbell Back Squat',e:'Barbell',l:'Intermediate',m:'Quads, Glutes, Core',c:['Bar on upper traps','Feet shoulder-width, toes slightly out','Break at hips and knees together','Drive knees out, chest tall']},
     {n:'Bulgarian Split Squat',e:'Dumbbell',l:'Intermediate',m:'Glutes, Quads',c:['Rear foot elevated on bench','Front foot far enough forward','Lower until rear knee nearly touches','Squeeze glute at top']},
     {n:'Pistol Squat',e:'No Equipment',l:'Advanced',m:'Quads, Glutes, Balance',c:['Stand on one leg','Extend other leg forward','Lower slowly under control','Push through heel to rise']},
-  ],
+  ,
+    {n:'Barbell Front Squat',e:'Barbell',l:'Advanced',m:'Quads, Core, Upper Back',c:['Bar rests on front deltoids','Elbows high and forward','Upright torso throughout','Drive knees out, chest tall']},
+    {n:'Pause Squat',e:'Barbell',l:'Advanced',m:'Quads, Glutes, Core',c:['Set up like back squat','Pause 3 full seconds at bottom','No bouncing out of the hole','Drive explosively to stand']},
+    {n:'Jump Squat',e:'No Equipment',l:'Advanced',m:'Quads, Glutes, Power',c:['Feet shoulder-width','Squat to parallel','Explode up leaving the ground','Land softly with bent knees']}
+  ,
+    {n:'Band Squat',e:'Band',l:'Beginner',m:'Glutes',c:['Adds resistance','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Box Squat',e:'Barbell/Box',l:'Beginner/Intermediate',m:'Glutes, Quads',c:['Sit back to box, pause','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Double Dumbbell Squat',e:'Dumbbell',l:'Intermediate',m:'Quads, Glutes',c:['More load','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Smith Machine Squat',e:'Machine',l:'Beginner/Intermediate',m:'Quads',c:['Guided movement','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Hack Squat',e:'Machine',l:'Intermediate',m:'Quads',c:['Quad dominant','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Belt Squat',e:'Machine',l:'Intermediate',m:'Glutes, Quads',c:['Low back friendly','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Safety Bar Squat',e:'Safety Bar',l:'Intermediate',m:'Quads, Glutes',c:['Shoulder-friendly variation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Dumbbell Split Squat',e:'Dumbbell',l:'Beginner/Intermediate',m:'Quads, Glutes',c:['Add load once form solid','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Bulgarian Split Squat (Barbell)',e:'Barbell',l:'Advanced',m:'Glutes, Quads',c:['Higher load option','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Rear Foot Elevated Squat',e:'Barbell',l:'Advanced',m:'Glutes',c:['Progression','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Step-Up',e:'Dumbbell',l:'Beginner/Intermediate',m:'Glutes, Quads',c:['Functional','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Lateral Step-Up',e:'Dumbbell',l:'Intermediate',m:'Glutes, Abductors',c:['Frontal plane challenge','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Skater Squat',e:'No Equipment',l:'Advanced',m:'Glutes, Quads',c:['Rear foot off ground','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Assisted Pistol Squat',e:'Band',l:'Intermediate',m:'Quads',c:['Regression','Control the movement','Core braced throughout','Quality reps over quantity']}],
   hinge:[
     {n:'Glute Bridge',e:'No Equipment',l:'Beginner',m:'Glutes, Hamstrings',c:['Lie on back, feet flat','Drive hips up squeezing glutes','Hold 1 sec at top','Lower with control']},
     {n:'Romanian Deadlift (Dumbbell)',e:'Dumbbell',l:'Beginner',m:'Hamstrings, Glutes',c:['Soft bend in knees','Push hips back as weight lowers','Keep back flat, weight close to legs','Drive hips forward to return']},
@@ -928,33 +1106,97 @@ const EX={
     {n:'Conventional Deadlift',e:'Barbell',l:'Intermediate',m:'Full Posterior Chain',c:['Bar over mid-foot','Chest up, lats engaged','Push floor away','Keep bar close to body']},
     {n:'Kettlebell Swing',e:'Kettlebell',l:'Intermediate',m:'Glutes, Hamstrings',c:['Hinge — not squat — to load hips','Explosive hip drive to swing','Arms float to shoulder height','Control the descent']},
     {n:'Single Leg RDL',e:'Dumbbell',l:'Intermediate',m:'Hamstrings, Glutes',c:['Soft bend in standing knee','Hinge forward, leg extends back','Keep hips square to floor','Return by squeezing standing glute']},
-  ],
+  ,
+    {n:'Barbell Romanian Deadlift',e:'Barbell',l:'Advanced',m:'Hamstrings, Glutes, Lower Back',c:['Double overhand grip','Push hips back not down','Bar stays close to legs','Feel deep hamstring stretch']},
+    {n:'Sumo Deadlift',e:'Barbell',l:'Advanced',m:'Inner Thighs, Glutes, Back',c:['Wide stance, toes out','Grip inside the legs','Chest tall, lats engaged','Drive floor away, hips through']},
+    {n:'Good Mornings',e:'Barbell',l:'Advanced',m:'Hamstrings, Lower Back, Glutes',c:['Light bar on upper traps','Soft knee bend','Hinge forward until parallel','Drive hips forward to return']}
+  ,
+    {n:'Glute Bridge (Bodyweight)',e:'No Equipment',l:'Beginner',m:'Glutes',c:['Floor variation, great for rehab','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Hip Thrust (Machine)',e:'Machine',l:'Beginner',m:'Glutes',c:['Controlled load','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Glute Bridge (Barbell)',e:'Barbell',l:'Beginner/Intermediate',m:'Glutes',c:['Loaded floor variation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Romanian Deadlift (Cable)',e:'Cable',l:'Beginner/Intermediate',m:'Hamstrings, Glutes',c:['Constant tension through ROM','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Romanian Deadlift (Barbell)',e:'Barbell',l:'Beginner/Intermediate',m:'Hamstrings, Glutes',c:['Hip hinge foundation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Trap Bar Deadlift',e:'Trap Bar',l:'Beginner/Intermediate',m:'Full Posterior Chain',c:['More upright torso','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Hip Thrust (Barbell)',e:'Barbell/Bench',l:'Intermediate',m:'Glutes',c:['Squeeze at top, chin tuck','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Stiff Leg Deadlift',e:'Barbell',l:'Intermediate',m:'Hamstrings',c:['Less knee bend than RDL','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Good Morning',e:'Barbell',l:'Intermediate/Advanced',m:'Hamstrings, Erectors',c:['Bar on traps, hinge at hip','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Nordic Hamstring Curl',e:'None/Partner',l:'Advanced',m:'Hamstrings',c:['Eccentric focus, high hamstring demand','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Glute Ham Raise',e:'GHR Machine',l:'Advanced',m:'Hamstrings, Glutes',c:['Full hamstring chain','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg Glute Bridge',e:'No Equipment',l:'Beginner',m:'Glutes',c:['Floor-based unilateral glute','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg RDL (Bodyweight)',e:'No Equipment',l:'Beginner',m:'Hamstrings, Glutes',c:['Balance and hip hinge control','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Cable Pull-Through',e:'Cable',l:'Beginner/Intermediate',m:'Glutes, Hamstrings',c:['Hip hinge pattern drill','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg Hip Thrust',e:'Bench',l:'Intermediate',m:'Glutes',c:['Unilateral glute emphasis','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg RDL (Cable)',e:'Cable',l:'Intermediate',m:'Hamstrings, Glutes',c:['Constant tension variation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg RDL (Dumbbell)',e:'Dumbbell',l:'Intermediate',m:'Hamstrings, Glutes',c:['Ipsilateral or contralateral load','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg Hip Thrust (Dumbbell)',e:'Dumbbell/Bench',l:'Intermediate/Advanced',m:'Glutes',c:['Loaded unilateral variation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Leg RDL (Barbell)',e:'Barbell',l:'Advanced',m:'Hamstrings, Glutes',c:['High load unilateral hinge','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Hip Hinge (Bodyweight)',e:'No Equipment',l:'Beginner',m:'Hamstrings, Glutes',c:['Dowel on spine drill','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Hip Hinge (Band)',e:'Band',l:'Beginner',m:'Hamstrings, Glutes',c:['Band around hips, load the hinge','Control the movement','Core braced throughout','Quality reps over quantity']}],
   hpush:[
     {n:'Incline Push-Up',e:'No Equipment',l:'Beginner',m:'Chest, Triceps',c:['Hands on elevated surface','Body in straight line','Lower chest to surface','Push through palms to return']},
     {n:'Push-Up',e:'No Equipment',l:'Beginner/Intermediate',m:'Chest, Triceps, Core',c:['Hands slightly wider than shoulders','Body rigid from head to heels','Lower until chest nearly touches','Don\'t flare elbows out']},
     {n:'Dumbbell Bench Press',e:'Dumbbell',l:'Beginner/Intermediate',m:'Chest, Triceps',c:['Feet flat, arch natural','Lower dumbbells with control','Elbows at 45° to body','Press and squeeze at top']},
     {n:'Barbell Bench Press',e:'Barbell',l:'Intermediate',m:'Chest, Triceps',c:['Grip just wider than shoulders','Lower to lower chest','Drive bar straight up','Keep shoulder blades retracted']},
     {n:'Dumbbell Incline Press',e:'Dumbbell',l:'Intermediate',m:'Upper Chest, Triceps',c:['Bench at 30–45 degrees','Retract shoulder blades','Lower controlled to upper chest','Press and squeeze at top']},
-  ],
+  ,
+    {n:'Weighted Dip',e:'Dip Bar',l:'Advanced',m:'Chest, Triceps, Shoulders',c:['Add weight via belt or vest','Slight forward lean for chest','Lower until shoulders below elbows','Press to full lockout']},
+    {n:'Close Grip Bench Press',e:'Barbell',l:'Advanced',m:'Triceps, Inner Chest',c:['Hands shoulder-width apart','Tuck elbows close to body','Lower to lower chest','Squeeze triceps at lockout']},
+    {n:'Archer Push-Up',e:'No Equipment',l:'Advanced',m:'Chest, Triceps, Stability',c:['Wide hand placement','Shift weight to one arm','That arm does the work','Other arm stays mostly straight']}
+  ,
+    {n:'Wall Push-Up',e:'Wall',l:'Beginner',m:'Chest, Triceps',c:['Entry level, great for rehab','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Push-Up Plus',e:'No Equipment',l:'Beginner/Intermediate',m:'Chest, Serratus Anterior',c:['Protraction at top, scapular health','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Landmine Press',e:'Barbell/Landmine',l:'Beginner/Intermediate',m:'Chest, Shoulders',c:['Shoulder-friendly arc of motion','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Decline Push-Up',e:'Bench',l:'Intermediate',m:'Upper Chest, Triceps',c:['Feet elevated, upper chest','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Cable Chest Fly',e:'Cable',l:'Intermediate',m:'Chest',c:['Constant tension, adduction focus','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Dumbbell Chest Fly',e:'Dumbbell/Bench',l:'Intermediate',m:'Chest',c:['Slight bend in elbow throughout','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Barbell Incline Press',e:'Barbell/Bench',l:'Intermediate',m:'Upper Chest, Triceps',c:['Upper chest emphasis','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Weighted Push-Up',e:'Plate/Vest',l:'Intermediate/Advanced',m:'Chest, Triceps',c:['Add load via plate or vest','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Barbell Floor Press',e:'Barbell',l:'Intermediate/Advanced',m:'Chest, Triceps',c:['Limited ROM, elbow-friendly','Control the movement','Core braced throughout','Quality reps over quantity']}],
   vpush:[
     {n:'Dumbbell Lateral Raise',e:'Dumbbell',l:'Beginner',m:'Lateral Deltoid',c:['Slight bend in elbows','Raise to shoulder height only','Lead with elbows, not hands','Lower slowly with control']},
     {n:'Dumbbell Shoulder Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
     {n:'Arnold Press',e:'Dumbbell',l:'Intermediate',m:'All 3 Deltoid Heads',c:['Start palms facing you at chin','Rotate palms out as you press','Full rotation at top','Reverse on the way down']},
     {n:'Barbell Overhead Press',e:'Barbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Bar at collarbone','Core braced, glutes squeezed','Press bar up and slightly back','Lock out overhead, bar over ears']},
-  ],
+  ,
+    {n:'Push Press',e:'Barbell',l:'Advanced',m:'Shoulders, Triceps, Legs',c:['Small knee dip for momentum','Explosive leg drive','Press bar overhead','Receive with locked arms']},
+    {n:'Handstand Push-Up',e:'Wall',l:'Advanced',m:'Shoulders, Triceps, Core',c:['Hands 6 inches from wall','Kick up to handstand','Lower head toward floor','Press back to full lockout']},
+    {n:'Z-Press',e:'Barbell',l:'Advanced',m:'Shoulders, Core, Stability',c:['Sit on floor legs straight','No leg drive allowed','Core must stabilize everything','Press strict overhead']}
+  ,
+    {n:'Cable Lateral Raise',e:'Cable',l:'Beginner/Intermediate',m:'Lateral Deltoid',c:['Constant tension on mid delt','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Landmine Shoulder Press',e:'Barbell/Landmine',l:'Beginner/Intermediate',m:'Shoulders, Triceps',c:['Shoulder-friendly arc of motion','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Dumbbell Z Press',e:'Dumbbell',l:'Intermediate/Advanced',m:'Shoulders, Core',c:['Seated on floor, high core demand','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Arm Landmine Press',e:'Barbell/Landmine',l:'Intermediate/Advanced',m:'Shoulder, Core',c:['Unilateral, anti-rotation demand','Control the movement','Core braced throughout','Quality reps over quantity']}],
   hpull:[
     {n:'Band Row',e:'Band',l:'Beginner',m:'Rhomboids, Mid Traps',c:['Anchor band at chest height','Pull elbows back past ribs','Squeeze shoulder blades','Return with control']},
     {n:'Chest Supported Row',e:'Dumbbell',l:'Beginner/Intermediate',m:'Rhomboids, Lats',c:['Chest on incline bench','Let arms hang naturally','Pull elbows to ceiling','Squeeze shoulder blades at top']},
     {n:'Seated Cable Row',e:'Cable',l:'Beginner/Intermediate',m:'Lats, Rhomboids',c:['Sit tall, slight lean back','Pull handle to lower ribs','Squeeze lats and mid-back','Extend with control']},
     {n:'Single Arm Dumbbell Row',e:'Dumbbell',l:'Intermediate',m:'Lats, Rhomboids',c:['Brace on bench with off hand','Pull elbow past hip','Keep shoulder packed down','Don\'t rotate torso']},
     {n:'Barbell Bent Over Row',e:'Barbell',l:'Intermediate',m:'Lats, Rhomboids',c:['Hip hinge at 45°','Pull to lower rib cage','Lead with elbows','Control the descent']},
-  ],
+  ,
+    {n:'Pendlay Row',e:'Barbell',l:'Advanced',m:'Lats, Rhomboids, Power',c:['Bar starts on floor each rep','Explosive pull from dead stop','Horizontal torso position','Bar to lower chest then reset']},
+    {n:'Meadows Row',e:'Barbell',l:'Advanced',m:'Lats, Teres Major',c:['Bar in landmine or corner','Staggered stance','Pull to hip not chest','Massive lat stretch at bottom']},
+    {n:'Chest to Bar Pull-Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Rhomboids, Biceps',c:['Dead hang start','Pull until chest touches bar','Elbows drive back and down','Full hang between reps']}
+  ,
+    {n:'Band Pull-Apart',e:'Band',l:'Beginner',m:'Rear Delt, Rhomboids',c:['Scapular health, warm-up drill','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'TRX Row',e:'TRX',l:'Beginner/Intermediate',m:'Rhomboids, Lats',c:['Angle controls difficulty','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Cable Face Pull',e:'Cable',l:'Beginner/Intermediate',m:'Rear Delt, Rotator Cuff',c:['External rotation, shoulder health','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Arm Cable Row',e:'Cable',l:'Intermediate',m:'Lats, Rhomboids',c:['Rotate through full ROM','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Barbell Pendlay Row',e:'Barbell',l:'Intermediate/Advanced',m:'Lats, Rhomboids',c:['Dead stop each rep, explosive pull','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Seal Row',e:'Barbell/Bench',l:'Intermediate/Advanced',m:'Rhomboids, Lats',c:['Chest on bench, strict form','Control the movement','Core braced throughout','Quality reps over quantity']}],
   vpull:[
     {n:'Lat Pulldown',e:'Machine',l:'Beginner/Intermediate',m:'Lats',c:['Grip wider than shoulders','Slight lean back','Pull to upper chest','Let bar rise with control']},
     {n:'Assisted Pull-Up',e:'Machine',l:'Beginner/Intermediate',m:'Lats, Biceps',c:['Use assistance to learn the pattern','Start from dead hang','Pull chest to bar','Lower all the way down']},
     {n:'Band Assisted Pull-Up',e:'Band',l:'Intermediate',m:'Lats, Biceps',c:['Loop band around bar','Foot or knee in band','Pull chest toward bar','Full range of motion']},
     {n:'Pull-Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Biceps',c:['Hang with full extension','Pull until chin clears bar','Control the descent','Full hang between reps']},
-  ],
+  ,
+    {n:'Weighted Pull-Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Biceps, Strength',c:['Add weight via belt or vest','Full dead hang start','Chin over bar','Slow controlled descent']},
+    {n:'Archer Pull-Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Biceps, Unilateral',c:['Wide grip','Pull toward one hand','That side does the work','Alternate sides each rep']},
+    {n:'L-Sit Pull-Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Core, Hip Flexors',c:['Hang from bar no swinging','Raise straight legs to horizontal','Pull chin over bar','Core must not drop']}
+  ,
+    {n:'Single Arm Lat Pulldown',e:'Machine',l:'Intermediate',m:'Lats',c:['Unilateral lat focus','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Wide Grip Lat Pulldown',e:'Machine',l:'Intermediate',m:'Lats',c:['Wider lat activation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Straight Arm Pulldown',e:'Cable',l:'Intermediate',m:'Lats, Serratus',c:['Arms straight, lat isolation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Chin-Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Biceps',c:['Supinated grip, more bicep','Control the movement','Core braced throughout','Quality reps over quantity']}],
   lunge:[
     {n:'Static Lunge',e:'No Equipment',l:'Beginner',m:'Quads, Glutes',c:['Split stance, feet hip-width','Lower back knee toward floor','Keep front shin vertical','Push through front heel']},
     {n:'Reverse Lunge',e:'No Equipment',l:'Beginner/Intermediate',m:'Glutes, Quads',c:['Step back into lunge','Lower until both knees at 90°','Push front foot to return','Control the step back']},
@@ -962,7 +1204,17 @@ const EX={
     {n:'Dumbbell Reverse Lunge',e:'Dumbbell',l:'Intermediate',m:'Glutes, Quads',c:['Weights at sides','Step back with control','Torso upright throughout','Drive through front heel']},
     {n:'Walking Lunge',e:'Dumbbell',l:'Intermediate',m:'Quads, Glutes',c:['Step forward into lunge','Lower back knee','Drive front foot for next step','Alternate legs continuously']},
     {n:'Curtsy Lunge',e:'No Equipment',l:'Intermediate',m:'Glutes, Abductors',c:['Step behind and across body','Lower back knee toward floor','Keep hips square as much as possible','Drive back through front heel']},
-  ],
+  ,
+    {n:'Barbell Walking Lunge',e:'Barbell',l:'Advanced',m:'Quads, Glutes, Balance',c:['Bar on upper traps','Take controlled steps forward','Both knees to 90 degrees','Stay tall, core braced']},
+    {n:'Jump Lunge',e:'No Equipment',l:'Advanced',m:'Quads, Glutes, Power',c:['Start in lunge position','Jump explosively','Switch legs in the air','Land softly, absorb impact']},
+    {n:'Deficit Reverse Lunge',e:'Dumbbell',l:'Advanced',m:'Quads, Glutes, Range',c:['Stand on a small plate or step','Step back into lunge','Greater range of motion','Front knee stays over ankle']}
+  ,
+    {n:'Dumbbell Static Lunge',e:'Dumbbell',l:'Beginner/Intermediate',m:'Quads, Glutes',c:['Add load once form solid','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Forward Lunge',e:'No Equipment',l:'Beginner/Intermediate',m:'Quads, Glutes',c:['More quad demand than reverse','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Dumbbell Forward Lunge',e:'Dumbbell',l:'Intermediate',m:'Quads, Glutes',c:['Step forward, return to start','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Dumbbell Lateral Lunge',e:'Dumbbell',l:'Intermediate',m:'Glutes, Adductors',c:['Weight on bent leg side','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Dumbbell Curtsy Lunge',e:'Dumbbell',l:'Intermediate',m:'Glutes, Abductors',c:['Loaded glute med work','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Barbell Reverse Lunge',e:'Barbell',l:'Intermediate/Advanced',m:'Glutes, Quads',c:['High load variation','Control the movement','Core braced throughout','Quality reps over quantity']}],
   core:[
     {n:'Dead Bug',e:'No Equipment',l:'Beginner',m:'Core, Stability',c:['Lower back pressed to floor','Extend opposite arm and leg slowly','Breathe out as you extend','Return with control']},
     {n:'Bird Dog',e:'No Equipment',l:'Beginner',m:'Core, Glutes',c:['On all fours, neutral spine','Extend opposite arm and leg','Hold 2 seconds at top','Don\'t let hips rotate']},
@@ -970,7 +1222,32 @@ const EX={
     {n:'Side Plank',e:'No Equipment',l:'Intermediate',m:'Obliques',c:['Stack feet or stagger them','Elbow under shoulder','Hips high, body straight','Breathe through the hold']},
     {n:'Hollow Body Hold',e:'No Equipment',l:'Intermediate',m:'Core',c:['Lower back pressed to floor','Arms overhead, legs extended','Lift shoulders and legs','Find lowest point you can hold']},
     {n:'Medicine Ball Slam',e:'Med Ball',l:'Intermediate',m:'Core, Full Body',c:['Raise ball overhead fully','Slam down with full force','Hinge to pick it up','Reset and repeat']},
-  ],
+  ,
+    {n:'Ab Wheel Rollout',e:'Ab Wheel',l:'Advanced',m:'Core, Shoulders, Lats',c:['Start kneeling on the floor','Roll out slowly until nearly flat','Back stays neutral no sagging','Pull back with core and lats']},
+    {n:'Hanging Leg Raise',e:'Pull-Up Bar',l:'Advanced',m:'Core, Hip Flexors',c:['Hang from bar no swinging','Raise straight legs to horizontal','Control the descent fully','Avoid using momentum']},
+    {n:'Dragon Flag',e:'Bench',l:'Advanced',m:'Full Core, Stability',c:['Grab bench behind head','Keep body rigid like a plank','Lower legs toward floor controlled','Never let lower back arch']}
+  ,
+    {n:'TRX Fallout',e:'TRX',l:'Intermediate',m:'Core, Lats',c:['Similar to ab rollout pattern','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'RKC Plank',e:'No Equipment',l:'Intermediate/Advanced',m:'Core',c:['Max tension throughout body','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Side Plank + Hip Abduction',e:'No Equipment',l:'Intermediate',m:'Glute Med, Obliques',c:['Add hip abduction for glute med','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Suitcase Carry',e:'Dumbbell',l:'Intermediate',m:'Obliques, Core',c:['Single side load, stay tall','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Farmer Carry',e:'Dumbbell',l:'Intermediate',m:'Core, Traps',c:['Bilateral loaded carry','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Band Pallof Press',e:'Band',l:'Beginner',m:'Obliques, Core',c:['Band version, good for beginners','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Pallof Press',e:'Cable',l:'Beginner/Intermediate',m:'Obliques, Core',c:['Press out and resist rotation','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Half Kneeling Pallof Press',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Kneeling adds hip stability demand','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Crunch',e:'No Equipment',l:'Beginner',m:'Rectus Abdominis',c:['Short ROM, lumbar stays down','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Bicycle Crunch',e:'No Equipment',l:'Intermediate',m:'Obliques, Core',c:['Rotation + flexion','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Cable Crunch',e:'Cable',l:'Intermediate',m:'Rectus Abdominis',c:['Kneel, crunch to floor','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'V-Up',e:'No Equipment',l:'Intermediate',m:'Core, Hip Flexors',c:['Meet in middle, full ROM','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Band Rotation',e:'Band',l:'Beginner',m:'Obliques, Core',c:['Low load, pattern establishment','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Cable Rotation',e:'Cable',l:'Beginner/Intermediate',m:'Obliques, Core',c:['Pivot feet, rotate from hips','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Russian Twist',e:'Bodyweight/Weight',l:'Intermediate',m:'Obliques',c:['Feet up for more demand','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Woodchop (High to Low)',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Diagonal, rotate and pivot','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Woodchop (Low to High)',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Reverse chop pattern','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Med Ball Rotational Throw',e:'Med Ball/Wall',l:'Intermediate',m:'Obliques, Core',c:['Explosive rotation, step into throw','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Half Kneeling Cable Rotation',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Kneeling adds hip stability','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Landmine Rotation',e:'Barbell/Landmine',l:'Intermediate',m:'Obliques, Core',c:['Arc pattern, pivot feet','Control the movement','Core braced throughout','Quality reps over quantity']},
+    {n:'Single Arm Cable Rotation',e:'Cable',l:'Intermediate',m:'Obliques',c:['Unilateral rotational control','Control the movement','Core braced throughout','Quality reps over quantity']}],
 };
 const CL={squat:'Squat',hinge:'Hinge',hpush:'H.Push',vpush:'V.Push',hpull:'H.Pull',vpull:'V.Pull',lunge:'Lunge',core:'Core'};
 const BET=[
@@ -1017,7 +1294,7 @@ function setNav(k){
 function goToMP(){
   Object.keys(MC).forEach(m=>{
     const el=document.getElementById('mp-'+m);
-    if(el)el.textContent=MC[m].ph[Math.floor(Math.random()*MC[m].ph.length)];
+    var dn=Math.floor(new Date().getTime()/(1000*60*60*24));if(el)el.textContent=MC[m].ph[dn%MC[m].ph.length];
   });
   goTo('moodpicker');
 }
@@ -1051,14 +1328,14 @@ function shareApp(){
 function goToOb(){goTo('onboarding');startOb();}
 
 // ONBOARDING
-let obS=1;const obT=6;
+let obS=1;const obT=9;
 function startOb(){obS=1;renderDots();showOb(1);}
 function renderDots(){
   const d=document.getElementById('ob-dots');d.innerHTML='';
   for(let i=1;i<=obT;i++){const dot=document.createElement('div');dot.className='ob-dot'+(i<obS?' done':i===obS?' active':'');d.appendChild(dot);}
   const bb=document.getElementById('ob-back');bb.style.opacity=obS===1?'0.3':'1';bb.style.pointerEvents=obS===1?'none':'auto';
 }
-function showOb(n){document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('on'));document.getElementById('ob-'+n).classList.add('on');renderDots();}
+function showOb(n){document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('on'));document.getElementById('ob-'+n).classList.add('on');renderDots();if(n===7)buildPlanCard();if(n===9)buildAvOb();}
 function obNext(){obS=Math.min(obT,obS+1);showOb(obS);}
 function obBack(){obS=Math.max(1,obS-1);showOb(obS);}
 function selOpt(el,type,val){el.closest('.opts').querySelectorAll('.opt').forEach(c=>c.classList.remove('on'));el.classList.add('on');S.user[type]=val;}
@@ -1070,8 +1347,15 @@ function finishOb(){
   document.getElementById('sum-l').textContent=LL[l]||'Some experience';
   document.getElementById('sum-d').textContent=(S.user.days||3)+' days/week';
   document.getElementById('sum-sp').textContent=S.user.days<=3?'Full Body Split':'Upper/Lower Split';
-  showOb(6);
-  setTimeout(()=>{S.onboarded=true;setupHome();buildEl();goTo('home');document.getElementById('bnav').classList.remove('hidden');save();},50);
+  showOb(7);
+  setTimeout(()=>{
+    S.onboarded=true;
+    try{setupHome();}catch(e){console.log('setupHome error:',e);}
+    try{buildEl();}catch(e){console.log('buildEl error:',e);}
+    goTo('home');
+    document.getElementById('bnav').classList.remove('hidden');
+    save();
+  },50);
 }
 
 // HOME
@@ -1093,7 +1377,7 @@ function setupHome(){
   document.getElementById('st-tot').textContent=S.total;
   document.getElementById('st-wk').textContent=S.weekW;
   const tm=topMood();document.getElementById('st-md').textContent=tm?ME[tm]:'😊';
-  setTip();buildCal();renderBadges();updateRecap();renderJ();
+  setTip();buildCal();renderBadges();updateRecap();renderJ();setupChallenge();
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -1118,7 +1402,16 @@ function buildCal(){
 function selMood(mood){S.currentMood=mood;genWk(mood);goTo('workout');}
 function genWk(mood){
   const cfg=MC[mood];const lv=S.user.level;
-  const pick=arr=>{const f=arr.filter(e=>lv==='new'?e.l.includes('Beginner'):lv==='some'?!e.l.includes('Advanced'):true);return f[Math.floor(Math.random()*f.length)]||arr[0];};
+  const loc=(S.user&&S.user.location)||'both';
+  const HOME_EQ=['No Equipment','Dumbbell','Band','Wall','Bench','Pull-Up Bar','Ab Wheel','Med Ball','TRX'];
+  const pick=arr=>{
+    const f=arr.filter(e=>{
+      const levelOk=lv==='new'?e.l.includes('Beginner'):lv==='some'?!e.l.includes('Advanced'):true;
+      const locOk=loc!=='home'||HOME_EQ.some(eq=>e.e&&e.e.includes(eq));
+      return levelOk&&locOk;
+    });
+    return f[Math.floor(Math.random()*f.length)]||arr[0];
+  };
   const cnt={low:4,neutral:5,happy:5,angry:6,stressed:5}[mood]||5;
   const pats=['squat','hinge','hpush','hpull','lunge','core'];
   S.currentWorkout=pats.slice(0,cnt).map((p,i)=>{const ex=pick(EX[p]);return{id:i,n:ex.n,m:ex.m,e:ex.e,p,sets:cfg.sets,reps:cfg.reps,done:false,w:''};});
@@ -1127,8 +1420,9 @@ function genWk(mood){
   const sp=S.user.days<=3?'Full Body':'Upper Body';
   const goal=S.user.goal||'feelgood';const sr=cfg.rs[goal]||60;
   document.getElementById('wk-sub').textContent=sp+' · '+cfg.int+' · '+cnt+' exercises · '+sr+'s rest/set';
-  renderWk();document.getElementById('rtbar').classList.add('on');document.getElementById('rt-n').textContent=sr+'s';S.rtMax=sr;
+  renderWk();// rtbar disableddocument.getElementById('rt-n').textContent=sr+'s';S.rtMax=sr;
   document.getElementById('ex-tip').style.display='none';
+  showWorkoutGuide();
 }
 function renderWk(){
   const cfg=MC[S.currentMood];const goal=S.user.goal||'feelgood';const sr=cfg?.rs[goal]||60;
@@ -1136,7 +1430,12 @@ function renderWk(){
     <div class="ex-c ${ex.done?'done':''}" id="exc-${i}">
       <div class="ex-row"><div class="ex-nb">${i+1}</div><div style="flex:1"><div class="ex-nm">${ex.n}</div><div class="ex-ms">${ex.m}</div></div></div>
       <div class="ex-tags"><span class="ex-tag et-s">📋 ${ex.sets} sets</span><span class="ex-tag et-r">🔁 ${ex.reps} reps</span><span class="ex-tag et-e">${ex.e}</span><span class="ex-tag et-t">⏱ ${sr}s rest</span></div>
-      <div class="w-log"><span class="w-lbl">Weight:</span><input class="w-inp" type="number" placeholder="0" value="${ex.w}" onchange="logW(${i},this.value)" min="0"><span class="w-unit">lbs/kg</span></div>
+      <div class="w-log" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="w-lbl">Weight:</span>
+        <input class="w-inp" type="number" placeholder="0" value="${ex.w}" onchange="logW(${i},this.value)" min="0">
+        <span class="w-unit">lbs/kg</span>
+        <button onclick="startFixedTimer()" type="button" style="margin-left:auto;display:flex;align-items:center;gap:4px;padding:5px 12px;background:#E8F7F5;border:2px solid #4BBFB5;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;color:#2D9E94;">⏱️ Rest</button>
+      </div>
       <div class="ex-acts"><button class="b-sw" onclick="openSwap(${i})">🔄 Swap</button><button class="b-dn ${ex.done?'un':''}" onclick="togDone(${i})">${ex.done?'Undo':'✓ Done'}</button></div>
     </div>`).join('');
 }
@@ -1187,7 +1486,7 @@ function completeWk(){
   const td=tdKey();if(!S.calData[td]){S.streak++;S.weekW++;}
   S.total++;S.moodCounts[S.currentMood]=(S.moodCounts[S.currentMood]||0)+1;
   S.calData[td]={type:'workout',emoji:ME[S.currentMood]};
-  clearInterval(S.rtInterval);document.getElementById('rtbar').classList.remove('on');
+  clearInterval(S.rtInterval);// rtbar disabled
   const cfg=MC[S.currentMood];const idx=Math.floor(Math.random()*cfg.pt.length);
   document.getElementById('pw-title').textContent=cfg.pt[idx];
   document.getElementById('pw-msg').textContent=cfg.pm[idx];
@@ -1243,10 +1542,26 @@ function renderBadges(){
   }).join('');
 }
 function updateRecap(){
-  const msgs={0:'Complete your first workout to unlock your weekly recap.',1:'You showed up once this week. One is always better than zero. 💙',2:'2 workouts this week. Building something real. 💪',3:'3 workouts. Consistency is your superpower. ⚡',4:'4 workouts! You\'re in the zone. 🔥',5:'5 workouts this week. Unstoppable. 🏆'};
-  document.getElementById('rc-m').textContent=msgs[Math.min(S.weekW,5)];
-  document.getElementById('rc-w').textContent=S.weekW;document.getElementById('rc-d').textContent=Object.keys(S.calData).length;
-  const tm=topMood();document.getElementById('rc-e').textContent=tm?ME[tm]:'😊';
+  var msgs={
+    0:'Complete your first workout to unlock your recap.',
+    1:'You showed up once this week. One is always better than zero. 💙',
+    2:'2 workouts this week. Building something real. 💪',
+    3:'3 workouts. Consistency is your superpower. ⚡',
+    4:'4 workouts! You are in the zone. 🔥',
+    5:'5 workouts this week. Unstoppable. 🏆'
+  };
+  var msg = msgs[Math.min(S.weekW||0, 5)];
+  // Update merged progress card message
+  var rcm = document.getElementById('rc-m');
+  if(rcm) rcm.textContent = msg;
+  // Update stats (these are in the merged card)
+  var rcw = document.getElementById('rc-w');
+  var rcd = document.getElementById('rc-d');
+  var rce = document.getElementById('rc-e');
+  if(rcw) rcw.textContent = S.weekW||0;
+  if(rcd) rcd.textContent = Object.keys(S.calData||{}).length;
+  var tm = topMood();
+  if(rce) rce.textContent = tm ? ME[tm] : '😊';
 }
 
 // JOURNAL
@@ -1270,10 +1585,9 @@ function renderEl(){
       <div class="el-det" id="eld-${i}">
         <div class="el-ms">🎯 ${e.m}</div>
         <div class="el-lv">${e.l}</div>
-        <div style="margin-top:8px;">
-          <div class="el-cues"><div class="el-ct">Coaching Cues</div>${(e.c||[]).map(c=>'<div class="el-cue"><div class="el-cd"></div><div class="el-cx">'+c+'</div></div>').join('')}</div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px;">
+          <div class="el-cues" style="flex:1;"><div class="el-ct">Coaching Cues</div>${(e.c||[]).map(c=>'<div class="el-cue"><div class="el-cd"></div><div class="el-cx">'+c+'</div></div>').join('')}</div>
         </div>
-        
       </div>
     </div>`).join('');
 }
@@ -1473,20 +1787,545 @@ window.addEventListener('DOMContentLoaded',function(){
     goTo('auth');
   },1800);
 });
-
-
 </script>
-
-
 
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/sw.js')
-      .then(function(reg){ console.log('SW registered'); })
-      .catch(function(err){ console.log('SW failed: ', err); });
+var AV=[
+  {e:'🌊',n:'The Flow',p:'I move at my own pace and that is more than enough.'},
+  {e:'💎',n:'The Diamond',p:'I am being built under pressure. Watch me shine.'},
+  {e:'👑',n:'Badass Queen',p:'I do not chase. I attract. And I never skip leg day.'},
+  {e:'🔥',n:'The Spark',p:'Once I start, nothing can stop me.'},
+  {e:'🌱',n:'The Grower',p:'Every rep is a promise to my future self.'},
+  {e:'🌙',n:'The Night Owl',p:'I show up even when no one is watching. Especially then.'}
+];
+function openAvatarModal(){
+  // Refresh selection state
+  var cur=(S.user.avatar&&S.user.avatar.e)||'🌊';
+  AV.forEach(function(a,i){
+    var b=document.getElementById('avb'+i);
+    if(b){
+      b.style.borderColor=a.e===cur?'#4BBFB5':'#EDE8E3';
+      b.style.background=a.e===cur?'#E8F7F5':'white';
+    }
+  });
+  document.getElementById('av-modal').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeAvatarModal(){
+  document.getElementById('av-modal').style.display='none';
+  document.body.style.overflow='';
+}
+function initAv(){
+  AV.forEach(function(a,i){
+    var btn=document.getElementById('avb'+i);
+    if(!btn)return;
+    btn.addEventListener('click',function(){
+      // Highlight selected
+      AV.forEach(function(_,j){
+        var b=document.getElementById('avb'+j);
+        if(b){b.style.borderColor='#EDE8E3';b.style.background='white';}
+      });
+      this.style.borderColor='#4BBFB5';
+      this.style.background='#E8F7F5';
+      // Save
+      S.user.avatar={e:a.e,n:a.n};
+      save();
+      // Update header icon
+      var icon=document.getElementById('av-icon-btn');
+      if(icon)icon.textContent=a.e;
+      // Close after short delay
+      setTimeout(closeAvatarModal,400);
+    });
+  });
+  // Close modal when tapping backdrop
+  var modal=document.getElementById('av-modal');
+  if(modal){
+    modal.addEventListener('click',function(e){
+      if(e.target===this)closeAvatarModal();
+    });
+  }
+  // Set initial icon from saved state
+  var saved=(S.user.avatar&&S.user.avatar.e)||'🌊';
+  var icon=document.getElementById('av-icon-btn');
+  if(icon)icon.textContent=saved;
+}
+window.addEventListener('DOMContentLoaded',function(){
+  setTimeout(initAv,300);
+});
+</script>
+
+
+<!-- AVATAR MODAL -->
+<div id="av-modal" style="display:none;position:fixed;inset:0;background:rgba(44,44,58,0.5);z-index:200;align-items:flex-end;justify-content:center;">
+  <div style="background:white;border-radius:20px 20px 0 0;padding:20px 18px 36px;width:100%;max-width:430px;">
+    <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 14px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">Who are you today?</div>
+    <div style="font-size:12px;color:#7A7A8C;margin-bottom:16px;">Your avatar. Your energy. Pick one.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;">
+      <button id="avb0" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
+        <span style="font-size:26px;">🌊</span>
+        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Flow</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I move at my own pace and that is more than enough.</span></span>
+      </button>
+      <button id="avb1" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
+        <span style="font-size:26px;">💎</span>
+        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Diamond</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I am being built under pressure. Watch me shine.</span></span>
+      </button>
+      <button id="avb2" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
+        <span style="font-size:26px;">👑</span>
+        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">Badass Queen</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I do not chase. I attract. And I never skip leg day.</span></span>
+      </button>
+      <button id="avb3" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
+        <span style="font-size:26px;">🔥</span>
+        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Spark</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">Once I start, nothing can stop me.</span></span>
+      </button>
+      <button id="avb4" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
+        <span style="font-size:26px;">🌱</span>
+        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Grower</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">Every rep is a promise to my future self.</span></span>
+      </button>
+      <button id="avb5" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
+        <span style="font-size:26px;">🌙</span>
+        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Night Owl</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I show up even when no one is watching. Especially then.</span></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- WORKOUT GUIDE -->
+<div id="wk-guide" style="display:none;position:fixed;inset:0;background:rgba(44,44,58,0.5);z-index:150;align-items:flex-end;justify-content:center;">
+  <div style="background:white;border-radius:20px 20px 0 0;padding:20px 18px 36px;width:100%;max-width:430px;">
+    <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 14px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">How your workout works</div>
+    <div style="font-size:12px;color:#7A7A8C;margin-bottom:14px;">First time? Here is what you need to know 💪</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:18px;">
+      <div style="display:flex;align-items:flex-start;gap:11px;padding:11px;background:#E8F7F5;border-radius:12px;">
+        <span style="font-size:18px;">✓</span>
+        <div><strong style="display:block;font-size:12px;color:#2C2C3A;">Mark each exercise done</strong><span style="font-size:11px;color:#7A7A8C;">Tap Done after each set. It tracks your progress!</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;padding:11px;background:#FEF3E8;border-radius:12px;">
+        <span style="font-size:18px;">🔄</span>
+        <div><strong style="display:block;font-size:12px;color:#2C2C3A;">Swap any exercise</strong><span style="font-size:11px;color:#7A7A8C;">Not comfortable with the equipment or movement? Tap Swap for 3 similar alternatives.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;padding:11px;background:#EEF5F1;border-radius:12px;">
+        <span style="font-size:18px;">⚖️</span>
+        <div><strong style="display:block;font-size:12px;color:#2C2C3A;">Log your weights</strong><span style="font-size:11px;color:#7A7A8C;">Type how much you lifted to track progress over time.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;padding:11px;background:#F5F2FC;border-radius:12px;">
+        <span style="font-size:18px;">⏱️</span>
+        <div><strong style="display:block;font-size:12px;color:#2C2C3A;">Rest timer at the top</strong><span style="font-size:11px;color:#7A7A8C;">After each set click the ⏱️ Rest button to start a countdown for exactly how long to rest.</span></div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:11px;padding:11px;background:#FDF0EE;border-radius:12px;">
+        <span style="font-size:18px;">➕</span>
+        <div><strong style="display:block;font-size:12px;color:#2C2C3A;">Add an extra exercise</strong><span style="font-size:11px;color:#7A7A8C;">Feeling strong? Tap + to add a bonus exercise!</span></div>
+      </div>
+    </div>
+    <button onclick="closeGuide()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">Got it! Let's go 💪</button>
+  </div>
+</div>
+
+<script>
+// WORKOUT GUIDE - shows first time only
+function showWorkoutGuide(){
+  if(!S.user.seenGuide){
+    S.user.seenGuide=true;
+    save();
+    document.getElementById('wk-guide').style.display='flex';
+    document.body.style.overflow='hidden';
+  }
+}
+function closeGuide(){
+  document.getElementById('wk-guide').style.display='none';
+  document.body.style.overflow='';
+}
+
+// CARDIO SUGGESTION
+var CARDIO={
+  low:{
+    new:{n:"5 Min Gentle Walk",d:"Slow and easy. You showed up. That is everything. 💙"},
+    some:{n:"10 Min Easy Walk",d:"A calm walk to cool down. You did great."},
+    regular:{n:"15 Min Recovery Walk",d:"Active recovery. Keep the blood flowing, help those muscles heal."},
+  },
+  neutral:{
+    new:{n:"10 Min Walk",d:"A brisk walk to finish strong. Your body will thank you."},
+    some:{n:"15 Min Walk or Jog",d:"Your choice. Walk, jog, or mix it up. Just keep moving."},
+    regular:{n:"20 Min Steady Cardio",d:"Bike, jog, row. 20 minutes steady state. Finish it right."},
+  },
+  happy:{
+    new:{n:"10 Min Dance Walk",d:"Put on your fave song and walk like nobody is watching. 😊"},
+    some:{n:"15 Min Run",d:"You have the energy. Use it. Run it out!"},
+    regular:{n:"20 Min Run",d:"Happy legs go fast. Push the pace a little!"},
+  },
+  angry:{
+    new:{n:"10 Min Power Walk",d:"Walk it out FAST. Let the pavement feel it. 😤"},
+    some:{n:"15 Min Run",d:"Run that energy OUT. Every step burns it away."},
+    regular:{n:"20 Min Intervals",d:"Sprint 30s, walk 30s. Repeat. Destroy that anger. 🔥"},
+  },
+  stressed:{
+    new:{n:"10 Min Mindful Walk",d:"Notice 5 things around you. Breathe. Walk. Reset. 💜"},
+    some:{n:"15 Min Easy Jog",d:"Rhythmic movement resets the nervous system. Trust it."},
+    regular:{n:"20 Min Zone 2 Cardio",d:"Easy pace, steady breathing. This is medicine for stress."},
+  },
+};
+function showCardio(){
+  var mood = S.currentMood || "neutral";
+  var lvl = "some";
+  try{ lvl = S.user.level === "new" ? "new" : S.user.level === "regular" ? "regular" : "some"; }catch(e){}
+  var data = {n:"10 Min Walk", d:"A brisk walk to finish strong."};
+  try{ data = CARDIO[mood][lvl] || data; }catch(e){}
+  var card = document.getElementById("cardio-card");
+  var btn = document.getElementById("done-btn");
+  var cn = document.getElementById("cardio-name");
+  var cd = document.getElementById("cardio-desc");
+  var skipBtn = document.getElementById("skip-btn");
+  var doBtn = document.getElementById("do-btn");
+  if(cn) cn.textContent = data.n;
+  if(cd) cd.textContent = data.d;
+  if(skipBtn) skipBtn.textContent = getCardioPhrase(SKIP_PH);
+  if(doBtn) doBtn.textContent = getCardioPhrase(DO_PH);
+  if(btn) btn.style.display = "none";
+  if(card){
+    card.style.display = "block";
+    setTimeout(function(){ card.scrollIntoView({behavior:"smooth", block:"center"}); }, 100);
+  }
+}
+function skipCardio(){
+  try{ completeWk(); }catch(e){ console.log(e); }
+}
+function doCardio(){
+  var mood = S.currentMood || "neutral";
+  var lvl = "some";
+  try{ lvl = S.user.level === "new" ? "new" : S.user.level === "regular" ? "regular" : "some"; }catch(e){}
+  var data = {n:"10 Min Walk"};
+  try{ data = CARDIO[mood][lvl] || data; }catch(e){}
+  showT("🏃 " + data.n + " — lets go! You are unstoppable! 🔥");
+  setTimeout(function(){ try{ completeWk(); }catch(e){ console.log(e); } }, 2000);
+}
+
+// MINI REST TIMER
+
+
+// FIXED REST TIMER
+var ftInterval = null;
+var ftRunning = false;
+
+function startFixedTimer(){
+  var timer = document.getElementById('fixed-timer');
+  if(!timer) return;
+  timer.style.display = 'block';
+  timer.style.zIndex = '999';
+  var secs = 60;
+  try{
+    var mood = S.currentMood || 'neutral';
+    var goal = (S.user && S.user.goal) || 'feelgood';
+    secs = MC[mood].rs[goal] || 60;
+  }catch(e){}
+  var secsEl = document.getElementById('ft-secs');
+  var msgEl = document.getElementById('ft-msg');
+  if(secsEl) secsEl.textContent = secs + 's';
+  if(msgEl) msgEl.textContent = 'Tap Start ▶ to begin';
+  // Auto start immediately!
+  runFixedTimer();
+}
+
+function runFixedTimer(){
+  var secs = 60;
+  try{
+    var mood = S.currentMood || 'neutral';
+    var goal = (S.user && S.user.goal) || 'feelgood';
+    secs = MC[mood].rs[goal] || 60;
+  }catch(e){ secs = 60; }
+
+  if(ftInterval) clearInterval(ftInterval);
+  
+  var secsEl = document.getElementById('ft-secs');
+  var msgEl = document.getElementById('ft-msg');
+  var startBtn = document.getElementById('ft-start');
+  
+  if(startBtn){ startBtn.textContent = '...'; startBtn.style.background = '#8BB8A0'; }
+  
+  var remaining = secs;
+  var msgs = ['Rest up! 💤', 'Almost there...', 'Getting stronger 💪', 'You got this!'];
+  
+  ftInterval = setInterval(function(){
+    remaining--;
+    if(secsEl) secsEl.textContent = remaining + 's';
+    if(msgEl) msgEl.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    
+    if(remaining <= 0){
+      clearInterval(ftInterval);
+      if(secsEl) secsEl.textContent = 'GO!';
+      if(msgEl) msgEl.textContent = 'Next set! 💪';
+      if(startBtn){ startBtn.textContent = 'Again ▶'; startBtn.style.background = '#4BBFB5'; }
+    }
+  }, 1000);
+}
+
+function closeFixedTimer(){
+  if(ftInterval) clearInterval(ftInterval);
+  var timer = document.getElementById('fixed-timer');
+  if(timer) timer.style.display = 'none';
+}
+
+// CARDIO BUTTON PHRASES - rotate daily
+var SKIP_PH = ["🏠 I am done, let me go home 😅","🛋️ My couch is calling my name","😴 I gave everything. I am out.","🏃 I already ran... to the fridge","👋 Done! See you tomorrow!","🧘 Rest IS part of training. Bye!","😂 Cardio? In this economy?","🍕 I have earned my rest. Peace."];
+var DO_PH = ["😤 I thought you were not gonna challenge me!","🔥 That is what I am talking about. LET'S GO!","💪 Easy. What else you got?","⚡ I was WAITING for this. Let's burn!","🏆 Challenge accepted. Obviously.","😈 I came here to WORK. Let's go!","🚀 More? Always. Let's do it!","👑 This is what legends do. Move!"];
+function getCardioPhrase(arr){
+  var day = Math.floor(new Date().getTime()/(1000*60*60*24));
+  return arr[day % arr.length];
+}
+
+var CHALLENGES={
+  new:[
+    {icon:"💪",name:"20 Push-Up Challenge",phrase:"You vs You. Lets go.",target:20},
+    {icon:"🦵",name:"50 Squat Challenge",phrase:"Strong legs, strong life.",target:50},
+    {icon:"🌉",name:"50 Glute Bridge Challenge",phrase:"Build that foundation.",target:50},
+    {icon:"🔥",name:"10 Burpee Challenge",phrase:"Just 10. You got this.",target:10},
+    {icon:"🧘",name:"Plank Challenge (sec)",phrase:"Hold it. Breathe. Grow.",target:60},
+    {icon:"🦵",name:"30 Lunge Challenge",phrase:"One leg at a time.",target:30},
+    {icon:"⬆️",name:"10 Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:10},
+    {icon:"🏃",name:"30,000 Step Challenge",phrase:"Move more. Feel better.",target:30000},
+  ],
+  some:[
+    {icon:"💪",name:"50 Push-Up Challenge",phrase:"You vs You. Lets go.",target:50},
+    {icon:"🦵",name:"100 Squat Challenge",phrase:"Strong legs, strong life.",target:100},
+    {icon:"🌉",name:"150 Glute Bridge Challenge",phrase:"Build that foundation.",target:150},
+    {icon:"🔥",name:"25 Burpee Challenge",phrase:"Burn it. Own it.",target:25},
+    {icon:"🧘",name:"Plank Challenge (sec)",phrase:"Hold it. Breathe. Grow.",target:135},
+    {icon:"🦵",name:"75 Lunge Challenge",phrase:"One leg at a time.",target:75},
+    {icon:"⬆️",name:"25 Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:25},
+    {icon:"🏃",name:"50,000 Step Challenge",phrase:"Move more. Feel better.",target:50000},
+  ],
+  regular:[
+    {icon:"💪",name:"100 Push-Up Challenge",phrase:"You vs You. Lets go.",target:100},
+    {icon:"🦵",name:"200 Squat Challenge",phrase:"Strong legs, strong life.",target:200},
+    {icon:"🌉",name:"250 Glute Bridge Challenge",phrase:"Build that foundation.",target:250},
+    {icon:"🔥",name:"50 Burpee Challenge",phrase:"Burn it. Own it.",target:50},
+    {icon:"🧘",name:"Plank Challenge (sec)",phrase:"Hold it. Breathe. Grow.",target:270},
+    {icon:"🦵",name:"150 Lunge Challenge",phrase:"One leg at a time.",target:150},
+    {icon:"⬆️",name:"50 Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:50},
+    {icon:"🏃",name:"70,000 Step Challenge",phrase:"Move more. Feel better.",target:70000},
+  ],
+};
+
+function getWeekNum(){
+  var now=new Date();
+  var monday=new Date(now);
+  monday.setDate(now.getDate()-((now.getDay()+6)%7));
+  monday.setHours(0,0,0,0);
+  return Math.floor(monday.getTime()/(1000*60*60*24*7));
+}
+function getDaysLeft(){
+  var now=new Date();
+  var day=now.getDay()||7;
+  return 7-day;
+}
+function setupChallenge(){
+  var lvl="some";
+  try{ lvl=(S.user&&S.user.level==="regular")?"regular":(S.user&&S.user.level==="new")?"new":"some"; }catch(e){}
+  if(!CHALLENGES[lvl]) lvl="some";
+  var weekNum=getWeekNum();
+  var round=S.challengeRound||0;
+  var chIdx=weekNum%8;
+  if(chIdx>=CHALLENGES[lvl].length) chIdx=0;
+  var ch=CHALLENGES[lvl][chIdx];
+  if(!ch) return;
+  var baseTarget=ch.target;
+  var target=Math.round(baseTarget+(baseTarget*0.2*round));
+  
+  // Reset if new week
+  var weekKey="w"+weekNum;
+  if(S.challengeWeek!==weekKey){
+    S.challengeWeek=weekKey;
+    S.challengeDone=0;
+    S.challengeComplete=false;
+    save();
+  }
+  
+  var done=S.challengeDone||0;
+  var pct=Math.min(100,Math.round((done/target)*100));
+  var left=getDaysLeft();
+  
+  var icon=document.getElementById("ch-icon");
+  var name=document.getElementById("ch-name");
+  var phrase=document.getElementById("ch-phrase");
+  var bar=document.getElementById("ch-bar");
+  var prog=document.getElementById("ch-prog");
+  var days=document.getElementById("ch-days");
+  
+  if(icon)icon.textContent=ch.icon;
+  if(name)name.textContent=(round>0?ch.name+" (Round "+(round+1)+")":ch.name);
+  if(phrase)phrase.textContent=ch.phrase;
+  if(bar)bar.style.width=pct+"%";
+  if(prog)prog.textContent=done+" / "+target+" done";
+  if(days)days.textContent="⏰ "+left+" day"+(left===1?"":"s")+" left";
+  
+  if(done>=target&&!S.challengeComplete){
+    S.challengeComplete=true;
+    S.challengeRound=(S.challengeRound||0)+1;
+    save();
+    setTimeout(function(){
+      showT("🏆 Challenge CRUSHED! "+ch.icon+" You are unstoppable!");
+      confetti();
+    },500);
+  }
+}
+function logChallenge(){
+  var lvl=(S.user&&S.user.level==="regular")?"regular":(S.user&&S.user.level==="new")?"new":"some";
+  var weekNum=getWeekNum();
+  var chIdx=weekNum%8;
+  var ch=CHALLENGES[lvl][chIdx];
+  var round=S.challengeRound||0;
+  var target=Math.round(ch.target+(ch.target*0.2*round));
+  var done=S.challengeDone||0;
+  var remaining=target-done;
+  var reps=prompt(ch.icon+" How many did you complete? ("+done+"/"+target+" done, "+remaining+" left)");
+  if(!reps||isNaN(parseInt(reps)))return;
+  var num=Math.max(0,parseInt(reps));
+  S.challengeDone=Math.min(target,done+num);
+  S.challengeComplete=false;
+  save();
+  setupChallenge();
+  showT("💪 "+num+" logged! "+S.challengeDone+"/"+target+" total!");
+}
+
+// AVATAR ONBOARDING
+function buildAvOb(){
+  var list = document.getElementById('av-ob-list');
+  if(!list) return;
+  var avatars = [
+    {e:'🌊', n:'The Flow',      p:'I move at my own pace and that is more than enough.'},
+    {e:'💎', n:'The Diamond',   p:'I am being built under pressure. Watch me shine.'},
+    {e:'👑', n:'Badass Queen',  p:'I do not chase. I attract. And I never skip leg day.'},
+    {e:'🔥', n:'The Spark',     p:'Once I start, nothing can stop me.'},
+    {e:'🌱', n:'The Grower',    p:'Every rep is a promise to my future self.'},
+    {e:'🌙', n:'The Night Owl', p:'I show up even when no one is watching. Especially then.'}
+  ];
+  list.innerHTML = '';
+  avatars.forEach(function(av, i){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.style.cssText = 'display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;font-family:Nunito,sans-serif;';
+    btn.innerHTML = '<span style="font-size:26px">' + av.e + '</span><span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A">' + av.n + '</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic">' + av.p + '</span></span>';
+    btn.addEventListener('click', function(){
+      // Reset all
+      list.querySelectorAll('button').forEach(function(b){
+        b.style.borderColor = '#EDE8E3';
+        b.style.background = 'white';
+      });
+      // Select this
+      btn.style.borderColor = '#4BBFB5';
+      btn.style.background = '#E8F7F5';
+      // Save
+      S.user.avatar = {e: av.e, n: av.n};
+      // Update header icon
+      var icon = document.getElementById('av-icon-btn');
+      if(icon) icon.textContent = av.e;
+    });
+    list.appendChild(btn);
   });
 }
+
+// PLAN CARD - builds personalized plan based on goal + level + days
+var PLAN_DATA = {
+  // [goal][level] = {title, desc, sets, reps, rest, phases[]}
+  muscle: {
+    new:     {title:'Strength Foundations',     desc:'You picked Build Muscle at beginner level. We start with perfect form and bodyweight basics — building the base everything else grows from.',          sets:'3', reps:'10-12', rest:'90s'},
+    some:    {title:'Muscle Building Program',   desc:'You picked Build Muscle with some experience. Compound lifts, progressive overload and enough volume to see real changes in 30 days.',               sets:'3-4', reps:'8-12', rest:'75s'},
+    regular: {title:'Advanced Hypertrophy',      desc:'You train regularly and want muscle. We go straight into high volume, advanced movements and short rest periods. This one is not easy.',              sets:'4-5', reps:'8-10', rest:'60s'},
+  },
+  feelgood: {
+    new:     {title:'Feel Good Foundations',     desc:'You want to feel better — more energy, better mood, lighter body. We mix strength and movement in a way that leaves you feeling great every session.',sets:'3', reps:'12-15', rest:'60s'},
+    some:    {title:'Energy and Wellness Plan',  desc:'Feel good, move well, build strength. Your plan balances resistance training with enough variety to keep you excited to show up.',                    sets:'3', reps:'12-15', rest:'60s'},
+    regular: {title:'Performance Wellness',      desc:'You train regularly and want to feel your best. We build strength, improve mobility and keep intensity high enough to see real results.',             sets:'4', reps:'10-15', rest:'50s'},
+  },
+  losefat: {
+    new:     {title:'Fat Loss Starter Plan',     desc:'You want to lose fat. We build muscle at the same time — more muscle means more calories burned at rest. The perfect combination for beginners.',    sets:'3', reps:'12-15', rest:'50s'},
+    some:    {title:'Lean Body Program',         desc:'Compound movements, higher reps, shorter rest. Your plan is designed to maximize calorie burn while building lean muscle. Best of both worlds.',      sets:'3-4', reps:'12-15', rest:'45s'},
+    regular: {title:'Advanced Fat Loss',         desc:'You train regularly and want to lean out. High intensity, supersets coming in Phase 3, minimal rest. This is the one that gets results fast.',        sets:'4', reps:'12-15', rest:'40s'},
+  }
+};
+
+var PHASES = {
+  new: [
+    {icon:'🌱', name:'Phase 1 — Just Move', days:'Days 1–30',    desc:'Build the habit. Learn proper form. Show up. Your body adapts even when it does not feel like it.'},
+    {icon:'💪', name:'Phase 2 — Build It',  days:'Days 31–60',   desc:'Add load. More volume. You will notice the difference from where you started.'},
+    {icon:'⚡', name:'Phase 3 — Level Up',  days:'Days 61–90',   desc:'Intermediate movements introduced. Strength gains become visible. This is where it gets exciting.'},
+    {icon:'🔥', name:'Phase 4 — Unleashed', days:'Days 91–120',  desc:'Advanced training. Maximum results. You built the foundation — now we build the best version of you.'},
+  ],
+  some: [
+    {icon:'🌱', name:'Phase 1 — Activate',  days:'Days 1–30',    desc:'Re-establish your foundation with purpose. More volume than beginner, proper progressive overload from day one.'},
+    {icon:'💪', name:'Phase 2 — Push It',   days:'Days 31–60',   desc:'Heavier loads. Compound movements. Your strength baseline gets reset — higher than you expected.'},
+    {icon:'⚡', name:'Phase 3 — Level Up',  days:'Days 61–90',   desc:'Advanced exercises introduced. Intensity climbs. The transformation becomes visible to others.'},
+    {icon:'🔥', name:'Phase 4 — Unleashed', days:'Days 91–120',  desc:'Peak training. Elite-level intensity. You will not recognise what you could do on Day 1.'},
+  ],
+  regular: [
+    {icon:'🌱', name:'Phase 1 — Recalibrate', days:'Days 1–30',  desc:'Even seasoned athletes benefit from a structured reset. High volume, perfect form, building the base for what comes next.'},
+    {icon:'💪', name:'Phase 2 — Overload',    days:'Days 31–60', desc:'Serious progressive overload. Short rest. High intensity. This is where most programs stop — we are just getting started.'},
+    {icon:'⚡', name:'Phase 3 — Dominate',    days:'Days 61–90', desc:'Supersets. Advanced movements. Maximum volume. The kind of training that produces real elite results.'},
+    {icon:'🔥', name:'Phase 4 — Unleashed',   days:'Days 91–120',desc:'The hardest phase. The most rewarding phase. Built for people who do not quit. That is you.'},
+  ]
+};
+
+function buildPlanCard(){
+  var goal  = (S.user && S.user.goal)  || 'feelgood';
+  var level = (S.user && S.user.level) || 'some';
+  var days  = (S.user && S.user.days)  || 3;
+
+  var pd = (PLAN_DATA[goal] && PLAN_DATA[goal][level]) || PLAN_DATA.feelgood.some;
+  var phases = PHASES[level] || PHASES.some;
+
+  // Fill summary card
+  var t = document.getElementById('plan-title');
+  var d = document.getElementById('plan-desc');
+  var s = document.getElementById('plan-sets');
+  var r = document.getElementById('plan-reps');
+  var rs = document.getElementById('plan-rest');
+  var dn = document.getElementById('plan-days-num');
+
+  if(t) t.textContent = pd.title;
+  if(d) d.textContent = pd.desc;
+  if(s) s.textContent = pd.sets;
+  if(r) r.textContent = pd.reps;
+  if(rs) rs.textContent = pd.rest;
+  if(dn) dn.textContent = days + ' days/wk';
+
+  // Build phases
+  var ph = document.getElementById('plan-phases');
+  if(ph){
+    ph.innerHTML = phases.map(function(p, i){
+      var active = i === 0;
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px;background:'+(active?'#E8F7F5':'transparent')+';border-radius:10px;">'
+        + '<span style="font-size:16px;flex-shrink:0;">'+p.icon+'</span>'
+        + '<div>'
+          + '<div style="font-size:12px;font-weight:800;color:#2C2C3A;">'+p.name+'</div>'
+          + '<div style="font-size:10px;color:#4BBFB5;font-weight:700;margin:1px 0;">'+p.days+'</div>'
+          + '<div style="font-size:11px;color:#7A7A8C;line-height:1.5;">'+p.desc+'</div>'
+        + '</div>'
+      + '</div>';
+    }).join('');
+  }
+}
 </script>
+
+<!-- FIXED MINI TIMER -->
+<div id="fixed-timer" style="display:none;position:fixed;bottom:65px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:400px;background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:16px;padding:12px 16px;z-index:90;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+  <div style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:42px;height:42px;border-radius:50%;border:3px solid #4BBFB5;display:flex;align-items:center;justify-content:center;">
+        <span id="ft-secs" style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:white;">60s</span>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:800;color:#4BBFB5;text-transform:uppercase;letter-spacing:0.5px;">Rest Timer</div>
+        <div id="ft-msg" style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:1px;">Tap Start to begin</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button onclick="runFixedTimer()" id="ft-start" style="padding:7px 14px;background:#4BBFB5;border:none;border-radius:10px;color:white;font-weight:800;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;">Start ▶</button>
+      <button onclick="closeFixedTimer()" style="padding:7px 10px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;color:white;font-weight:700;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;">✕</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
+
+    <!-- Step 4 - Location -->
+    
