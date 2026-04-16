@@ -18,8 +18,8 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;}
 .app{width:100%;max-width:430px;min-height:100vh;background:var(--cream);position:relative;overflow-x:hidden;margin:0 auto;}
-.screen{display:none;flex-direction:column;min-height:100%;}
-.screen.active{display:flex;flex-direction:column;min-height:100vh;width:100%;overflow-y:auto;}
+.screen{display:none;flex-direction:column;position:absolute;top:0;left:0;width:100%;min-height:100%;}
+.screen.active{display:flex;flex-direction:column;position:relative;min-height:100vh;width:100%;overflow-y:auto;}
 
 /* LOGO SVG - inline, no image needed */
 .logo-svg{width:70px;height:70px;background:white;border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(75,191,181,0.15);}
