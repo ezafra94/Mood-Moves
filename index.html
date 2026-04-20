@@ -1257,6 +1257,45 @@ else{setAllLogos();setAllAvatars();}
     <button onclick="document.getElementById('terms-modal').style.display='none'" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">Got it ✓</button>
   </div>
 </div>
+
+<!-- NOTIFICATION SETTINGS MODAL -->
+<div id="notif-modal" style="display:none;position:fixed;inset:0;background:rgba(44,44,58,0.5);z-index:200;align-items:flex-end;justify-content:center;">
+  <div style="background:white;border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;">
+    <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">🔔 Notifications</div>
+    <div style="font-size:12px;color:#7A7A8C;margin-bottom:20px;">Get daily mood boosters, workout reminders and challenge nudges</div>
+    
+    <div style="background:#F8F8FA;border-radius:14px;padding:16px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;color:#2C2C3A;margin-bottom:12px;">🌅 Daily workout reminder time</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <select id="notif-hour" style="flex:1;padding:10px;border:1.5px solid #EDE8E3;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#2C2C3A;background:white;">
+          <option value="6">6:00 AM</option>
+          <option value="7">7:00 AM</option>
+          <option value="8">8:00 AM</option>
+          <option value="9" selected>9:00 AM</option>
+          <option value="10">10:00 AM</option>
+          <option value="11">11:00 AM</option>
+          <option value="12">12:00 PM</option>
+          <option value="17">5:00 PM</option>
+          <option value="18">6:00 PM</option>
+          <option value="19">7:00 PM</option>
+        </select>
+      </div>
+    </div>
+    
+    <div style="background:#F8F8FA;border-radius:14px;padding:14px;margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:800;color:#4BBFB5;margin-bottom:4px;">What you'll get:</div>
+      <div style="font-size:11px;color:#7A7A8C;line-height:1.8;">
+        🌅 Daily mood booster (quote, tip, or cheer)<br>
+        🏋️ Workout reminder 30 min after<br>
+        🏆 Weekly challenge nudge (Sundays)
+      </div>
+    </div>
+    
+    <button onclick="saveNotifSettings()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:10px;">Enable Notifications 🔔</button>
+    <button onclick="closeNotifSettings()" style="width:100%;padding:12px;background:transparent;color:#B0B0C0;border:none;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Not now</button>
+  </div>
+</div>
 </div>
 <script>
 const S={user:{name:'',goal:'',level:'',days:3,location:'both'},streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],currentMood:'',currentWorkout:[],phSlot:'',earnedBadges:[],onboarded:false,rtInterval:null,rtMax:0,challengeDone:0,challengeRound:0,challengeWeek:"",challengeComplete:false};
@@ -3019,6 +3058,546 @@ function startInlineTimer(btn){
     }
   }, 1000);
 }
+
+// ═══════════════════════════════════════════
+// PUSH NOTIFICATIONS
+// ═══════════════════════════════════════════
+
+// Daily mood boosters - combinatorial system = 365+ unique messages
+const MORNING_GREETINGS = [
+  "Good morning","Rise and shine","Hey you","Morning, champion","Wake up, superstar",
+  "Hello beautiful","Good morning, legend","Rise up","Morning, warrior","Hey sunshine",
+  "Good morning, friend","Rise and move","Morning, rockstar","Hello champion","Wake up gorgeous"
+];
+const MOTIVATIONAL_QUOTES = [
+  "The body achieves what the mind believes 💫",
+  "You don't have to be great to start, but you have to start to be great 🔥",
+  "Strength doesn't come from what you can do. It comes from overcoming what you thought you couldn't 💪",
+  "The only workout you regret is the one you skipped 😤",
+  "Progress is progress, no matter how small. Celebrate it 🎉",
+  "Your body can stand almost anything. It's your mind you have to convince 🧠",
+  "Fall in love with taking care of yourself — mind, body, spirit 🌿",
+  "The secret to getting ahead is getting started 🚀",
+  "Take care of your body. It's the only place you have to live 🏠",
+  "Small steps every day lead to big changes every year 📈",
+  "Be stronger than your excuses 💪",
+  "Your health is an investment, not an expense 💎",
+  "Don't stop when you're tired. Stop when you're done 🎯",
+  "The gym is a metaphor for life. You get out what you put in 💯",
+  "Believe in yourself and all that you are 🌙",
+  "Fitness is not about being better than someone else. It's about being better than you used to be 🌱",
+  "The pain you feel today is the strength you'll feel tomorrow 💥",
+  "You are one workout away from a good mood. Go find it 😊",
+  "Sweat is just fat crying. Let it cry 😂💦",
+  "The hardest lift is lifting yourself off the couch. You've done it before. Do it again 🛋️",
+  "You don't need motivation. You need momentum 🌊",
+  "Every rep you do today is a vote for who you want to become 🌱",
+  "Your future self is cheering you on right now 🌅",
+  "You've survived 100% of your hard days. Today is no different 💙",
+  "This is your reminder that you are stronger than you think 💜",
+  "Movement is medicine. Dose accordingly 💊",
+  "You didn't come this far to only come this far 🏁",
+  "Make yourself proud today 👑",
+  "Your only competition is who you were yesterday 🔄",
+  "Earn your rest. Move your body 🛌",
+  "Energy creates energy. Start moving ⚡",
+  "A little progress each day adds up to big results 📊",
+  "The best project you'll ever work on is yourself 🛠️",
+  "You are capable of amazing things 🌟",
+  "Do it for the version of you that gave up too soon 💫",
+  "Your body is not your enemy. Train it like an ally 🤝",
+  "One day or day one. You decide 🗓️",
+  "Champions are made when no one is watching 🏆",
+  "Discipline is choosing between what you want now and what you want most ⚖️",
+  "The secret ingredient is always showing up 🔑",
+  "Your comfort zone is a beautiful place but nothing ever grows there 🌱",
+  "Train hard, recover harder 💤",
+  "Every workout is a celebration of what your body can do 🎊",
+  "You're not tired. You're just getting started 🔥",
+  "Make your body the sexiest outfit you own 👗",
+  "Hustle for that muscle 💪",
+  "Sore today, strong tomorrow 🌅",
+  "The only bad workout is the one you didn't do 🏋️",
+  "Breathe. Believe. Achieve 🌬️",
+  "Today's workout is tomorrow's warmup 📈"
+];
+const WELLNESS_TIPS = [
+  "Drink a glass of water before anything else today 💧",
+  "A 20-minute workout beats a perfect workout you never do ⚡",
+  "Sleep is where muscle is built. Prioritise 7-8 hours tonight 😴",
+  "Add protein to your breakfast — eggs, Greek yogurt, or a smoothie 🥚",
+  "Take the stairs today. Every step counts 🪜",
+  "Stretch for 5 minutes before bed tonight ✨",
+  "Put your workout clothes out the night before. Remove all excuses 👟",
+  "Magnesium before bed helps with muscle recovery and sleep quality 🌙",
+  "Try journaling how you feel before and after your workout 📓",
+  "Foam roll your legs tonight. 5 minutes of self-care goes a long way 🦵",
+  "Deep breathing activates your parasympathetic system. Try 4-7-8 breathing 🫁",
+  "Cold water on your face and wrists in the morning wakes you up fast ❄️",
+  "Eat the rainbow today — aim for 3 different coloured vegetables 🌈",
+  "Reduce screen time 1 hour before bed for better sleep 📵",
+  "Meal prep one thing this week. Even just boiling eggs saves time 🥚",
+  "Craving sugar? Drink water first. Dehydration masquerades as hunger 💧",
+  "Walk outside for 10 minutes. Sunlight and movement = instant mood boost ☀️",
+  "Eating close to your workout? Go light — fruit, nuts, or yogurt 🍎",
+  "Add a 5-minute walk after meals. Helps digestion and blood sugar 🚶",
+  "Rest days are part of the plan. Your muscles grow when you recover 💤",
+  "Your lymphatic system runs on movement — even a walk counts 🚶",
+  "Try going to bed 30 minutes earlier tonight 🛏️",
+  "Limit caffeine after 2pm for better sleep quality ☕",
+  "Add a handful of nuts to your day for healthy fats and energy 🥜",
+  "Standing up and stretching every hour boosts energy levels 🧘",
+  "Batch cook grains on Sunday — it saves so much time during the week 🍚",
+  "Your posture affects your mood. Sit up straight and see how you feel 🪑",
+  "Smile at yourself in the mirror today. Sounds silly. Works every time 😊",
+  "Gratitude before bed rewires your brain for positivity overnight 🙏",
+  "Snack on frozen grapes instead of sugar when cravings hit 🍇",
+  "Taking a cold shower can boost alertness and circulation ❄️",
+  "Chew your food slowly. It improves digestion and prevents overeating 🍽️",
+  "Listening to music while working out increases performance by up to 15% 🎵",
+  "Replace one coffee with green tea for antioxidants without the crash 🍵",
+  "Your gut health affects your mood. Eat fermented foods this week 🫙",
+  "Breathe through your nose during low-intensity workouts for better oxygen use 👃",
+  "Track your water intake today — most people are chronically dehydrated 💧",
+  "Progressive overload: add just 2.5kg to your lifts this week 📈",
+  "Try a body scan meditation before sleep to release tension 🧘",
+  "Pair carbs with protein after your workout to maximise recovery 🍗",
+  "Your mental health IS health. Movement is one of the best medicines 🧠",
+  "Plan tomorrow's workout tonight. Decision fatigue is real 📋",
+  "Dark chocolate (70%+) after a workout has antioxidants and feels like a reward 🍫",
+  "Stretching your hip flexors daily prevents lower back pain 🦴",
+  "Vitamin D from 15 minutes of sun exposure improves mood and energy ☀️",
+  "Try box breathing: 4 counts in, 4 hold, 4 out, 4 hold 📦",
+  "Eating more fibre improves energy levels and gut health 🥦",
+  "A consistent sleep schedule matters more than sleep duration ⏰",
+  "Strength train first, cardio after — you'll burn more fat 🏃",
+  "Your breathing is the remote control for your nervous system 🫁"
+];
+const MORNING_CHEERS = [
+  "Every rep you do today is a vote for who you want to become 🌱",
+  "Your mood is data, not destiny. Use it to fuel your workout 💫",
+  "Even on low energy days — showing up is the win 🤍",
+  "Your body is ready. Your mood is the fuel. Let's go 🔥",
+  "Today is a new opportunity to move your body and feel alive 🌊",
+  "You made it to today. Now let's make today count 💚",
+  "Your mood moves you. Let it move you somewhere beautiful today 🌺",
+  "Good morning! The only bad workout is the one that didn't happen 🌞",
+  "You've survived 100% of your hard days. Today is no different 💙",
+  "Every workout is a gift you give your future self 🎁",
+  "You showed up yesterday. Show up today. That's the whole formula 🔄",
+  "Every single movement matters. Walk, stretch, breathe. It all counts 🫶",
+  "Today's mood is valid. And today's workout will make it even better 🌈",
+  "Your body woke up today. Now wake it UP 🔔",
+  "This is your reminder that you are stronger than you think 💜",
+  "You are one decision away from a completely different day 🗝️",
+  "The version of you that never gave up is so proud right now 🌟",
+  "Small consistent actions create massive change. You're doing it 🌊",
+  "Your energy is contagious. Spread it through your workout today ⚡",
+  "Not every day will be perfect. But every day you move is a win 🏆",
+  "You woke up. You showed up. The hardest part is already done ✅",
+  "Your body is capable of more than your mind believes. Test it today 🧠",
+  "Today you will do what others won't so tomorrow you can do what others can't 🌅",
+  "The comeback is always stronger than the setback 💪",
+  "You are building something incredible, one workout at a time 🏗️",
+  "Consistency beats perfection every single time 🎯",
+  "Your future self is writing you a thank you note right now ✉️",
+  "Every morning you have two choices: sleep with your dreams or wake up and chase them 🌅",
+  "You have exactly what it takes. All of it. Right now 💯",
+  "Move your body today because you can, not because you have to 🙏"
+];
+
+
+const FAMOUS_QUOTES = [
+  {q:"The secret of getting ahead is getting started.", a:"Mark Twain"},
+  {q:"It does not matter how slowly you go as long as you do not stop.", a:"Confucius"},
+  {q:"Our greatest glory is not in never falling, but in rising every time we fall.", a:"Confucius"},
+  {q:"The body is your temple. Keep it pure and clean for the soul to reside in.", a:"B.K.S. Iyengar"},
+  {q:"Take care of your body. It's the only place you have to live.", a:"Jim Rohn"},
+  {q:"To keep the body in good health is a duty, otherwise we shall not be able to keep our mind strong.", a:"Buddha"},
+  {q:"Physical fitness is not only one of the most important keys to a healthy body, it is the basis of dynamic and creative intellectual activity.", a:"John F. Kennedy"},
+  {q:"The groundwork for all happiness is good health.", a:"Leigh Hunt"},
+  {q:"A healthy outside starts from the inside.", a:"Robert Urich"},
+  {q:"Your body can do it. It's your mind you have to convince.", a:"Unknown"},
+  {q:"Success is walking from failure to failure with no loss of enthusiasm.", a:"Winston Churchill"},
+  {q:"Believe you can and you're halfway there.", a:"Theodore Roosevelt"},
+  {q:"It always seems impossible until it's done.", a:"Nelson Mandela"},
+  {q:"Don't watch the clock; do what it does. Keep going.", a:"Sam Levenson"},
+  {q:"The only way to do great work is to love what you do.", a:"Steve Jobs"},
+  {q:"In the middle of every difficulty lies opportunity.", a:"Albert Einstein"},
+  {q:"Life is what happens when you're busy making other plans.", a:"John Lennon"},
+  {q:"The future belongs to those who believe in the beauty of their dreams.", a:"Eleanor Roosevelt"},
+  {q:"You miss 100% of the shots you don't take.", a:"Wayne Gretzky"},
+  {q:"Whether you think you can or you think you can't, you're right.", a:"Henry Ford"},
+  {q:"The only limit to our realization of tomorrow is our doubts of today.", a:"Franklin D. Roosevelt"},
+  {q:"Do what you can, with what you have, where you are.", a:"Theodore Roosevelt"},
+  {q:"It is during our darkest moments that we must focus to see the light.", a:"Aristotle"},
+  {q:"Spread love everywhere you go. Let no one ever come to you without leaving happier.", a:"Mother Teresa"},
+  {q:"When you reach the end of your rope, tie a knot in it and hang on.", a:"Franklin D. Roosevelt"},
+  {q:"Always remember that you are absolutely unique. Just like everyone else.", a:"Margaret Mead"},
+  {q:"Don't judge each day by the harvest you reap but by the seeds that you plant.", a:"Robert Louis Stevenson"},
+  {q:"The best time to plant a tree was 20 years ago. The second best time is now.", a:"Chinese Proverb"},
+  {q:"An unexamined life is not worth living.", a:"Socrates"},
+  {q:"Spread your wings and let the fairy in you fly.", a:"Unknown"},
+  {q:"You only live once, but if you do it right, once is enough.", a:"Mae West"},
+  {q:"In three words I can sum up everything I've learned about life: it goes on.", a:"Robert Frost"},
+  {q:"To live is the rarest thing in the world. Most people just exist.", a:"Oscar Wilde"},
+  {q:"Go confidently in the direction of your dreams. Live the life you have imagined.", a:"Henry David Thoreau"},
+  {q:"The best revenge is massive success.", a:"Frank Sinatra"},
+  {q:"Life is either a daring adventure or nothing at all.", a:"Helen Keller"},
+  {q:"Many of life's failures are people who did not realize how close they were to success when they gave up.", a:"Thomas A. Edison"},
+  {q:"You have brains in your head. You have feet in your shoes. You can steer yourself any direction you choose.", a:"Dr. Seuss"},
+  {q:"If life were predictable it would cease to be life and be without flavor.", a:"Eleanor Roosevelt"},
+  {q:"If you look at what you have in life, you'll always have more.", a:"Oprah Winfrey"},
+  {q:"If you want to live a happy life, tie it to a goal, not to people or things.", a:"Albert Einstein"},
+  {q:"Never let the fear of striking out keep you from playing the game.", a:"Babe Ruth"},
+  {q:"Money and success don't change people; they merely amplify what is already there.", a:"Will Smith"},
+  {q:"Your time is limited, so don't waste it living someone else's life.", a:"Steve Jobs"},
+  {q:"Not how long, but how well you have lived is the main thing.", a:"Seneca"},
+  {q:"If life is not smiling at you, give it a good tickling.", a:"Unknown"},
+  {q:"Live in the sunshine, swim the sea, drink the wild air.", a:"Ralph Waldo Emerson"},
+  {q:"The most wasted of all days is one without laughter.", a:"E.E. Cummings"},
+  {q:"Every strike brings me closer to the next home run.", a:"Babe Ruth"},
+  {q:"If you're going through hell, keep going.", a:"Winston Churchill"},
+];
+
+const IAM_AFFIRMATIONS = [
+  "I am strong enough to do hard things 💪",
+  "I am becoming the best version of myself every day 🌱",
+  "I am worthy of feeling good in my body 🌸",
+  "I am capable of more than I think 💫",
+  "I am proud of how far I've come 🏆",
+  "I am building strength from the inside out 🔥",
+  "I am consistent, committed and powerful 💎",
+  "I am grateful for this body and what it can do 🙏",
+  "I am showing up for myself every single day 🌊",
+  "I am enough, exactly as I am right now 💙",
+  "I am transforming with every workout 🦋",
+  "I am the energy I bring to this room ⚡",
+  "I am resilient. I bounce back. Always 💥",
+  "I am the author of my own story 📖",
+  "I am making my future self proud 🌅",
+  "I am not defined by my bad days 🌤️",
+  "I am a work in progress and that is beautiful 🎨",
+  "I am stronger than my excuses 💪",
+  "I am exactly where I need to be on this journey 🗺️",
+  "I am deserving of rest, recovery and self-care 🤍",
+  "I am fuelled by purpose, not just motivation 🎯",
+  "I am a force of nature 🌪️",
+  "I am choosing health, happiness and movement 🌿",
+  "I am creating habits that will last a lifetime 🏗️",
+  "I am brave enough to start again 🌱",
+  "I am magnetic energy. I attract good things 🌟",
+  "I am beyond what the scale says or the mirror shows 💜",
+  "I am turning my mood into momentum 🌊",
+  "I am unstoppable when I believe in myself 🚀",
+  "I am the change I want to see in my life ✨",
+];
+
+function getDailyBooster(){
+  const day = Math.floor(Date.now() / (1000*60*60*24));
+  const types = ['quote','tip','cheer','famous','iam','quote','tip','cheer','famous','iam','cheer','tip'];
+  const type = types[day % types.length];
+  const greeting = MORNING_GREETINGS[day % MORNING_GREETINGS.length];
+  let msg;
+  if(type==='quote'){
+    msg = MOTIVATIONAL_QUOTES[(day * 7 + 3) % MOTIVATIONAL_QUOTES.length];
+  } else if(type==='tip'){
+    msg = '💡 Tip: ' + WELLNESS_TIPS[(day * 11 + 5) % WELLNESS_TIPS.length];
+  } else if(type==='famous'){
+    var fq = FAMOUS_QUOTES[(day * 9 + 2) % FAMOUS_QUOTES.length];
+    msg = '"' + fq.q + '" — ' + fq.a;
+  } else if(type==='iam'){
+    msg = IAM_AFFIRMATIONS[(day * 13 + 7) % IAM_AFFIRMATIONS.length];
+  } else {
+    msg = MORNING_CHEERS[(day * 17 + 11) % MORNING_CHEERS.length];
+  }
+  return {type, greeting, msg};
+}
+const DAILY_BOOSTERS = [
+  {type:'quote', msg:'The body achieves what the mind believes. Show up today. 💫'},
+  {type:'tip', msg:'Morning tip: Drink a glass of water before anything else. Your body will thank you 💧'},
+  {type:'cheer', msg:'Good morning! Every rep you do today is a vote for who you want to become 🌱'},
+  {type:'quote', msg:'You don't have to be great to start, but you have to start to be great 🔥'},
+  {type:'tip', msg:'Tip: A 20-minute workout beats a perfect workout you never do ⚡'},
+  {type:'cheer', msg:'Rise and move! Your future self is cheering you on right now 🌅'},
+  {type:'quote', msg:'Strength doesn't come from what you can do. It comes from overcoming what you thought you couldn't 💪'},
+  {type:'tip', msg:'Tip: Sleep is where muscle is built. Prioritise 7-8 hours tonight 😴'},
+  {type:'cheer', msg:'Today is a new opportunity to move your body and feel alive 🌊'},
+  {type:'quote', msg:'The hardest lift is lifting yourself off the couch. You've done it before. Do it again 🛋️'},
+  {type:'tip', msg:'Tip: Add protein to your breakfast — eggs, Greek yogurt, or a smoothie 🥚'},
+  {type:'cheer', msg:'Your mood is data, not destiny. Use it to fuel your workout today 💫'},
+  {type:'quote', msg:'Progress is progress, no matter how small. Celebrate it 🎉'},
+  {type:'tip', msg:'Tip: Take the stairs today. Every step counts 🪜'},
+  {type:'cheer', msg:'Good morning! The only bad workout is the one that didn't happen 🌞'},
+  {type:'quote', msg:'Your body can stand almost anything. It's your mind you have to convince 🧠'},
+  {type:'tip', msg:'Tip: Stretch for 5 minutes before bed tonight. Your body will feel it tomorrow ✨'},
+  {type:'cheer', msg:'You made it to today. Now let's make today count 💚'},
+  {type:'quote', msg:'Fitness is not about being better than someone else. It's about being better than you used to be 🌱'},
+  {type:'tip', msg:'Tip: Put your workout clothes out the night before. Remove all excuses 👟'},
+  {type:'cheer', msg:'Even on low energy days — showing up is the win. You've got this 🤍'},
+  {type:'quote', msg:'The pain you feel today is the strength you'll feel tomorrow 💥'},
+  {type:'tip', msg:'Tip: Walk outside for 10 minutes. Sunlight and movement = instant mood boost ☀️'},
+  {type:'cheer', msg:'Your body is not your enemy. It's your greatest ally. Treat it well today 🌸'},
+  {type:'quote', msg:'You are one workout away from a good mood. Go find it 😊'},
+  {type:'tip', msg:'Tip: Magnesium before bed helps with muscle recovery and sleep quality 🌙'},
+  {type:'cheer', msg:'Monday energy or Friday energy — your body doesn't care. It just wants to move 🏃'},
+  {type:'quote', msg:'Don't stop when you're tired. Stop when you're done 🎯'},
+  {type:'tip', msg:'Tip: Rest days are part of the plan. Your muscles grow when you recover 💤'},
+  {type:'cheer', msg:'Every workout is a gift you give your future self. Wrap it up today 🎁'},
+  {type:'quote', msg:'The secret to getting ahead is getting started 🚀'},
+  {type:'tip', msg:'Tip: Try journaling how you feel before and after your workout. The shift will surprise you 📓'},
+  {type:'cheer', msg:'You don't need motivation. You need momentum. Start small, start now 🌊'},
+  {type:'quote', msg:'Take care of your body. It's the only place you have to live 🏠'},
+  {type:'tip', msg:'Tip: Foam roll your legs tonight. 5 minutes of self-care goes a long way 🦵'},
+  {type:'cheer', msg:'Good morning, champion. Your body woke up today. Now wake it UP 🔔'},
+  {type:'quote', msg:'Sweat is just fat crying. Let it cry 😂💦'},
+  {type:'tip', msg:'Tip: Eating close to your workout? Go light — fruit, a handful of nuts, or yogurt 🍎'},
+  {type:'cheer', msg:'Your mood moves you. Let it move you somewhere beautiful today 🌺'},
+  {type:'quote', msg:'The only workout you regret is the one you skipped 😤'},
+  {type:'tip', msg:'Tip: Deep breathing activates your parasympathetic system. Try 4-7-8 breathing before bed 🫁'},
+  {type:'cheer', msg:'You've survived 100% of your hard days. Today is no different 💙'},
+  {type:'quote', msg:'Small steps every day lead to big changes every year 📈'},
+  {type:'tip', msg:'Tip: Add a 5-minute walk after meals. It helps digestion and blood sugar 🚶'},
+  {type:'cheer', msg:'This is your reminder that you are stronger than you think 💜'},
+  {type:'quote', msg:'Fall in love with taking care of yourself — mind, body, spirit 🌿'},
+  {type:'tip', msg:'Tip: Cold water on your face and wrists in the morning wakes you up better than coffee ❄️'},
+  {type:'cheer', msg:'Your body is ready. Your mood is the fuel. Let's go 🔥'},
+  {type:'quote', msg:'The gym is a metaphor for life. You get out what you put in 💯'},
+  {type:'tip', msg:'Tip: Eat the rainbow today — aim for 3 different coloured vegetables 🌈'},
+  {type:'cheer', msg:'Morning! Pick your mood, start your workout, and own this day 🌟'},
+  {type:'quote', msg:'Believe in yourself and all that you are 🌙'},
+  {type:'tip', msg:'Tip: Reduce screen time 1 hour before bed for better sleep and recovery 📵'},
+  {type:'cheer', msg:'You showed up yesterday. Show up today. That's the whole formula 🔄'},
+  {type:'quote', msg:'Your health is an investment, not an expense 💎'},
+  {type:'tip', msg:'Tip: Meal prep one thing on Sunday. Even just boiling eggs saves you on busy days 🥚'},
+  {type:'cheer', msg:'Every single movement matters. Walk, stretch, breathe. It all counts 🫶'},
+  {type:'quote', msg:'Be stronger than your excuses 💪'},
+  {type:'tip', msg:'Tip: Craving sugar? Drink water first. Dehydration often masquerades as hunger 💧'},
+  {type:'cheer', msg:'Today's mood is valid. And today's workout will make it even better 🌈'},
+];
+
+// Workout reminder messages
+const WORKOUT_REMINDERS = [
+  "Time to move! Your workout is waiting 💪",
+  "Your body called — it wants a workout 🏋️",
+  "Mood Moves reminder: Let your energy lead today 🌊",
+  "Hey! Quick check — have you moved today? 🏃",
+  "Your future self is requesting a workout 📲",
+  "It's go time! Open Mood Moves and let's do this 🔥",
+  "Small effort today = big results tomorrow 💫",
+];
+
+// Challenge reminder messages  
+const CHALLENGE_REMINDERS = [
+  "Your weekly challenge is waiting! Don't break your streak 🏆",
+  "Challenge update: You're so close! Finish strong 💪",
+  "Don't let your challenge expire! A few reps = done ✅",
+  "Weekly challenge reminder — you've got this! 🔥",
+];
+
+
+const FAMOUS_QUOTES = [
+  {q:"The secret of getting ahead is getting started.", a:"Mark Twain"},
+  {q:"It does not matter how slowly you go as long as you do not stop.", a:"Confucius"},
+  {q:"Our greatest glory is not in never falling, but in rising every time we fall.", a:"Confucius"},
+  {q:"The body is your temple. Keep it pure and clean for the soul to reside in.", a:"B.K.S. Iyengar"},
+  {q:"Take care of your body. It's the only place you have to live.", a:"Jim Rohn"},
+  {q:"To keep the body in good health is a duty, otherwise we shall not be able to keep our mind strong.", a:"Buddha"},
+  {q:"Physical fitness is not only one of the most important keys to a healthy body, it is the basis of dynamic and creative intellectual activity.", a:"John F. Kennedy"},
+  {q:"The groundwork for all happiness is good health.", a:"Leigh Hunt"},
+  {q:"A healthy outside starts from the inside.", a:"Robert Urich"},
+  {q:"Your body can do it. It's your mind you have to convince.", a:"Unknown"},
+  {q:"Success is walking from failure to failure with no loss of enthusiasm.", a:"Winston Churchill"},
+  {q:"Believe you can and you're halfway there.", a:"Theodore Roosevelt"},
+  {q:"It always seems impossible until it's done.", a:"Nelson Mandela"},
+  {q:"Don't watch the clock; do what it does. Keep going.", a:"Sam Levenson"},
+  {q:"The only way to do great work is to love what you do.", a:"Steve Jobs"},
+  {q:"In the middle of every difficulty lies opportunity.", a:"Albert Einstein"},
+  {q:"Life is what happens when you're busy making other plans.", a:"John Lennon"},
+  {q:"The future belongs to those who believe in the beauty of their dreams.", a:"Eleanor Roosevelt"},
+  {q:"You miss 100% of the shots you don't take.", a:"Wayne Gretzky"},
+  {q:"Whether you think you can or you think you can't, you're right.", a:"Henry Ford"},
+  {q:"The only limit to our realization of tomorrow is our doubts of today.", a:"Franklin D. Roosevelt"},
+  {q:"Do what you can, with what you have, where you are.", a:"Theodore Roosevelt"},
+  {q:"It is during our darkest moments that we must focus to see the light.", a:"Aristotle"},
+  {q:"Spread love everywhere you go. Let no one ever come to you without leaving happier.", a:"Mother Teresa"},
+  {q:"When you reach the end of your rope, tie a knot in it and hang on.", a:"Franklin D. Roosevelt"},
+  {q:"Always remember that you are absolutely unique. Just like everyone else.", a:"Margaret Mead"},
+  {q:"Don't judge each day by the harvest you reap but by the seeds that you plant.", a:"Robert Louis Stevenson"},
+  {q:"The best time to plant a tree was 20 years ago. The second best time is now.", a:"Chinese Proverb"},
+  {q:"An unexamined life is not worth living.", a:"Socrates"},
+  {q:"Spread your wings and let the fairy in you fly.", a:"Unknown"},
+  {q:"You only live once, but if you do it right, once is enough.", a:"Mae West"},
+  {q:"In three words I can sum up everything I've learned about life: it goes on.", a:"Robert Frost"},
+  {q:"To live is the rarest thing in the world. Most people just exist.", a:"Oscar Wilde"},
+  {q:"Go confidently in the direction of your dreams. Live the life you have imagined.", a:"Henry David Thoreau"},
+  {q:"The best revenge is massive success.", a:"Frank Sinatra"},
+  {q:"Life is either a daring adventure or nothing at all.", a:"Helen Keller"},
+  {q:"Many of life's failures are people who did not realize how close they were to success when they gave up.", a:"Thomas A. Edison"},
+  {q:"You have brains in your head. You have feet in your shoes. You can steer yourself any direction you choose.", a:"Dr. Seuss"},
+  {q:"If life were predictable it would cease to be life and be without flavor.", a:"Eleanor Roosevelt"},
+  {q:"If you look at what you have in life, you'll always have more.", a:"Oprah Winfrey"},
+  {q:"If you want to live a happy life, tie it to a goal, not to people or things.", a:"Albert Einstein"},
+  {q:"Never let the fear of striking out keep you from playing the game.", a:"Babe Ruth"},
+  {q:"Money and success don't change people; they merely amplify what is already there.", a:"Will Smith"},
+  {q:"Your time is limited, so don't waste it living someone else's life.", a:"Steve Jobs"},
+  {q:"Not how long, but how well you have lived is the main thing.", a:"Seneca"},
+  {q:"If life is not smiling at you, give it a good tickling.", a:"Unknown"},
+  {q:"Live in the sunshine, swim the sea, drink the wild air.", a:"Ralph Waldo Emerson"},
+  {q:"The most wasted of all days is one without laughter.", a:"E.E. Cummings"},
+  {q:"Every strike brings me closer to the next home run.", a:"Babe Ruth"},
+  {q:"If you're going through hell, keep going.", a:"Winston Churchill"},
+];
+
+const IAM_AFFIRMATIONS = [
+  "I am strong enough to do hard things 💪",
+  "I am becoming the best version of myself every day 🌱",
+  "I am worthy of feeling good in my body 🌸",
+  "I am capable of more than I think 💫",
+  "I am proud of how far I've come 🏆",
+  "I am building strength from the inside out 🔥",
+  "I am consistent, committed and powerful 💎",
+  "I am grateful for this body and what it can do 🙏",
+  "I am showing up for myself every single day 🌊",
+  "I am enough, exactly as I am right now 💙",
+  "I am transforming with every workout 🦋",
+  "I am the energy I bring to this room ⚡",
+  "I am resilient. I bounce back. Always 💥",
+  "I am the author of my own story 📖",
+  "I am making my future self proud 🌅",
+  "I am not defined by my bad days 🌤️",
+  "I am a work in progress and that is beautiful 🎨",
+  "I am stronger than my excuses 💪",
+  "I am exactly where I need to be on this journey 🗺️",
+  "I am deserving of rest, recovery and self-care 🤍",
+  "I am fuelled by purpose, not just motivation 🎯",
+  "I am a force of nature 🌪️",
+  "I am choosing health, happiness and movement 🌿",
+  "I am creating habits that will last a lifetime 🏗️",
+  "I am brave enough to start again 🌱",
+  "I am magnetic energy. I attract good things 🌟",
+  "I am beyond what the scale says or the mirror shows 💜",
+  "I am turning my mood into momentum 🌊",
+  "I am unstoppable when I believe in myself 🚀",
+  "I am the change I want to see in my life ✨",
+];
+
+function getDailyBooster(){
+  const day = Math.floor(Date.now() / (1000*60*60*24));
+  return DAILY_BOOSTERS[day % DAILY_BOOSTERS.length];
+}
+
+// Request notification permission
+async function requestNotifPermission(){
+  if(!('Notification' in window)) return false;
+  if(Notification.permission === 'granted') return true;
+  const perm = await Notification.requestPermission();
+  return perm === 'granted';
+}
+
+// Schedule notifications using service worker
+async function scheduleNotifications(workoutHour, workoutMin){
+  if(!('serviceWorker' in navigator)) return;
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    // Store preferences
+    localStorage.setItem('mm_notif_hour', workoutHour || 9);
+    localStorage.setItem('mm_notif_min', workoutMin || 0);
+    localStorage.setItem('mm_notif_enabled', '1');
+    showT('🔔 Notifications enabled!');
+  }catch(e){ console.log('SW not ready:', e); }
+}
+
+// Send immediate notification (for testing)
+function sendTestNotif(){
+  if(Notification.permission !== 'granted'){ showT('Enable notifications first!'); return; }
+  const booster = getDailyBooster();
+  const icons = {quote:'💬', tip:'💡', cheer:'🌅'};
+  new Notification('Mood Moves ' + (icons[booster.type]||'💫'), {
+    body: booster.msg,
+    icon: '/icon-192.png',
+    badge: '/icon-192.png'
+  });
+}
+
+// Show notification settings on profile
+function openNotifSettings(){
+  const modal = document.getElementById('notif-modal');
+  if(modal) modal.style.display='flex';
+}
+function closeNotifSettings(){
+  const modal = document.getElementById('notif-modal');
+  if(modal) modal.style.display='none';
+}
+async function saveNotifSettings(){
+  const granted = await requestNotifPermission();
+  if(!granted){ showT('Please allow notifications in browser settings'); return; }
+  const hour = document.getElementById('notif-hour')?.value || 9;
+  const min = document.getElementById('notif-min')?.value || 0;
+  await scheduleNotifications(hour, min);
+  
+  // Show today's booster as test
+  const booster = getDailyBooster();
+  const icons = {quote:'💬', tip:'💡', cheer:'🌅'};
+  setTimeout(()=>{
+    if(Notification.permission==='granted'){
+      new Notification('Mood Moves ' + (icons[booster.type]||'💫'), {
+        body: booster.msg,
+        icon: '/icon-192.png'
+      });
+    }
+  }, 2000);
+  
+  closeNotifSettings();
+}
+
+// Check and send daily notifications
+function checkDailyNotifications(){
+  if(localStorage.getItem('mm_notif_enabled') !== '1') return;
+  if(Notification.permission !== 'granted') return;
+  
+  const now = new Date();
+  const hour = now.getHours();
+  const min = now.getMinutes();
+  const savedHour = parseInt(localStorage.getItem('mm_notif_hour')||'9');
+  const savedMin = parseInt(localStorage.getItem('mm_notif_min')||'0');
+  const lastSent = localStorage.getItem('mm_last_notif');
+  const today = now.toDateString();
+  
+  // Send workout reminder at chosen time
+  if(hour === savedHour && min === savedMin && lastSent !== today){
+    localStorage.setItem('mm_last_notif', today);
+    const booster = getDailyBooster();
+    const icons = {quote:'💬', tip:'💡', cheer:'🌅'};
+    
+    // Daily booster
+    new Notification('Good morning from Mood Moves ' + (icons[booster.type]||'💫'), {
+      body: booster.msg,
+      icon: '/icon-192.png'
+    });
+    
+    // Workout reminder (30 min later)
+    setTimeout(()=>{
+      const msg = WORKOUT_REMINDERS[Math.floor(Math.random()*WORKOUT_REMINDERS.length)];
+      new Notification('Mood Moves 🏋️', { body: msg, icon: '/icon-192.png' });
+    }, 30*60*1000);
+  }
+  
+  // Weekly challenge reminder (Sundays at 6pm)
+  if(now.getDay()===0 && hour===18 && min===0){
+    const lastChallengNotif = localStorage.getItem('mm_last_challenge_notif');
+    if(lastChallengNotif !== today){
+      localStorage.setItem('mm_last_challenge_notif', today);
+      const msg = CHALLENGE_REMINDERS[Math.floor(Math.random()*CHALLENGE_REMINDERS.length)];
+      new Notification('Mood Moves 🏆', { body: msg, icon: '/icon-192.png' });
+    }
+  }
+}
+
+// Check notifications every minute
+setInterval(checkDailyNotifications, 60000);
+// Also check on app open
+setTimeout(checkDailyNotifications, 3000);
 </script>
 
 <!-- FIXED MINI TIMER -->
