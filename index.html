@@ -456,6 +456,55 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .mf-btn.mf-active{background:#4BBFB5;border-color:#4BBFB5;color:white;}
 #muscle-filters::-webkit-scrollbar{display:none;}
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // SUPABASE CONFIG - replace with your values
+    const SUPA_URL = 'https://gikhxwvkalmxhmnvxllj.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpa2h4d3ZrYWxteGhtbnZ4bGxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDkxOTUsImV4cCI6MjA5MjAyNTE5NX0.AJmG160g6ufdfXL_qH9ftRJyX211pgAuZ2QD_MufwGE';
+    const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+    // Save user data to Supabase
+    async function saveToCloud(userId, data) {
+      try {
+        await supa.from('users').upsert({
+          id: userId,
+          data: data,
+          updated_at: new Date().toISOString()
+        });
+      } catch(e) { console.log('Cloud save failed:', e); }
+    }
+
+    // Load user data from Supabase
+    async function loadFromCloud(userId) {
+      try {
+        const { data } = await supa.from('users').select('data').eq('id', userId).single();
+        return data ? data.data : null;
+      } catch(e) { return null; }
+    }
+
+    // Get real founding member count
+    async function getFounderCount() {
+      try {
+        const { count } = await supa.from('users').select('*', {count: 'exact', head: true});
+        return count || 0;
+      } catch(e) { return 0; }
+    }
+
+    // Register new user
+    async function registerUser(name, email) {
+      try {
+        const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+        await supa.from('users').insert({
+          id: userId,
+          name: name,
+          email: email,
+          created_at: new Date().toISOString(),
+          data: {}
+        });
+        return userId;
+      } catch(e) { return null; }
+    }
+  </script>
 </head>
 <body>
 <script>
@@ -516,6 +565,7 @@ else{setAllLogos();setAllAvatars();}
       <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="login-pw" placeholder="••••••••"></div>
       <div class="rem"><input type="checkbox" id="rem" checked><label for="rem">Remember me</label></div>
       <button class="bp" onclick="handleLogin()">Log In →</button>
+    <div style="text-align:center;margin-top:14px;font-size:10px;color:#B0B0C0;">By continuing you agree to our <span onclick="document.getElementById('terms-modal').style.display='flex'" style="color:#4BBFB5;cursor:pointer;font-weight:700;text-decoration:underline;">Terms</span> and <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="color:#4BBFB5;cursor:pointer;font-weight:700;text-decoration:underline;">Privacy Policy</span></div>
     </div>
     <div id="signup-form" class="hidden">
       <div class="fg"><label class="fl">Your Name</label><input class="fi" type="text" id="signup-name" placeholder="What should we call you?"></div>
@@ -1016,6 +1066,13 @@ else{setAllLogos();setAllAvatars();}
 
 
 
+
+  <div style="text-align:center;padding:16px 20px 8px;display:flex;justify-content:center;gap:16px;">
+    <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms of Service</span>
+    <span style="font-size:10px;color:#EDE8E3;">|</span>
+    <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
+  </div>
+
 <!-- JOURNAL SCREEN -->
 <div class="screen" id="journal-screen">
   <div class="j-hdr">
@@ -1146,6 +1203,58 @@ else{setAllLogos();setAllAvatars();}
     <div style="font-size:10px;font-weight:800;color:#2D9E94;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">💪 Form Tips</div>
     <div id="ft-cues-list" style="display:flex;flex-direction:column;gap:7px;margin-bottom:18px;max-height:300px;overflow-y:auto;"></div>
     <button onclick="closeFormTips()" style="width:100%;padding:13px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">Got it! 💪</button>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacy-modal" style="display:none;position:fixed;inset:0;background:rgba(44,44,58,0.5);z-index:200;align-items:flex-end;justify-content:center;">
+  <div style="background:white;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:430px;height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+    <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">Privacy Policy</div>
+    <div style="font-size:10px;color:#7A7A8C;margin-bottom:16px;">Last updated: April 2026</div>
+    <div style="font-size:12px;color:#2C2C3A;line-height:1.8;">
+      <p style="margin-bottom:12px;">Mood Moves ("we", "us", or "our") is committed to protecting your privacy. This policy explains what data we collect and how we use it.</p>
+      <p style="font-weight:800;margin-bottom:4px;">What we collect</p>
+      <p style="margin-bottom:12px;">We collect your name, email address, fitness goals, workout history, journal entries, and progress photos you choose to upload. All data is stored securely using Supabase.</p>
+      <p style="font-weight:800;margin-bottom:4px;">How we use your data</p>
+      <p style="margin-bottom:12px;">Your data is used solely to personalise your workout experience. We do not sell, share, or rent your personal information to any third parties.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Photos</p>
+      <p style="margin-bottom:12px;">Progress photos are stored locally on your device only and are never uploaded to our servers unless you explicitly share them.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Cookies & Analytics</p>
+      <p style="margin-bottom:12px;">We may use basic analytics to understand how the app is used. No personally identifiable information is shared with analytics providers.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Your rights</p>
+      <p style="margin-bottom:12px;">You may request deletion of your data at any time by contacting us. You can also clear your data directly in the app via Profile settings.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Contact</p>
+      <p style="margin-bottom:20px;">For any privacy questions, contact us at hello@moodmoves.app</p>
+    </div>
+    <button onclick="document.getElementById('privacy-modal').style.display='none'" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">Got it ✓</button>
+  </div>
+</div>
+
+<!-- TERMS OF SERVICE MODAL -->
+<div id="terms-modal" style="display:none;position:fixed;inset:0;background:rgba(44,44,58,0.5);z-index:200;align-items:flex-end;justify-content:center;">
+  <div style="background:white;border-radius:20px 20px 0 0;padding:20px 20px 40px;width:100%;max-width:430px;height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+    <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">Terms of Service</div>
+    <div style="font-size:10px;color:#7A7A8C;margin-bottom:16px;">Last updated: April 2026</div>
+    <div style="font-size:12px;color:#2C2C3A;line-height:1.8;">
+      <p style="margin-bottom:12px;">By using Mood Moves you agree to these terms. Please read them carefully.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Not medical advice</p>
+      <p style="margin-bottom:12px;">Mood Moves provides fitness suggestions for general wellness purposes only. Nothing in this app constitutes medical advice, diagnosis, or treatment. Always consult a qualified healthcare professional before starting any exercise program, especially if you have any medical conditions or injuries.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Use at your own risk</p>
+      <p style="margin-bottom:12px;">Exercise carries inherent risks. You assume full responsibility for any injury, loss, or damage that may occur as a result of using this app. Mood Moves is not liable for any direct or indirect damages arising from use of the app.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Your account</p>
+      <p style="margin-bottom:12px;">You are responsible for maintaining the confidentiality of your account. You must be at least 16 years old to use Mood Moves.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Intellectual property</p>
+      <p style="margin-bottom:12px;">All content, design, and functionality of Mood Moves is owned by us and protected by applicable intellectual property laws.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Changes to terms</p>
+      <p style="margin-bottom:12px;">We may update these terms at any time. Continued use of the app after changes constitutes acceptance of the new terms.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Founding members</p>
+      <p style="margin-bottom:12px;">The first 100 users receive lifetime free access. This offer is non-transferable and subject to fair use.</p>
+      <p style="font-weight:800;margin-bottom:4px;">Contact</p>
+      <p style="margin-bottom:20px;">For any questions, contact us at hello@moodmoves.app</p>
+    </div>
+    <button onclick="document.getElementById('terms-modal').style.display='none'" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">Got it ✓</button>
   </div>
 </div>
 </div>
