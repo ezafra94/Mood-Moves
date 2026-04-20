@@ -582,7 +582,7 @@ else{setAllLogos();setAllAvatars();}
     <div class="f-badge">🏅</div>
     <div class="f-title">You're one of the first 100.</div>
     <div class="f-sub">Welcome to the Mood Moves founding family. Full access — forever. Free.</div>
-    <div class="spots">🔥 47 founding spots remaining</div>
+    <div class="spots" id="spots-counter">🔥 loading...</div>
     <div class="f-deal">
       <p>We just ask <strong>one thing</strong> in return.<br><br>Share Mood Moves with someone who needs it. A friend, a sister, someone struggling to stay consistent.<br><br><em>"That's the deal. We keep ours if you keep yours. 🤝"</em></p>
     </div>
@@ -1611,7 +1611,54 @@ function switchAuth(t){
   document.getElementById('login-form').classList.toggle('hidden',t!=='login');
   document.getElementById('signup-form').classList.toggle('hidden',t!=='signup');
 }
-function handleLogin(){
+
+async function updateFounderCounter(){
+  try{
+    const {count}=await supa.from('users').select('*',{count:'exact',head:true});
+    const remaining=Math.max(0,100-(count||0));
+    const el=document.getElementById('spots-counter');
+    if(el){
+      if(remaining<=0){el.textContent='🔒 Founding spots are full!';el.style.background='#f4c5c0';}
+      else{el.textContent='🔥 '+remaining+' founding spot'+(remaining===1?'':'s')+' remaining';}
+    }
+  }catch(e){
+    const el=document.getElementById('spots-counter');
+    if(el)el.textContent='🔥 Limited spots remaining';
+  }
+}
+
+
+async function sendWelcomeEmail(name, email){
+  if(!email) return;
+  try{
+    // Store email signup in Supabase for manual sending or trigger
+    await supa.from('email_signups').upsert({
+      email: email,
+      name: name,
+      signed_up_at: new Date().toISOString(),
+      type: 'founding_member'
+    });
+    console.log('Email signup stored!');
+  }catch(e){ console.log('Email signup failed:', e); }
+}
+
+async function saveUserToSupabase(name, email){
+  try{
+    const userId='mm_'+ Date.now()+'_'+Math.random().toString(36).substr(2,6);
+    await supa.from('users').upsert({
+      id: userId,
+      name: name,
+      email: email,
+      created_at: new Date().toISOString(),
+      data: {}
+    });
+    localStorage.setItem('mm_uid', userId);
+    sendWelcomeEmail(name, email);
+    console.log('User saved to Supabase!');
+  }catch(e){ console.log('Supabase save failed:', e); }
+}
+
+function handleLogin(){updateFounderCounter();
   try{const d=localStorage.getItem('mm_v3');if(d){Object.assign(S,JSON.parse(d));if(S.onboarded){setupHome();buildEl();goTo('home');document.getElementById('bnav').classList.remove('hidden');return;}}}catch(e){}
   S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
   goTo('founding');
@@ -1629,7 +1676,15 @@ function shareApp(){
   else{try{navigator.clipboard.writeText(msg);}catch(e){}showT('✅ Link copied! Share away 🚀');}
   goToOb();
 }
-function goToOb(){goTo('onboarding');startOb();}
+function goToOb(){
+  // Save user to Supabase when they start onboarding
+  var nameEl=document.getElementById('signup-name');
+  var emailEls=document.querySelectorAll('.fi[type="email"]');
+  var name=nameEl?nameEl.value.trim():'';
+  var email=emailEls.length?emailEls[0].value.trim():'';
+  if(name||email){ saveUserToSupabase(name,email); }
+  goTo('onboarding');startOb();
+}
 
 // ONBOARDING
 let obS=1;const obT=9;
