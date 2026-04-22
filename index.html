@@ -357,6 +357,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .hidden{display:none!important;}
 .back{position:absolute;top:46px;left:13px;width:30px;height:30px;background:var(--cream);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt);z-index:10;}
 .confetti-p{position:fixed;width:7px;height:7px;top:0;pointer-events:none;border-radius:2px;z-index:999;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 @keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
 .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-110px);background:var(--charcoal);color:white;padding:11px 16px;border-radius:12px;font-size:12px;font-weight:700;z-index:200;transition:transform 0.4s ease;max-width:310px;text-align:center;line-height:1.5;width:88%;}
 .toast.on{transform:translateX(-50%) translateY(0);}
@@ -520,27 +521,15 @@ else{setAllLogos();setAllAvatars();}
 
 <!-- SPLASH -->
 <div class="screen active" id="splash" onclick="goTo('auth')" style="cursor:pointer;">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;background:linear-gradient(160deg,#FDF0EE,#FAF8F5 50%,#E8F7F5);padding:40px 24px;">
-    <img src="" class="mm-logo" style="width:180px;height:180px;object-fit:contain;border-radius:40px;box-shadow:0 12px 50px rgba(75,191,181,0.2);" alt="Mood Moves">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:#2C2C3A;margin-top:8px;">Mood Moves</div>
-    <div style="font-size:14px;color:#7A7A8C;letter-spacing:0.5px;">Your Energy, Your Exercise</div>
-    <div style="margin-top:32px;width:100%;max-width:280px;">
-      <div style="
-        background:linear-gradient(135deg,#4BBFB5,#8BB8A0);
-        color:white;
-        font-family:'Nunito',sans-serif;
-        font-weight:800;
-        font-size:16px;
-        padding:18px 32px;
-        border-radius:16px;
-        text-align:center;
-        box-shadow:0 8px 24px rgba(75,191,181,0.35);
-        animation:pulse-btn 2s ease-in-out infinite;
-        letter-spacing:0.3px;
-        cursor:pointer;
-      " onclick="goTo('auth')">Let's Move →</div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;background:linear-gradient(160deg,#FDF0EE 0%,#FAF8F5 45%,#E8F7F5 100%);padding:48px 32px;text-align:center;gap:0;">
+    <img src="" class="mm-logo" style="width:100px;height:100px;object-fit:contain;border-radius:28px;box-shadow:0 12px 40px rgba(75,191,181,0.25);margin-bottom:22px;" alt="Mood Moves">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:#2C2C3A;letter-spacing:-0.5px;line-height:1;">Mood Moves</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:#4BBFB5;margin-top:8px;letter-spacing:0.3px;">Our Mood Moves Us</div>
+    <div style="width:36px;height:2px;background:linear-gradient(90deg,#4BBFB5,#8BB8A0);border-radius:2px;margin:24px auto 36px;"></div>
+    <div style="width:100%;max-width:280px;" onclick="goTo('auth')">
+      <div style="background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:18px 32px;border-radius:16px;text-align:center;box-shadow:0 8px 24px rgba(75,191,181,0.35);animation:pulse-btn 2s ease-in-out infinite;letter-spacing:0.3px;cursor:pointer;">Let Your Mood Move You →</div>
     </div>
-    <div style="font-size:11px;color:#C0C0D0;margin-top:4px;">Tap anywhere to get started</div>
+    <div style="font-size:10px;color:#C8C8D8;margin-top:14px;">Tap anywhere to begin</div>
   </div>
 </div>
 
@@ -608,23 +597,21 @@ else{setAllLogos();setAllAvatars();}
     <div class="ob-step on" id="ob-1">
       <div class="ob-em">🌊</div>
       <div class="ob-title">Welcome to Mood Moves</div>
-      <div class="ob-sub">No matter how you feel, you still train. Just differently.</div>
-      <div class="ob-phil">
-        <p>Some days you give 100%. Some days you give 10%. <strong>Both count. Both build you.</strong><br><br>Mood Moves was built for those days too — because a 10% workout still beats zero. <strong>Every single time.</strong><br><br><em>"Just meet yourself where you are. We'll take it from there."</em><br><br>No guilt. No pressure. Just movement that works for <strong>YOU.</strong></p>
-        <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(139,184,160,0.3);">
-          <div style="font-size:10px;font-weight:800;color:var(--sage-d);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Here is how it works</div>
-          <p style="font-size:12px;color:var(--txt);line-height:1.8;margin-bottom:8px;">You pick your goal and fitness level. We build your plan.<br>Every day you tell us how you feel — we do the rest:</p>
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😞 <span><strong>Low energy</strong> → gentle &amp; light</span></div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😤 <span><strong>Angry</strong> → intense &amp; powerful</span></div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😊 <span><strong>Happy</strong> → full energy, full effort</span></div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😵‍💫 <span><strong>Stressed</strong> → rhythmic &amp; calming</span></div>
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt);">😐 <span><strong>Neutral</strong> → steady &amp; strong</span></div>
-          </div>
-          <p style="font-size:12px;color:var(--sage-d);font-style:italic;margin-top:10px;font-weight:700;">Same goal. Different workout every day — because YOU are different every day.</p>
-        </div>
+      <div class="ob-phil" style="text-align:left;">
+        <p style="font-size:14px;color:#2C2C3A;line-height:2;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;margin-bottom:16px;">
+          Every emotion carries energy. We help you turn that energy into movement that matters.
+        </p>
+        <p style="font-size:13px;color:#5A5A6E;line-height:1.95;margin-bottom:16px;">
+          Some days you give 100%. Some days you give 10%. And both of those days count. Both build you. Mood Moves was made for the 10% days just as much as the 100% ones — because showing up, even gently, still beats staying still. Every single time.
+        </p>
+        <p style="font-size:13px;color:#5A5A6E;line-height:1.95;margin-bottom:16px;">
+          Sad, angry, happy, stressed — whatever you bring through the door, we work with it. Your mood isn't an obstacle. It's the plan. No guilt. No pressure. Just movement that meets you exactly where you are.
+        </p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:#4BBFB5;line-height:1.7;">
+          "Just meet yourself where you are.<br>We'll take it from there."
+        </p>
       </div>
-      <div class="ob-foot"><button class="bp" onclick="obNext()">See How It Works →</button></div>
+      <div class="ob-foot"><button class="bp" onclick="obNext()">See What's Inside →</button></div>
     </div>
     <!-- Step 2 - Animated Feature Tour -->
     <div class="ob-step" id="ob-2">
@@ -658,6 +645,16 @@ else{setAllLogos();setAllAvatars();}
           <div class="intro-dot" id="id-2"></div>
           <div class="intro-dot" id="id-3"></div>
           <div class="intro-dot" id="id-4"></div>
+          <div class="intro-dot" id="id-5"></div>
+          <div class="intro-dot" id="id-6"></div>
+        </div>
+        <div class="intro-slide" data-color="sage" id="is-5">
+          <div class="intro-icon-anim">🏆</div>
+          <div class="intro-txt"><div class="intro-tt">Weekly Challenges</div><div class="intro-ds">A new challenge every week to push you just a little further. Log your reps, track progress, celebrate wins. Small goals. Big momentum.</div></div>
+        </div>
+        <div class="intro-slide" data-color="blush" id="is-6">
+          <div class="intro-icon-anim">🔔</div>
+          <div class="intro-txt"><div class="intro-tt">Daily Mood Boosters</div><div class="intro-ds">Wake up to a quote, tip or affirmation — different every single day. Over 3,000 combinations so it never gets old.</div></div>
         </div>
         <div class="intro-nav">
           <button class="intro-nav-btn" onclick="introNav(-1)">← Back</button>
@@ -1739,21 +1736,12 @@ function obBack(){obS=Math.max(1,obS-1);showOb(obS);}
 function selOpt(el,type,val){el.closest('.opts').querySelectorAll('.opt').forEach(c=>c.classList.remove('on'));el.classList.add('on');S.user[type]=val;}
 function selDay(el,d){document.querySelectorAll('.dc').forEach(c=>c.classList.remove('on'));el.classList.add('on');S.user.days=d;const h={3:'3 days = Full Body. Every session hits your whole body.',4:'4 days = Upper/Lower split. More volume per muscle group.',5:'5 days = Upper/Lower+. Serious frequency for serious goals.'};document.getElementById('day-hint').textContent=h[d];}
 function finishOb(){
-  const g=S.user.goal||'muscle';const l=S.user.level||'some';
-  document.getElementById('sum-gi').textContent=GI[g]||'🎯';
-  document.getElementById('sum-g').textContent=GL[g]||'Build Muscle';
-  document.getElementById('sum-l').textContent=LL[l]||'Some experience';
-  document.getElementById('sum-d').textContent=(S.user.days||3)+' days/week';
-  document.getElementById('sum-sp').textContent=S.user.days<=3?'Full Body Split':'Upper/Lower Split';
-  showOb(7);
-  setTimeout(()=>{
-    S.onboarded=true;
-    try{setupHome();}catch(e){console.log('setupHome error:',e);}
-    try{buildEl();}catch(e){console.log('buildEl error:',e);}
-    goTo('home');
-    document.getElementById('bnav').classList.remove('hidden');
-    save();
-  },50);
+  S.onboarded=true;
+  try{setupHome();}catch(e){console.log('setupHome error:',e);}
+  try{buildEl();}catch(e){console.log('buildEl error:',e);}
+  goTo('home');
+  document.getElementById('bnav').classList.remove('hidden');
+  save();
 }
 
 // HOME
@@ -2014,7 +2002,7 @@ function showT(msg){const t=document.getElementById('toast');t.textContent=msg;t
 
 // ANIMATED INTRO
 var introIdx = 0;
-var introTotal = 5;
+var introTotal = 7;
 function introNav(dir) {
   introIdx = Math.max(0, Math.min(introTotal - 1, introIdx + dir));
   for (var i = 0; i < introTotal; i++) {
@@ -2036,7 +2024,7 @@ function startIntroAuto() {
   introTimer = setInterval(function() {
     if (introIdx < introTotal - 1) { introNav(1); }
     else { clearInterval(introTimer); }
-  }, 2800);
+  }, 5000);
 }
 
 // AVATAR phrases per mood
@@ -2189,13 +2177,19 @@ window.addEventListener('DOMContentLoaded',function(){
   if(js) js.style.overflowY = 'auto';
   var ps = document.getElementById('progress-screen');
   if(ps) ps.style.overflowY = 'auto';
-  setTimeout(function(){
-    try{
-      const d=localStorage.getItem('mm_v3');
-      if(d){const data=JSON.parse(d);Object.assign(S,data);if(S.onboarded){setupHome();buildEl();goTo('home');document.getElementById('bnav').classList.remove('hidden');return;}}
-    }catch(e){}
-    goTo('auth');
-  },1800);
+  // Check if returning user - go straight to home
+  // New users stay on splash and tap when ready
+  try{
+    const d=localStorage.getItem('mm_v3');
+    if(d){
+      const data=JSON.parse(d);
+      Object.assign(S,data);
+      if(S.onboarded){
+        setupHome();buildEl();goTo('home');
+        document.getElementById('bnav').classList.remove('hidden');
+      }
+    }
+  }catch(e){}
 });
 </script>
 
@@ -3054,7 +3048,7 @@ function startInlineTimer(btn){
         btn.style.background = '#E8F7F5';
         btn.style.borderColor = '#4BBFB5';
         btn.style.color = '#2D9E94';
-      }, 3000);
+      }, 5000);
     }
   }, 1000);
 }
@@ -3313,68 +3307,7 @@ function getDailyBooster(){
   }
   return {type, greeting, msg};
 }
-const DAILY_BOOSTERS = [
-  {type:'quote', msg:'The body achieves what the mind believes. Show up today. 💫'},
-  {type:'tip', msg:'Morning tip: Drink a glass of water before anything else. Your body will thank you 💧'},
-  {type:'cheer', msg:'Good morning! Every rep you do today is a vote for who you want to become 🌱'},
-  {type:'quote', msg:'You don't have to be great to start, but you have to start to be great 🔥'},
-  {type:'tip', msg:'Tip: A 20-minute workout beats a perfect workout you never do ⚡'},
-  {type:'cheer', msg:'Rise and move! Your future self is cheering you on right now 🌅'},
-  {type:'quote', msg:'Strength doesn't come from what you can do. It comes from overcoming what you thought you couldn't 💪'},
-  {type:'tip', msg:'Tip: Sleep is where muscle is built. Prioritise 7-8 hours tonight 😴'},
-  {type:'cheer', msg:'Today is a new opportunity to move your body and feel alive 🌊'},
-  {type:'quote', msg:'The hardest lift is lifting yourself off the couch. You've done it before. Do it again 🛋️'},
-  {type:'tip', msg:'Tip: Add protein to your breakfast — eggs, Greek yogurt, or a smoothie 🥚'},
-  {type:'cheer', msg:'Your mood is data, not destiny. Use it to fuel your workout today 💫'},
-  {type:'quote', msg:'Progress is progress, no matter how small. Celebrate it 🎉'},
-  {type:'tip', msg:'Tip: Take the stairs today. Every step counts 🪜'},
-  {type:'cheer', msg:'Good morning! The only bad workout is the one that didn't happen 🌞'},
-  {type:'quote', msg:'Your body can stand almost anything. It's your mind you have to convince 🧠'},
-  {type:'tip', msg:'Tip: Stretch for 5 minutes before bed tonight. Your body will feel it tomorrow ✨'},
-  {type:'cheer', msg:'You made it to today. Now let's make today count 💚'},
-  {type:'quote', msg:'Fitness is not about being better than someone else. It's about being better than you used to be 🌱'},
-  {type:'tip', msg:'Tip: Put your workout clothes out the night before. Remove all excuses 👟'},
-  {type:'cheer', msg:'Even on low energy days — showing up is the win. You've got this 🤍'},
-  {type:'quote', msg:'The pain you feel today is the strength you'll feel tomorrow 💥'},
-  {type:'tip', msg:'Tip: Walk outside for 10 minutes. Sunlight and movement = instant mood boost ☀️'},
-  {type:'cheer', msg:'Your body is not your enemy. It's your greatest ally. Treat it well today 🌸'},
-  {type:'quote', msg:'You are one workout away from a good mood. Go find it 😊'},
-  {type:'tip', msg:'Tip: Magnesium before bed helps with muscle recovery and sleep quality 🌙'},
-  {type:'cheer', msg:'Monday energy or Friday energy — your body doesn't care. It just wants to move 🏃'},
-  {type:'quote', msg:'Don't stop when you're tired. Stop when you're done 🎯'},
-  {type:'tip', msg:'Tip: Rest days are part of the plan. Your muscles grow when you recover 💤'},
-  {type:'cheer', msg:'Every workout is a gift you give your future self. Wrap it up today 🎁'},
-  {type:'quote', msg:'The secret to getting ahead is getting started 🚀'},
-  {type:'tip', msg:'Tip: Try journaling how you feel before and after your workout. The shift will surprise you 📓'},
-  {type:'cheer', msg:'You don't need motivation. You need momentum. Start small, start now 🌊'},
-  {type:'quote', msg:'Take care of your body. It's the only place you have to live 🏠'},
-  {type:'tip', msg:'Tip: Foam roll your legs tonight. 5 minutes of self-care goes a long way 🦵'},
-  {type:'cheer', msg:'Good morning, champion. Your body woke up today. Now wake it UP 🔔'},
-  {type:'quote', msg:'Sweat is just fat crying. Let it cry 😂💦'},
-  {type:'tip', msg:'Tip: Eating close to your workout? Go light — fruit, a handful of nuts, or yogurt 🍎'},
-  {type:'cheer', msg:'Your mood moves you. Let it move you somewhere beautiful today 🌺'},
-  {type:'quote', msg:'The only workout you regret is the one you skipped 😤'},
-  {type:'tip', msg:'Tip: Deep breathing activates your parasympathetic system. Try 4-7-8 breathing before bed 🫁'},
-  {type:'cheer', msg:'You've survived 100% of your hard days. Today is no different 💙'},
-  {type:'quote', msg:'Small steps every day lead to big changes every year 📈'},
-  {type:'tip', msg:'Tip: Add a 5-minute walk after meals. It helps digestion and blood sugar 🚶'},
-  {type:'cheer', msg:'This is your reminder that you are stronger than you think 💜'},
-  {type:'quote', msg:'Fall in love with taking care of yourself — mind, body, spirit 🌿'},
-  {type:'tip', msg:'Tip: Cold water on your face and wrists in the morning wakes you up better than coffee ❄️'},
-  {type:'cheer', msg:'Your body is ready. Your mood is the fuel. Let's go 🔥'},
-  {type:'quote', msg:'The gym is a metaphor for life. You get out what you put in 💯'},
-  {type:'tip', msg:'Tip: Eat the rainbow today — aim for 3 different coloured vegetables 🌈'},
-  {type:'cheer', msg:'Morning! Pick your mood, start your workout, and own this day 🌟'},
-  {type:'quote', msg:'Believe in yourself and all that you are 🌙'},
-  {type:'tip', msg:'Tip: Reduce screen time 1 hour before bed for better sleep and recovery 📵'},
-  {type:'cheer', msg:'You showed up yesterday. Show up today. That's the whole formula 🔄'},
-  {type:'quote', msg:'Your health is an investment, not an expense 💎'},
-  {type:'tip', msg:'Tip: Meal prep one thing on Sunday. Even just boiling eggs saves you on busy days 🥚'},
-  {type:'cheer', msg:'Every single movement matters. Walk, stretch, breathe. It all counts 🫶'},
-  {type:'quote', msg:'Be stronger than your excuses 💪'},
-  {type:'tip', msg:'Tip: Craving sugar? Drink water first. Dehydration often masquerades as hunger 💧'},
-  {type:'cheer', msg:'Today's mood is valid. And today's workout will make it even better 🌈'},
-];
+// Daily boosters handled by combinatorial system
 
 // Workout reminder messages
 const WORKOUT_REMINDERS = [
@@ -3396,96 +3329,9 @@ const CHALLENGE_REMINDERS = [
 ];
 
 
-const FAMOUS_QUOTES = [
-  {q:"The secret of getting ahead is getting started.", a:"Mark Twain"},
-  {q:"It does not matter how slowly you go as long as you do not stop.", a:"Confucius"},
-  {q:"Our greatest glory is not in never falling, but in rising every time we fall.", a:"Confucius"},
-  {q:"The body is your temple. Keep it pure and clean for the soul to reside in.", a:"B.K.S. Iyengar"},
-  {q:"Take care of your body. It's the only place you have to live.", a:"Jim Rohn"},
-  {q:"To keep the body in good health is a duty, otherwise we shall not be able to keep our mind strong.", a:"Buddha"},
-  {q:"Physical fitness is not only one of the most important keys to a healthy body, it is the basis of dynamic and creative intellectual activity.", a:"John F. Kennedy"},
-  {q:"The groundwork for all happiness is good health.", a:"Leigh Hunt"},
-  {q:"A healthy outside starts from the inside.", a:"Robert Urich"},
-  {q:"Your body can do it. It's your mind you have to convince.", a:"Unknown"},
-  {q:"Success is walking from failure to failure with no loss of enthusiasm.", a:"Winston Churchill"},
-  {q:"Believe you can and you're halfway there.", a:"Theodore Roosevelt"},
-  {q:"It always seems impossible until it's done.", a:"Nelson Mandela"},
-  {q:"Don't watch the clock; do what it does. Keep going.", a:"Sam Levenson"},
-  {q:"The only way to do great work is to love what you do.", a:"Steve Jobs"},
-  {q:"In the middle of every difficulty lies opportunity.", a:"Albert Einstein"},
-  {q:"Life is what happens when you're busy making other plans.", a:"John Lennon"},
-  {q:"The future belongs to those who believe in the beauty of their dreams.", a:"Eleanor Roosevelt"},
-  {q:"You miss 100% of the shots you don't take.", a:"Wayne Gretzky"},
-  {q:"Whether you think you can or you think you can't, you're right.", a:"Henry Ford"},
-  {q:"The only limit to our realization of tomorrow is our doubts of today.", a:"Franklin D. Roosevelt"},
-  {q:"Do what you can, with what you have, where you are.", a:"Theodore Roosevelt"},
-  {q:"It is during our darkest moments that we must focus to see the light.", a:"Aristotle"},
-  {q:"Spread love everywhere you go. Let no one ever come to you without leaving happier.", a:"Mother Teresa"},
-  {q:"When you reach the end of your rope, tie a knot in it and hang on.", a:"Franklin D. Roosevelt"},
-  {q:"Always remember that you are absolutely unique. Just like everyone else.", a:"Margaret Mead"},
-  {q:"Don't judge each day by the harvest you reap but by the seeds that you plant.", a:"Robert Louis Stevenson"},
-  {q:"The best time to plant a tree was 20 years ago. The second best time is now.", a:"Chinese Proverb"},
-  {q:"An unexamined life is not worth living.", a:"Socrates"},
-  {q:"Spread your wings and let the fairy in you fly.", a:"Unknown"},
-  {q:"You only live once, but if you do it right, once is enough.", a:"Mae West"},
-  {q:"In three words I can sum up everything I've learned about life: it goes on.", a:"Robert Frost"},
-  {q:"To live is the rarest thing in the world. Most people just exist.", a:"Oscar Wilde"},
-  {q:"Go confidently in the direction of your dreams. Live the life you have imagined.", a:"Henry David Thoreau"},
-  {q:"The best revenge is massive success.", a:"Frank Sinatra"},
-  {q:"Life is either a daring adventure or nothing at all.", a:"Helen Keller"},
-  {q:"Many of life's failures are people who did not realize how close they were to success when they gave up.", a:"Thomas A. Edison"},
-  {q:"You have brains in your head. You have feet in your shoes. You can steer yourself any direction you choose.", a:"Dr. Seuss"},
-  {q:"If life were predictable it would cease to be life and be without flavor.", a:"Eleanor Roosevelt"},
-  {q:"If you look at what you have in life, you'll always have more.", a:"Oprah Winfrey"},
-  {q:"If you want to live a happy life, tie it to a goal, not to people or things.", a:"Albert Einstein"},
-  {q:"Never let the fear of striking out keep you from playing the game.", a:"Babe Ruth"},
-  {q:"Money and success don't change people; they merely amplify what is already there.", a:"Will Smith"},
-  {q:"Your time is limited, so don't waste it living someone else's life.", a:"Steve Jobs"},
-  {q:"Not how long, but how well you have lived is the main thing.", a:"Seneca"},
-  {q:"If life is not smiling at you, give it a good tickling.", a:"Unknown"},
-  {q:"Live in the sunshine, swim the sea, drink the wild air.", a:"Ralph Waldo Emerson"},
-  {q:"The most wasted of all days is one without laughter.", a:"E.E. Cummings"},
-  {q:"Every strike brings me closer to the next home run.", a:"Babe Ruth"},
-  {q:"If you're going through hell, keep going.", a:"Winston Churchill"},
-];
 
-const IAM_AFFIRMATIONS = [
-  "I am strong enough to do hard things 💪",
-  "I am becoming the best version of myself every day 🌱",
-  "I am worthy of feeling good in my body 🌸",
-  "I am capable of more than I think 💫",
-  "I am proud of how far I've come 🏆",
-  "I am building strength from the inside out 🔥",
-  "I am consistent, committed and powerful 💎",
-  "I am grateful for this body and what it can do 🙏",
-  "I am showing up for myself every single day 🌊",
-  "I am enough, exactly as I am right now 💙",
-  "I am transforming with every workout 🦋",
-  "I am the energy I bring to this room ⚡",
-  "I am resilient. I bounce back. Always 💥",
-  "I am the author of my own story 📖",
-  "I am making my future self proud 🌅",
-  "I am not defined by my bad days 🌤️",
-  "I am a work in progress and that is beautiful 🎨",
-  "I am stronger than my excuses 💪",
-  "I am exactly where I need to be on this journey 🗺️",
-  "I am deserving of rest, recovery and self-care 🤍",
-  "I am fuelled by purpose, not just motivation 🎯",
-  "I am a force of nature 🌪️",
-  "I am choosing health, happiness and movement 🌿",
-  "I am creating habits that will last a lifetime 🏗️",
-  "I am brave enough to start again 🌱",
-  "I am magnetic energy. I attract good things 🌟",
-  "I am beyond what the scale says or the mirror shows 💜",
-  "I am turning my mood into momentum 🌊",
-  "I am unstoppable when I believe in myself 🚀",
-  "I am the change I want to see in my life ✨",
-];
 
-function getDailyBooster(){
-  const day = Math.floor(Date.now() / (1000*60*60*24));
-  return DAILY_BOOSTERS[day % DAILY_BOOSTERS.length];
-}
+// getDailyBooster handled above
 
 // Request notification permission
 async function requestNotifPermission(){
