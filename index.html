@@ -19,7 +19,7 @@
 body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;}
 .app{width:100%;max-width:430px;background:var(--cream);margin:0 auto;}
 .screen{display:none;}
-.screen.active{display:flex;flex-direction:column;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--cream);z-index:1;scrollbar-width:none;-ms-overflow-style:none;}
+.screen.active{display:flex;flex-direction:column;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--cream);z-index:1;scrollbar-width:none;-ms-overflow-style:none;}
 #auth.active{min-height:100vh;}
 
 /* LOGO SVG - inline, no image needed */
@@ -112,8 +112,8 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* HOME */
 #home{background:var(--cream);padding-bottom:85px;overflow-y:auto;}
-.h-hdr{background:white;padding:46px 18px 16px;border-bottom:1px solid var(--border);}
-.h-row{display:flex;align-items:center;justify-content:space-between;}
+.h-hdr{background:white;padding:max(52px, calc(20px + env(safe-area-inset-top))) 18px 14px;border-bottom:1px solid var(--border);overflow:hidden;}
+.h-row{display:flex;align-items:center;justify-content:space-between;width:100%;overflow:hidden;}
 .h-greet{font-size:11px;color:var(--txt2);}
 .h-name{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:var(--charcoal);margin-top:1px;}
 .h-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,var(--blush-l),var(--sage-l));border:1px solid var(--border);border-radius:20px;padding:3px 10px;margin-top:5px;font-size:10px;color:var(--txt2);font-weight:800;}
@@ -530,6 +530,7 @@ else{setAllLogos();setAllAvatars();}
       <div style="background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:18px 32px;border-radius:16px;text-align:center;box-shadow:0 8px 24px rgba(75,191,181,0.35);animation:pulse-btn 2s ease-in-out infinite;letter-spacing:0.3px;cursor:pointer;">Let Your Mood Move You →</div>
     </div>
     <div style="font-size:10px;color:#C8C8D8;margin-top:14px;">Tap anywhere to begin</div>
+    <div style="font-size:9px;color:#D8D8E8;margin-top:8px;">© 2026 Mood Moves</div>
   </div>
 </div>
 
@@ -1032,6 +1033,15 @@ else{setAllLogos();setAllAvatars();}
     <div class="pm-card"><div class="pm-b">✨ Coming Soon</div><div class="pm-t">Mood Moves Premium</div><div class="pm-s">Advanced features launching soon. Founding members get exclusive early access.</div><button class="pm-btn">Join the Waitlist 🚀</button></div>
     <div class="pr-row" onclick="signOut()" style="border-color:#F4C5C0;"><div class="pr-l"><div class="pr-ic">🚪</div><div><div class="pr-tt" style="color:#C08080;">Sign Out</div><div class="pr-ds">Come back anytime</div></div></div><div class="pr-ar">›</div></div>
     <div class="pr-row" onclick="resetApp()"><div class="pr-l"><div class="pr-ic">🔄</div><div><div class="pr-tt">Reset App</div><div class="pr-ds">Clear all data & start fresh</div></div></div><div class="pr-ar">›</div></div>
+    <div style="text-align:center;padding:20px 0 8px;border-top:1px solid #EDE8E3;margin-top:8px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#4BBFB5;margin-bottom:4px;">Our Mood Moves Us</div>
+      <div style="font-size:10px;color:#C0C0D0;line-height:1.8;">© 2026 Mood Moves. All rights reserved.<br>Made with 💙 for the 10% days.</div>
+      <div style="display:flex;justify-content:center;gap:16px;margin-top:10px;">
+        <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
+        <span style="font-size:10px;color:#EDE8E3;">|</span>
+        <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1064,11 +1074,8 @@ else{setAllLogos();setAllAvatars();}
 
 
 
-  <div style="text-align:center;padding:16px 20px 8px;display:flex;justify-content:center;gap:16px;">
-    <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms of Service</span>
-    <span style="font-size:10px;color:#EDE8E3;">|</span>
-    <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-  </div>
+
+
 
 <!-- JOURNAL SCREEN -->
 <div class="screen" id="journal-screen">
