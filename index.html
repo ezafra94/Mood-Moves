@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Mood Moves</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -112,7 +112,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* HOME */
 #home{background:var(--cream);padding-bottom:85px;overflow-y:auto;}
-.h-hdr{background:white;padding:max(52px, calc(20px + env(safe-area-inset-top))) 18px 14px;border-bottom:1px solid var(--border);overflow:hidden;}
+.h-hdr{background:white;padding:14px 18px 14px;border-bottom:1px solid var(--border);overflow:hidden;}
 .h-row{display:flex;align-items:center;justify-content:space-between;width:100%;overflow:hidden;}
 .h-greet{font-size:11px;color:var(--txt2);}
 .h-name{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:var(--charcoal);margin-top:1px;}
@@ -167,7 +167,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* MOOD PICKER */
 #moodpicker{background:white;overflow-y:auto;}
-.mp-hdr{padding:46px 18px 14px;border-bottom:1px solid var(--border);}
+.mp-hdr{padding:max(46px, calc(10px + env(safe-area-inset-top))) 18px 14px;border-bottom:1px solid var(--border);}
 .mp-row{display:flex;align-items:center;gap:9px;margin-bottom:3px;}
 .mp-hdr h2{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--charcoal);}
 .mp-hdr p{font-size:12px;color:var(--txt2);}
@@ -185,7 +185,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* WORKOUT */
 #workout{background:var(--cream);padding-bottom:85px;overflow-y:auto;}
-.wk-hdr{background:white;padding:46px 18px 14px;border-bottom:1px solid var(--border);}
+.wk-hdr{background:white;padding:max(46px, calc(10px + env(safe-area-inset-top))) 18px 14px;border-bottom:1px solid var(--border);}
 .wk-row{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
 .wk-chip{display:inline-flex;align-items:center;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:6px;}
 .wk-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--charcoal);}
@@ -299,7 +299,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* EXERCISES */
 #exercises{background:var(--cream);padding-bottom:85px;overflow-y:auto;}
-.el-hdr{background:white;padding:46px 18px 0;position:sticky;top:0;z-index:10;}
+.el-hdr{background:white;padding:max(46px, calc(10px + env(safe-area-inset-top))) 18px 0;position:sticky;top:0;z-index:10;}
 .el-row{display:flex;align-items:center;gap:9px;margin-bottom:3px;}
 .el-hdr h2{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--charcoal);}
 .el-hdr p{font-size:11px;color:var(--txt2);}
@@ -348,7 +348,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .pm-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--teal),var(--sage));color:white;border:none;border-radius:9px;font-weight:800;font-size:12px;cursor:pointer;}
 
 /* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid var(--border);display:flex;padding:7px 0 17px;z-index:100;box-shadow:0 -4px 20px rgba(44,44,58,0.06);}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid var(--border);display:flex;padding:7px 0 max(17px, calc(10px + env(safe-area-inset-bottom, 0px)));z-index:100;box-shadow:0 -4px 20px rgba(44,44,58,0.06);}
 .ni2{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 0;}
 .ni2-ic{font-size:18px;}
 .ni2-lb{font-size:9px;font-weight:800;color:var(--txt3);letter-spacing:0.3px;}
