@@ -112,8 +112,8 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* HOME */
 #home{background:var(--cream);padding-bottom:85px;overflow-y:auto;}
-.h-hdr{background:white;padding:14px 18px 14px;border-bottom:1px solid var(--border);overflow:hidden;}
-.h-row{display:flex;align-items:center;justify-content:space-between;width:100%;overflow:hidden;}
+.h-hdr{background:white;padding:16px 18px 14px;padding-top:max(16px,env(safe-area-inset-top,0px));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.h-row{display:flex;align-items:center;justify-content:space-between;width:100%;}
 .h-greet{font-size:11px;color:var(--txt2);}
 .h-name{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:var(--charcoal);margin-top:1px;}
 .h-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,var(--blush-l),var(--sage-l));border:1px solid var(--border);border-radius:20px;padding:3px 10px;margin-top:5px;font-size:10px;color:var(--txt2);font-weight:800;}
