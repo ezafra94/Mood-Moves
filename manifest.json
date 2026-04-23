@@ -1,7 +1,7 @@
 {
   "name": "Mood Moves",
   "short_name": "Mood Moves",
-  "description": "Your Energy, Your Exercise",
+  "description": "Your mood-based fitness app. Our Mood Moves Us.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FAF8F5",
@@ -9,14 +9,23 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/6cfa3a26-b56c-43cf-9de8-1f302f7d4b37.jpg",
+      "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/6cfa3a26-b56c-43cf-9de8-1f302f7d4b37.jpg",
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": [
+    "health",
+    "fitness",
+    "lifestyle"
+  ],
+  "screenshots": [],
+  "lang": "en-US"
 }
