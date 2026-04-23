@@ -214,7 +214,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .et-r{background:var(--blush-l);color:#C08080;}
 .et-e{background:var(--cream);color:var(--txt2);}
 .et-t{background:var(--orange-l);color:var(--orange);}
-.w-log{display:flex;align-items:center;gap:6px;margin-top:7px;}
+.w-log{display:flex;flex-direction:column;gap:4px;margin-top:8px;padding:10px 12px;background:#FAF8F5;border-radius:12px;}
 .w-lbl{font-size:10px;color:var(--txt2);font-weight:700;}
 .w-inp{width:65px;padding:4px 7px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Nunito',sans-serif;color:var(--txt);background:var(--cream);outline:none;}
 .w-inp:focus{border-color:var(--teal);}
@@ -1041,6 +1041,12 @@ else{setAllLogos();setAllAvatars();}
     <div class="pm-card"><div class="pm-b">✨ Coming Soon</div><div class="pm-t">Mood Moves Premium</div><div class="pm-s">Advanced features launching soon. Founding members get exclusive early access.</div><button class="pm-btn">Join the Waitlist 🚀</button></div>
     <div class="pr-row" onclick="signOut()" style="border-color:#F4C5C0;"><div class="pr-l"><div class="pr-ic">🚪</div><div><div class="pr-tt" style="color:#C08080;">Sign Out</div><div class="pr-ds">Come back anytime</div></div></div><div class="pr-ar">›</div></div>
     <div class="pr-row" onclick="resetApp()"><div class="pr-l"><div class="pr-ic">🔄</div><div><div class="pr-tt">Reset App</div><div class="pr-ds">Clear all data & start fresh</div></div></div><div class="pr-ar">›</div></div>
+    <div class="pr-row" onclick="openHistory()" style="cursor:pointer;">
+      <div class="pr-l"><div class="pr-ic">📋</div><div><div class="pr-tt">Workout History</div><div class="pr-ds">See all past workouts & weights</div></div></div><div class="pr-ar">›</div>
+    </div>
+    <div class="pr-row" onclick="window.location.href='mailto:hello@moodmoves.app'" style="cursor:pointer;">
+      <div class="pr-l"><div class="pr-ic">💌</div><div><div class="pr-tt">Contact Us</div><div class="pr-ds">hello@moodmoves.app</div></div></div><div class="pr-ar">›</div>
+    </div>
     <div style="text-align:center;padding:20px 0 8px;border-top:1px solid #EDE8E3;margin-top:8px;">
       <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#4BBFB5;margin-bottom:4px;">Our Mood Moves Us</div>
       <div style="font-size:10px;color:#C0C0D0;line-height:1.8;">© 2026 Mood Moves. All rights reserved.<br>Made with 💙 for the 10% days.</div>
@@ -1049,6 +1055,27 @@ else{setAllLogos();setAllAvatars();}
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- WORKOUT HISTORY SCREEN -->
+<div class="screen" id="history-screen" style="background:var(--cream);padding-bottom:85px;">
+  <div class="h-hdr">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="goTo('home');setNav('home')" style="background:none;border:none;font-size:20px;cursor:pointer;padding:0;">‹</button>
+      <div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--charcoal);">Workout History</div>
+        <div style="font-size:10px;color:var(--txt2);">Every rep. Every set. Every win.</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:16px;" id="history-list">
+    <div style="text-align:center;padding:40px 20px;color:var(--txt2);">
+      <div style="font-size:40px;margin-bottom:12px;">📋</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:6px;">No workouts yet</div>
+      <div style="font-size:12px;">Complete your first workout to start tracking progress!</div>
     </div>
   </div>
 </div>
@@ -1825,20 +1852,84 @@ function genWk(mood){window.scrollTo(0,0);
   document.getElementById('ex-tip').style.display='none';
   showWorkoutGuide();
 }
+function makeSetRowHTML(exIdx, idx, s, total) {
+  var removeBtn = total > 1
+    ? '<button onclick="removeSetRow(' + exIdx + ',' + idx + ')" type="button" style="padding:3px 7px;background:#FFF0F0;border:1px solid #F4C5C0;border-radius:6px;font-size:10px;color:#C08080;cursor:pointer;">✕</button>'
+    : '';
+  return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
+    + '<span style="font-size:10px;font-weight:800;color:#B0B0C0;min-width:38px;">Set ' + (idx + 1) + '</span>'
+    + '<input type="number" placeholder="lbs/kg" value="' + (s.weight || '') + '" min="0"'
+    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',&quot;weight&quot;,this.value)"'
+    + ' style="width:70px;padding:5px 7px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:12px;font-weight:700;background:white;text-align:center;">'
+    + '<input type="text" placeholder="notes..." value="' + (s.note || '') + '"'
+    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',&quot;note&quot;,this.value)"'
+    + ' style="flex:1;padding:5px 7px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:11px;background:white;">'
+    + removeBtn
+    + '</div>';
+}
+
 function renderWk(){
-  const cfg=MC[S.currentMood];const goal=S.user.goal||'feelgood';const sr=cfg?.rs[goal]||60;
-  document.getElementById('wk-exs').innerHTML=S.currentWorkout.map((ex,i)=>`
-    <div class="ex-c ${ex.done?'done':''}" id="exc-${i}">
-      <div class="ex-row"><div class="ex-nb">${i+1}</div><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"><div class="ex-nm">${ex.n}</div><button onclick="showFormTips(${i})" type="button" style="padding:2px 8px;background:#E8F7F5;border:1.5px solid #4BBFB5;border-radius:20px;font-size:9px;font-weight:800;color:#2D9E94;cursor:pointer;font-family:'Nunito',sans-serif;flex-shrink:0;">Form tips</button></div><div class="ex-ms">${ex.m}</div></div></div>
-      <div class="ex-tags"><span class="ex-tag et-s">📋 ${ex.sets} sets</span><span class="ex-tag et-r">🔁 ${ex.reps} reps</span><span class="ex-tag et-e">${ex.e}</span><span class="ex-tag et-t">⏱ ${sr}s rest</span></div>
-      <div class="w-log" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span class="w-lbl">Weight:</span>
-        <input class="w-inp" type="number" placeholder="0" value="${ex.w}" onchange="logW(${i},this.value)" min="0">
-        <span class="w-unit">lbs/kg</span>
-        <button onclick="startInlineTimer(this)" type="button" id="rest-btn-${i}" style="margin-left:auto;display:flex;align-items:center;gap:4px;padding:5px 12px;background:#E8F7F5;border:2px solid #4BBFB5;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;color:#2D9E94;">⏱️ Rest</button>
-      </div>
-      <div class="ex-acts"><button class="b-sw" onclick="openSwap(${i})">🔄 Swap</button><button class="b-dn ${ex.done?'un':''}" onclick="togDone(${i})">${ex.done?'Undo':'✓ Done'}</button></div>
-    </div>`).join('');
+  var cfg = MC[S.currentMood];
+  var goal = S.user.goal || 'feelgood';
+  var sr = (cfg && cfg.rs && cfg.rs[goal]) ? cfg.rs[goal] : 60;
+
+  var html = '';
+  S.currentWorkout.forEach(function(ex, i) {
+    // Init sets_log from plan
+    if (!ex.sets_log || ex.sets_log.length === 0) {
+      ex.sets_log = [];
+      var ns = parseInt(ex.sets) || 3;
+      for (var j = 0; j < ns; j++) ex.sets_log.push({weight: '', note: ''});
+    }
+
+    // Build set rows
+    var rows = '';
+    ex.sets_log.forEach(function(s, idx) {
+      rows += makeSetRowHTML(i, idx, s, ex.sets_log.length);
+    });
+
+    html += '<div class="ex-c ' + (ex.done ? 'done' : '') + '" id="exc-' + i + '">'
+
+      // Header
+      + '<div class="ex-row">'
+        + '<div class="ex-nb">' + (i + 1) + '</div>'
+        + '<div style="flex:1">'
+          + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
+            + '<div class="ex-nm">' + ex.n + '</div>'
+            + '<button onclick="showFormTips(' + i + ')" type="button" style="padding:2px 8px;background:#E8F7F5;border:1.5px solid #4BBFB5;border-radius:20px;font-size:9px;font-weight:800;color:#2D9E94;cursor:pointer;">Form tips</button>'
+          + '</div>'
+          + '<div class="ex-ms">' + ex.m + '</div>'
+        + '</div>'
+      + '</div>'
+
+      // Tags
+      + '<div class="ex-tags">'
+        + '<span class="ex-tag et-s">📋 ' + ex.sets + ' sets</span>'
+        + '<span class="ex-tag et-r">🔁 ' + ex.reps + ' reps</span>'
+        + '<span class="ex-tag et-e">' + ex.e + '</span>'
+        + '<span class="ex-tag et-t">⏱ ' + sr + 's rest</span>'
+      + '</div>'
+
+      // Weight log card
+      + '<div class="w-log">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #EDE8E3;">'
+          + '<span style="font-size:10px;font-weight:800;color:#7A7A8C;letter-spacing:0.5px;text-transform:uppercase;">📋 Weight Log</span>'
+          + '<button onclick="startInlineTimer(this)" type="button" id="rest-btn-' + i + '" style="display:flex;align-items:center;gap:4px;padding:6px 14px;background:#E8F7F5;border:2px solid #4BBFB5;border-radius:20px;cursor:pointer;font-weight:800;font-size:11px;color:#2D9E94;">⏱️ Rest</button>'
+        + '</div>'
+        + '<div id="wlog-' + i + '" style="display:flex;flex-direction:column;gap:3px;">' + rows + '</div>'
+        + '<button onclick="addSetRow(' + i + ')" type="button" style="margin-top:6px;padding:6px 0;width:100%;background:transparent;border:1.5px dashed #EDE8E3;border-radius:10px;font-weight:800;font-size:11px;color:#B0B0C0;cursor:pointer;">+ Add set</button>'
+      + '</div>'
+
+      // Actions — preserve sets_log through togDone by NOT using renderWk approach
+      + '<div class="ex-acts">'
+        + '<button class="b-sw" onclick="openSwap(' + i + ')">🔄 Swap</button>'
+        + '<button class="b-dn ' + (ex.done ? 'un' : '') + '" onclick="togDone(' + i + ')">' + (ex.done ? 'Undo' : '✓ Done') + '</button>'
+      + '</div>'
+
+    + '</div>';
+  });
+
+  document.getElementById('wk-exs').innerHTML = html;
 }
 function logW(i,v){S.currentWorkout[i].w=v;}
 function togDone(i){
@@ -1862,13 +1953,52 @@ function showRT(){
   document.getElementById('rt-fg').style.strokeDashoffset='0';
 }
 function startRT(){
-  document.getElementById('rt-start').textContent='Running...';document.getElementById('rt-start').style.background='var(--sage)';
+  // If already running, PAUSE it
+  if(S.rtInterval){
+    clearInterval(S.rtInterval);
+    S.rtInterval=null;
+    S.rtPaused=true;
+    document.getElementById('rt-start').textContent='Resume ▶';
+    document.getElementById('rt-start').style.background='var(--teal)';
+    document.getElementById('rt-ph').textContent='Paused — tap Resume when ready';
+    return;
+  }
+  // If paused, RESUME from where we left off
+  if(S.rtPaused){
+    document.getElementById('rt-start').textContent='Pause ⏸';
+    document.getElementById('rt-start').style.background='var(--sage)';
+    document.getElementById('rt-ph').textContent=RP[Math.floor(Math.random()*RP.length)];
+    S.rtPaused=false;
+    S.rtInterval=setInterval(()=>{
+      S.rtCurrent--;
+      document.getElementById('rt-n').textContent=S.rtCurrent+'s';
+      document.getElementById('rt-fg').style.strokeDashoffset=(283*(1-S.rtCurrent/S.rtMax));
+      if(S.rtCurrent<=0){
+        clearInterval(S.rtInterval);S.rtInterval=null;S.rtPaused=false;
+        document.getElementById('rt-n').textContent='GO!';
+        document.getElementById('rt-ph').textContent='Time\'s up! Next set 💪';
+        document.getElementById('rt-start').textContent='Start ▶';
+        document.getElementById('rt-start').style.background='var(--teal)';
+      }
+    },1000);
+    return;
+  }
+  // Fresh start
+  S.rtCurrent=S.rtMax;S.rtPaused=false;
+  document.getElementById('rt-start').textContent='Pause ⏸';
+  document.getElementById('rt-start').style.background='var(--sage)';
   document.getElementById('rt-ph').textContent=RP[Math.floor(Math.random()*RP.length)];
-  let s=S.rtMax;
   S.rtInterval=setInterval(()=>{
-    s--;document.getElementById('rt-n').textContent=s+'s';
-    document.getElementById('rt-fg').style.strokeDashoffset=(283*(1-s/S.rtMax));
-    if(s<=0){clearInterval(S.rtInterval);document.getElementById('rt-n').textContent='GO!';document.getElementById('rt-ph').textContent='Time\'s up! Next set 💪';document.getElementById('rt-start').textContent='Start ▶';document.getElementById('rt-start').style.background='var(--teal)';}
+    S.rtCurrent--;
+    document.getElementById('rt-n').textContent=S.rtCurrent+'s';
+    document.getElementById('rt-fg').style.strokeDashoffset=(283*(1-S.rtCurrent/S.rtMax));
+    if(S.rtCurrent<=0){
+      clearInterval(S.rtInterval);S.rtInterval=null;S.rtPaused=false;
+      document.getElementById('rt-n').textContent='GO!';
+      document.getElementById('rt-ph').textContent='Time\'s up! Next set 💪';
+      document.getElementById('rt-start').textContent='Start ▶';
+      document.getElementById('rt-start').style.background='var(--teal)';
+    }
   },1000);
 }
 function skipRT(){clearInterval(S.rtInterval);document.getElementById('rt-n').textContent='—';document.getElementById('rt-ph').textContent='Let\'s go! 💪';document.getElementById('rt-start').textContent='Start ▶';document.getElementById('rt-start').style.background='var(--teal)';}
@@ -1887,7 +2017,28 @@ function completeWk(){
   const td=tdKey();if(!S.calData[td]){S.streak++;S.weekW++;}
   S.total++;S.moodCounts[S.currentMood]=(S.moodCounts[S.currentMood]||0)+1;
   S.calData[td]={type:'workout',emoji:ME[S.currentMood]};
-  clearInterval(S.rtInterval);// rtbar disabled
+  clearInterval(S.rtInterval);
+
+  // SAVE WORKOUT TO HISTORY
+  if(!S.workoutHistory) S.workoutHistory=[];
+  var wkLog={
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    dateKey: td,
+    mood: S.currentMood,
+    moodEmoji: ME[S.currentMood]||'💪',
+    exercises: S.currentWorkout.map(function(ex){
+      return {
+        name: ex.n,
+        sets: ex.sets,
+        reps: ex.reps,
+        done: ex.done,
+        sets_log: ex.sets_log||[]
+      };
+    })
+  };
+  S.workoutHistory.unshift(wkLog); // newest first
+  if(S.workoutHistory.length>50) S.workoutHistory.pop(); // keep last 50
+
   const cfg=MC[S.currentMood];const idx=Math.floor(Math.random()*cfg.pt.length);
   document.getElementById('pw-title').textContent=cfg.pt[idx];
   document.getElementById('pw-msg').textContent=cfg.pm[idx];
@@ -3031,29 +3182,74 @@ function deleteProgressPhoto(idx){
 }
 
 var inlineTimers = {};
+var inlinePaused = {};
+var inlineRemaining = {};
 function startInlineTimer(btn){
+  var key = btn.id || 'timer';
+
+  // If running → PAUSE
+  if(inlineTimers[key]){
+    clearInterval(inlineTimers[key]);
+    inlineTimers[key] = null;
+    inlinePaused[key] = true;
+    btn.textContent = '⏸ ' + inlineRemaining[key] + 's';
+    btn.style.background = '#FEF3E8';
+    btn.style.borderColor = '#F5A042';
+    btn.style.color = '#E8832A';
+    return;
+  }
+
+  // If paused → RESUME
+  if(inlinePaused[key]){
+    inlinePaused[key] = false;
+    btn.style.background = '#FEF3E8';
+    btn.style.borderColor = '#F5A042';
+    btn.style.color = '#E8832A';
+    inlineTimers[key] = setInterval(function(){
+      inlineRemaining[key]--;
+      btn.textContent = '⏸ ' + inlineRemaining[key] + 's';
+      if(inlineRemaining[key] <= 0){
+        clearInterval(inlineTimers[key]);
+        inlineTimers[key] = null;
+        inlinePaused[key] = false;
+        btn.textContent = '💪 GO!';
+        btn.style.background = '#4BBFB5';
+        btn.style.borderColor = '#4BBFB5';
+        btn.style.color = 'white';
+        setTimeout(function(){
+          btn.textContent = '⏱️ Rest';
+          btn.style.background = '#E8F7F5';
+          btn.style.borderColor = '#4BBFB5';
+          btn.style.color = '#2D9E94';
+          inlineRemaining[key] = null;
+        }, 5000);
+      }
+    }, 1000);
+    return;
+  }
+
+  // Fresh start
   var secs = 60;
   try{
     var mood = S.currentMood || 'neutral';
     var goal = (S.user && S.user.goal) || 'feelgood';
     secs = MC[mood].rs[goal] || 60;
   }catch(e){ secs = 60; }
-  
-  var key = btn.id || 'timer';
-  if(inlineTimers[key]) clearInterval(inlineTimers[key]);
-  
+
+  inlineRemaining[key] = secs;
+  inlinePaused[key] = false;
   btn.style.background = '#FEF3E8';
   btn.style.borderColor = '#F5A042';
   btn.style.color = '#E8832A';
-  
-  var remaining = secs;
-  btn.textContent = '⏱️ ' + remaining + 's';
-  
+  btn.textContent = '⏸ ' + secs + 's';
+
   inlineTimers[key] = setInterval(function(){
-    remaining--;
-    btn.textContent = '⏱️ ' + remaining + 's';
-    if(remaining <= 0){
+    inlineRemaining[key]--;
+    btn.textContent = '⏸ ' + inlineRemaining[key] + 's';
+    if(inlineRemaining[key] <= 0){
       clearInterval(inlineTimers[key]);
+      inlineTimers[key] = null;
+      inlinePaused[key] = false;
       btn.textContent = '💪 GO!';
       btn.style.background = '#4BBFB5';
       btn.style.borderColor = '#4BBFB5';
@@ -3063,6 +3259,7 @@ function startInlineTimer(btn){
         btn.style.background = '#E8F7F5';
         btn.style.borderColor = '#4BBFB5';
         btn.style.color = '#2D9E94';
+        inlineRemaining[key] = null;
       }, 5000);
     }
   }, 1000);
@@ -3478,12 +3675,88 @@ setTimeout(checkDailyNotifications, 3000);
       <button onclick="closeFixedTimer()" style="padding:7px 10px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;color:white;font-weight:700;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;">✕</button>
     </div>
   </div>
+
+
+
+
+
+<script>
+function saveSetData(exIdx, idx, field, val) {
+  if (!S.currentWorkout[exIdx] || !S.currentWorkout[exIdx].sets_log) return;
+  S.currentWorkout[exIdx].sets_log[idx][field] = val;
+}
+function addSetRow(exIdx) {
+  if (!S.currentWorkout[exIdx].sets_log) S.currentWorkout[exIdx].sets_log = [];
+  S.currentWorkout[exIdx].sets_log.push({weight: '', note: ''});
+  refreshSetRows(exIdx);
+}
+function removeSetRow(exIdx, idx) {
+  if (!S.currentWorkout[exIdx].sets_log) return;
+  S.currentWorkout[exIdx].sets_log.splice(idx, 1);
+  refreshSetRows(exIdx);
+}
+function refreshSetRows(exIdx) {
+  var container = document.getElementById('wlog-' + exIdx);
+  if (!container) return;
+  var sets = S.currentWorkout[exIdx].sets_log;
+  var rows = '';
+  sets.forEach(function(s, idx) {
+    rows += makeSetRowHTML(exIdx, idx, s, sets.length);
+  });
+  container.innerHTML = rows;
+}
+</script>
+
+<script>
+// WORKOUT HISTORY
+function openHistory(){
+  if(!S.workoutHistory) S.workoutHistory=[];
+  var list=document.getElementById('history-list');
+  if(!list){ console.log('history-list not found'); return; }
+  if(S.workoutHistory.length===0){
+    list.innerHTML='<div style="text-align:center;padding:40px 20px;color:#7A7A8C;">'
+      +'<div style="font-size:40px;margin-bottom:12px;">📋</div>'
+      +'<div style="font-size:20px;font-weight:600;margin-bottom:6px;">No workouts yet</div>'
+      +'<div style="font-size:12px;">Complete your first workout to start tracking!</div>'
+      +'</div>';
+  } else {
+    var cards='';
+    S.workoutHistory.forEach(function(wk){
+      var doneExs=wk.exercises.filter(function(e){return e.done;}).length;
+      var exCards='';
+      wk.exercises.forEach(function(ex){
+        if(!ex.sets_log||ex.sets_log.length===0) return;
+        var hasW=ex.sets_log.some(function(s){return s.weight;});
+        if(!hasW) return;
+        var rows='';
+        ex.sets_log.forEach(function(s,si){
+          if(!s.weight) return;
+          rows+='<div style="display:flex;gap:8px;font-size:11px;padding:4px 0;border-bottom:1px solid #F5F3F0;">'
+            +'<span style="color:#B0B0C0;min-width:40px;">Set '+(si+1)+'</span>'
+            +'<span style="font-weight:800;color:#4BBFB5;">'+s.weight+' lbs</span>'
+            +(s.note?'<span style="color:#7A7A8C;flex:1;">'+s.note+'</span>':'')
+            +'</div>';
+        });
+        if(!rows) return;
+        exCards+='<div style="margin-top:8px;padding:10px;background:#FAF8F5;border-radius:10px;">'
+          +'<div style="font-weight:800;font-size:12px;color:#2C2C3A;margin-bottom:6px;">'+ex.name+'</div>'
+          +rows+'</div>';
+      });
+      cards+='<div style="background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+          +'<div>'
+            +'<div style="font-size:18px;font-weight:700;color:#2C2C3A;">'+wk.date+'</div>'
+            +'<div style="font-size:11px;color:#7A7A8C;">'+wk.moodEmoji+' '+wk.mood+' mood &middot; '+doneExs+'/'+wk.exercises.length+' done</div>'
+          +'</div>'
+          +'<span style="font-size:24px;">'+wk.moodEmoji+'</span>'
+        +'</div>'
+        +(exCards||'<div style="font-size:11px;color:#C0C0D0;margin-top:8px;font-style:italic;">No weights logged</div>')
+        +'</div>';
+    });
+    list.innerHTML=cards;
+  }
+  goTo('history-screen');
+}
+</script>
 </body>
 </html>
-
-    <!-- Step 4 - Location -->
-    
-</div>
-
-</div>
-
