@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mood Moves">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="theme-color" content="#4BBFB5">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-KWSBM7C6K8"></script>
 <script>
@@ -1708,17 +1715,39 @@ async function updateFounderCounter(){
 
 async function sendWelcomeEmail(name, email){
   if(!email) return;
+  // 1. Save to Supabase
   try{
-    // Store email signup in Supabase for manual sending or trigger
     await supa.from('email_signups').upsert({
       email: email,
       name: name,
       signed_up_at: new Date().toISOString(),
       type: 'founding_member'
     });
-    console.log('Email signup stored!');
-  }catch(e){ console.log('Email signup failed:', e); }
+  }catch(e){ console.log('Supabase signup store failed:', e); }
+
+  // 2. Send welcome email via Resend
+  try{
+    const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    const emailHtml = getWelcomeEmailHTML(name, today);
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer re_ewgyagbP_25DPCZHaoFDkFP73F3rTft6D'
+      },
+      body: JSON.stringify({
+        from: 'Gisela @ Mood Moves <hello@moodmoves.app>',
+        to: [email],
+        subject: 'Welcome to Mood Moves. Our Mood Moves Us. 🌊',
+        html: emailHtml
+      })
+    });
+    const data = await res.json();
+    console.log('Welcome email sent!', data);
+  }catch(e){ console.log('Resend email failed:', e); }
 }
+
+
 
 async function saveUserToSupabase(name, email){
   try{
@@ -3757,6 +3786,70 @@ function openHistory(){
   }
   goTo('history-screen');
 }
+</script>
+
+<!-- PWA INSTALL BANNER -->
+<div id="pwa-banner" style="display:none;position:fixed;bottom:75px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:16px;padding:14px 16px;z-index:9998;box-shadow:0 4px 20px rgba(0,0,0,0.3);align-items:center;gap:12px;">
+  <img src="/icon-192.png" width="40" height="40" style="border-radius:10px;flex-shrink:0;">
+  <div style="flex:1;">
+    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:white;">Add to Home Screen</div>
+    <div style="font-family:'Nunito',sans-serif;font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;">Install Mood Moves — works like a real app!</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+    <button onclick="installPWA()" style="padding:7px 14px;background:#4BBFB5;border:none;border-radius:10px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;cursor:pointer;">Install</button>
+    <button onclick="dismissInstallBanner()" style="padding:4px 14px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;color:rgba(255,255,255,0.6);font-family:'Nunito',sans-serif;font-size:10px;cursor:pointer;">Later</button>
+  </div>
+</div>
+
+<script>
+// SERVICE WORKER REGISTRATION
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg){ console.log('SW registered'); })
+      .catch(function(err){ console.log('SW failed:', err); });
+  });
+}
+
+// PWA INSTALL PROMPT
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner after 3 seconds on home screen
+  setTimeout(showInstallBanner, 3000);
+});
+
+function showInstallBanner(){
+  if(!deferredPrompt) return;
+  // Only show if not already installed
+  if(window.matchMedia('(display-mode: standalone)').matches) return;
+  var banner = document.getElementById('pwa-banner');
+  if(banner) banner.style.display = 'flex';
+}
+
+function installPWA(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(result){
+    if(result.outcome === 'accepted'){
+      showT('🎉 Mood Moves added to your home screen!');
+    }
+    deferredPrompt = null;
+    var banner = document.getElementById('pwa-banner');
+    if(banner) banner.style.display = 'none';
+  });
+}
+
+function dismissInstallBanner(){
+  var banner = document.getElementById('pwa-banner');
+  if(banner) banner.style.display = 'none';
+}
+
+window.addEventListener('appinstalled', function(){
+  showT('🎉 Mood Moves installed! Find it on your home screen.');
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
