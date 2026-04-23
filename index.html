@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KWSBM7C6K8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-KWSBM7C6K8');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Mood Moves</title>
@@ -112,7 +120,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* HOME */
 #home{background:var(--cream);padding-bottom:85px;overflow-y:auto;}
-.h-hdr{background:white;padding:16px 18px 14px;padding-top:max(16px,env(safe-area-inset-top,0px));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.h-hdr{background:white;padding:10px 18px 10px;padding-top:max(10px,env(safe-area-inset-top,0px));border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
 .h-row{display:flex;align-items:center;justify-content:space-between;width:100%;}
 .h-greet{font-size:11px;color:var(--txt2);}
 .h-name{font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:var(--charcoal);margin-top:1px;}
@@ -811,7 +819,7 @@ else{setAllLogos();setAllAvatars();}
   <div class="h-hdr">
     <div class="h-row">
       <div style="display:flex;align-items:center;gap:10px;">
-        <img src="" class="mm-logo" style="width:44px;height:44px;object-fit:contain;border-radius:12px;" alt="MM">
+        <img src="" class="mm-logo" style="width:36px;height:36px;object-fit:contain;border-radius:10px;" alt="MM">
         <div>
           <div class="h-greet" id="h-greet">Good morning</div>
           <div class="h-name" id="h-name">Hey there!</div>
