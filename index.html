@@ -2569,39 +2569,146 @@ var CARDIO={
     regular:{n:"20 Min Zone 2 Cardio",d:"Easy pace, steady breathing. This is medicine for stress."},
   },
 };
+// CARDIO OPTIONS
+var CARDIO_OPTIONS = [
+  {e:'🚶', n:'Walk', met:3.5},
+  {e:'🏃', n:'Run', met:9.8},
+  {e:'🚴', n:'Bike', met:7.5},
+  {e:'🏊', n:'Swim', met:8.0},
+  {e:'🪂', n:'Jump rope', met:11.0},
+  {e:'💃', n:'Dance', met:5.0},
+  {e:'🧗', n:'Stairs', met:8.0},
+  {e:'🚣', n:'Row', met:7.0},
+  {e:'🛹', n:'Skate', met:7.0},
+  {e:'🥊', n:'Kickbox', met:10.0}
+];
+
+var cardioSelected = {e:'🚶', n:'Walk', met:3.5};
+var cardioIntensity = 'moderate';
+var cardioMETmult = 1.0;
+var cardioInterval = null;
+var cardioSeconds = 0;
+var cardioRunning = false;
+
 function showCardio(){
-  var mood = S.currentMood || "neutral";
-  var lvl = "some";
-  try{ lvl = S.user.level === "new" ? "new" : S.user.level === "regular" ? "regular" : "some"; }catch(e){}
-  var data = {n:"10 Min Walk", d:"A brisk walk to finish strong."};
-  try{ data = CARDIO[mood][lvl] || data; }catch(e){}
-  var card = document.getElementById("cardio-card");
-  var btn = document.getElementById("done-btn");
-  var cn = document.getElementById("cardio-name");
-  var cd = document.getElementById("cardio-desc");
-  var skipBtn = document.getElementById("skip-btn");
-  var doBtn = document.getElementById("do-btn");
-  if(cn) cn.textContent = data.n;
-  if(cd) cd.textContent = data.d;
-  if(skipBtn) skipBtn.textContent = SKIP_PH[Math.floor(Math.random()*SKIP_PH.length)];
-  if(doBtn) doBtn.textContent = DO_PH[Math.floor(Math.random()*DO_PH.length)];
-  if(btn) btn.style.display = "none";
+  var btn = document.getElementById('done-btn');
+  var card = document.getElementById('cardio-card');
+  if(btn) btn.style.display = 'none';
+
+  // Build picker chips
+  var picker = document.getElementById('cardio-picker');
+  if(picker){
+    picker.innerHTML = '';
+    CARDIO_OPTIONS.forEach(function(c,i){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = c.e + ' ' + c.n;
+      b.setAttribute('onclick','pickCardio('+i+',this)');
+      b.style.cssText = 'padding:6px 12px;border:2px solid '+(i===0?'#F5A042':'#EDE8E3')+';border-radius:20px;background:'+(i===0?'#FFF8F0':'white')+';font-size:12px;font-weight:800;color:'+(i===0?'#F5A042':'#7A7A8C')+';cursor:pointer;font-family:Nunito,sans-serif;';
+      picker.appendChild(b);
+    });
+  }
+
+  // Set default
+  pickCardio(0, null);
+  setIntensity('moderate', document.getElementById('int-moderate'));
+
   if(card){
-    card.style.display = "block";
-    setTimeout(function(){ card.scrollIntoView({behavior:"smooth", block:"center"}); }, 100);
+    card.style.display = 'block';
+    setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
   }
 }
+
+function pickCardio(idx, btn){
+  cardioSelected = CARDIO_OPTIONS[idx];
+  var cn = document.getElementById('cardio-name');
+  var cd = document.getElementById('cardio-desc');
+  if(cn) cn.textContent = cardioSelected.n;
+  if(cd) cd.textContent = 'Great choice! Pick your intensity and hit go.';
+  // Update chip styles
+  var picker = document.getElementById('cardio-picker');
+  if(picker){
+    Array.from(picker.children).forEach(function(b,i){
+      var active = i===idx;
+      b.style.borderColor = active ? '#F5A042' : '#EDE8E3';
+      b.style.background = active ? '#FFF8F0' : 'white';
+      b.style.color = active ? '#F5A042' : '#7A7A8C';
+    });
+  }
+}
+
+function setIntensity(level, btn){
+  cardioIntensity = level;
+  cardioMETmult = level==='easy' ? 0.7 : level==='intense' ? 1.4 : 1.0;
+  // Update button styles
+  ['easy','moderate','intense'].forEach(function(l){
+    var b = document.getElementById('int-'+l);
+    if(!b) return;
+    var active = l===level;
+    b.style.borderColor = active ? '#F5A042' : '#EDE8E3';
+    b.style.background = active ? '#FFF8F0' : 'white';
+    b.style.color = active ? '#F5A042' : '#7A7A8C';
+  });
+}
+
+function startDoCardio(){
+  var actBtns = document.getElementById('cardio-action-btns');
+  var timerSec = document.getElementById('cardio-timer-section');
+  if(actBtns) actBtns.style.display = 'none';
+  if(timerSec) timerSec.style.display = 'block';
+  cardioSeconds = 0;
+  cardioRunning = false;
+  updateCardioDisplay();
+}
+
+function startCardioTimer(){
+  var startBtn = document.getElementById('cardio-start-btn');
+  if(cardioRunning){
+    // PAUSE
+    clearInterval(cardioInterval);
+    cardioRunning = false;
+    if(startBtn){ startBtn.textContent = '▶ Resume'; startBtn.style.background = 'linear-gradient(135deg,#4BBFB5,#8BB8A0)'; }
+  } else {
+    // START / RESUME
+    cardioRunning = true;
+    if(startBtn){ startBtn.textContent = '⏸ Pause'; startBtn.style.background = 'linear-gradient(135deg,#F5A042,#E8832A)'; }
+    cardioInterval = setInterval(function(){
+      cardioSeconds++;
+      updateCardioDisplay();
+    }, 1000);
+  }
+}
+
+function updateCardioDisplay(){
+  var mins = Math.floor(cardioSeconds/60);
+  var secs = cardioSeconds % 60;
+  var el = document.getElementById('cardio-elapsed');
+  if(el) el.textContent = mins + ':' + (secs<10?'0':'')+secs;
+  // Estimate calories: MET * weight_kg * hours
+  var weightKg = 70; // default if unknown
+  var hours = cardioSeconds / 3600;
+  var cals = Math.round(cardioSelected.met * cardioMETmult * weightKg * hours);
+  var calEl = document.getElementById('cardio-cals');
+  if(calEl) calEl.textContent = '~' + cals + ' cal burned';
+}
+
+function finishCardio(){
+  clearInterval(cardioInterval);
+  cardioRunning = false;
+  var mins = Math.floor(cardioSeconds/60);
+  var cals = document.getElementById('cardio-cals') ? document.getElementById('cardio-cals').textContent : '';
+  showT('🔥 ' + cardioSelected.e + ' ' + cardioSelected.n + ' — ' + mins + ' min done! ' + cals + ' Amazing!');
+  setTimeout(function(){ try{ completeWk(); }catch(e){ console.log(e); } }, 2000);
+}
+
 function skipCardio(){
+  clearInterval(cardioInterval);
   try{ completeWk(); }catch(e){ console.log(e); }
 }
+
 function doCardio(){
-  var mood = S.currentMood || "neutral";
-  var lvl = "some";
-  try{ lvl = S.user.level === "new" ? "new" : S.user.level === "regular" ? "regular" : "some"; }catch(e){}
-  var data = {n:"10 Min Walk"};
-  try{ data = CARDIO[mood][lvl] || data; }catch(e){}
-  showT("🏃 " + data.n + " — lets go! You are unstoppable! 🔥");
-  setTimeout(function(){ try{ completeWk(); }catch(e){ console.log(e); } }, 2000);
+  // Legacy fallback
+  startDoCardio();
 }
 
 // MINI REST TIMER
