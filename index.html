@@ -1753,12 +1753,14 @@ function handleLogin(){updateFounderCounter();
   try{const d=localStorage.getItem('mm_v3');if(d){Object.assign(S,JSON.parse(d));if(S.onboarded){setupHome();buildEl();goTo('home');document.getElementById('bnav').classList.remove('hidden');return;}}}catch(e){}
   S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
   goTo('founding');
+  setTimeout(function(){ updateFounderCounter(); },300);
 }
 function handleSignup(){
   const n=document.getElementById('signup-name').value.trim();
   if(n)S.user.name=n;
   S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
   goTo('founding');
+  setTimeout(function(){ updateFounderCounter(); },300);
 }
 function save(){try{localStorage.setItem('mm_v3',JSON.stringify(S));}catch(e){}}
 function shareApp(){
@@ -1801,6 +1803,8 @@ function finishOb(){
 
 // HOME
 function setupHome(){window.scrollTo(0,0);
+  // Refresh founding counter in background
+  if(typeof updateFounderCounter === 'function') setTimeout(updateFounderCounter, 800);
   // Refresh logos in case they weren't loaded yet
   try{setAllLogos();setAllAvatars();}catch(e){}
   const h=new Date().getHours();
@@ -2356,6 +2360,8 @@ window.addEventListener('DOMContentLoaded',function(){
   if(js) js.style.overflowY = 'auto';
   var ps = document.getElementById('progress-screen');
   if(ps) ps.style.overflowY = 'auto';
+  // Update founding counter on load
+  setTimeout(function(){ updateFounderCounter(); }, 500);
   // Check if returning user - go straight to home
   // New users stay on splash and tap when ready
   try{
@@ -2438,6 +2444,8 @@ window.addEventListener('DOMContentLoaded',function(){
   if(js) js.style.overflowY = 'auto';
   var ps = document.getElementById('progress-screen');
   if(ps) ps.style.overflowY = 'auto';
+  // Update founding counter on load
+  setTimeout(function(){ updateFounderCounter(); }, 500);
   setTimeout(initAv,300);
 });
 </script>
