@@ -2594,29 +2594,54 @@ function showCardio(){
   var btn = document.getElementById('done-btn');
   var card = document.getElementById('cardio-card');
   if(btn) btn.style.display = 'none';
+  if(!card) return;
+
+  // Always rebuild the card HTML fresh so it works regardless of what is in index.html
+  card.innerHTML =
+    '<div style="font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">&#127939; Optional Cardio</div>' +
+    '<div style="font-size:11px;font-weight:800;color:#7A7A8C;margin-bottom:8px;">What would you like to do?</div>' +
+    '<div id="cardio-picker" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>' +
+    '<div style="font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:2px;font-family:serif" id="cardio-name">Walk</div>' +
+    '<div style="font-size:11px;color:#7A7A8C;margin-bottom:14px;" id="cardio-desc">Great choice! Pick your intensity and hit go.</div>' +
+    '<div style="font-size:11px;font-weight:800;color:#7A7A8C;margin-bottom:8px;">Intensity</div>' +
+    '<div style="display:flex;gap:8px;margin-bottom:16px;">' +
+      '<button onclick="setIntensity(&quot;easy&quot;,this)" id="int-easy" style="flex:1;padding:8px 4px;border:2px solid #EDE8E3;border-radius:10px;background:white;font-size:11px;font-weight:800;color:#7A7A8C;cursor:pointer;">&#128034; Easy</button>' +
+      '<button onclick="setIntensity(&quot;moderate&quot;,this)" id="int-moderate" style="flex:1;padding:8px 4px;border:2px solid #F5A042;border-radius:10px;background:#FFF8F0;font-size:11px;font-weight:800;color:#F5A042;cursor:pointer;">&#127939; Moderate</button>' +
+      '<button onclick="setIntensity(&quot;intense&quot;,this)" id="int-intense" style="flex:1;padding:8px 4px;border:2px solid #EDE8E3;border-radius:10px;background:white;font-size:11px;font-weight:800;color:#7A7A8C;cursor:pointer;">&#128293; Intense</button>' +
+    '</div>' +
+    '<div id="cardio-timer-section" style="display:none;background:white;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;border:1.5px solid #EDE8E3;">' +
+      '<div style="font-size:10px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Time</div>' +
+      '<div id="cardio-elapsed" style="font-size:48px;font-weight:600;color:#2C2C3A;line-height:1;font-family:serif">0:00</div>' +
+      '<div id="cardio-cals" style="font-size:12px;color:#4BBFB5;font-weight:800;margin-top:4px;">~0 cal burned</div>' +
+      '<div style="display:flex;gap:8px;margin-top:12px;">' +
+        '<button id="cardio-start-btn" onclick="startCardioTimer()" style="flex:1;padding:11px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">&#9654; Start</button>' +
+        '<button onclick="finishCardio()" style="flex:1;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">&#10003; Finish</button>' +
+      '</div>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:8px;" id="cardio-action-btns">' +
+      '<button onclick="startDoCardio()" style="width:100%;padding:13px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">Lets go! &#128293;</button>' +
+      '<button onclick="skipCardio()" style="width:100%;padding:11px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;">I am done, take me home &#127968;</button>' +
+    '</div>';
 
   // Build picker chips
   var picker = document.getElementById('cardio-picker');
   if(picker){
-    picker.innerHTML = '';
     CARDIO_OPTIONS.forEach(function(c,i){
       var b = document.createElement('button');
       b.type = 'button';
       b.textContent = c.e + ' ' + c.n;
       b.setAttribute('onclick','pickCardio('+i+',this)');
-      b.style.cssText = 'padding:6px 12px;border:2px solid '+(i===0?'#F5A042':'#EDE8E3')+';border-radius:20px;background:'+(i===0?'#FFF8F0':'white')+';font-size:12px;font-weight:800;color:'+(i===0?'#F5A042':'#7A7A8C')+';cursor:pointer;font-family:Nunito,sans-serif;';
+      b.style.cssText = 'padding:6px 12px;border:2px solid '+(i===0?'#F5A042':'#EDE8E3')+';border-radius:20px;background:'+(i===0?'#FFF8F0':'white')+';font-size:12px;font-weight:800;color:'+(i===0?'#F5A042':'#7A7A8C')+';cursor:pointer;';
       picker.appendChild(b);
     });
   }
 
-  // Set default
   pickCardio(0, null);
-  setIntensity('moderate', document.getElementById('int-moderate'));
+  cardioIntensity = 'moderate';
+  cardioMETmult = 1.0;
 
-  if(card){
-    card.style.display = 'block';
-    setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
-  }
+  card.style.display = 'block';
+  setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
 }
 
 function pickCardio(idx, btn){
