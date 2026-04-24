@@ -940,25 +940,9 @@ else{setAllLogos();setAllAvatars();}
     <button class="done-btn" id="done-btn" onclick="showCardio()">✓ Complete Workout</button>
 
     <!-- CARDIO SUGGESTION -->
-    <div id="cardio-card" style="display:none;margin:8px 14px 0;background:linear-gradient(135deg,#FDF0EE,#FAF8F5);border-radius:18px;padding:16px;border:1.5px solid #F4C5C0;">
-      <div style="font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🏃 Optional Cardio</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#2C2C3A;margin-bottom:4px;" id="cardio-name">10 Min Walk</div>
-      <div style="font-size:12px;color:#7A7A8C;line-height:1.6;margin-bottom:12px;" id="cardio-desc">A brisk walk to finish strong.</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button id="skip-btn" onclick="skipCardio()" style="width:100%;padding:12px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;">🏠 I am done, let me go home 😅</button>
-        <button id="do-btn" onclick="doCardio()" style="width:100%;padding:12px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">😤 I thought you were not gonna challenge me!</button>
-      </div>
-    </div>
+    <div id="cardio-card" style="display:none;margin:8px 14px 14px;background:linear-gradient(135deg,#FDF0EE,#FAF8F5);border-radius:18px;padding:18px;border:1.5px solid #F4C5C0;"></div>
     <!-- CARDIO SUGGESTION -->
-    <div id="cardio-card" style="display:none;margin:0 14px 10px;background:linear-gradient(135deg,#FDF0EE,#FAF8F5);border-radius:18px;padding:16px;border:1.5px solid #F4C5C0;">
-      <div style="font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">🏃 Optional Cardio</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#2C2C3A;margin-bottom:4px;" id="cardio-name">10 Min Walk</div>
-      <div style="font-size:12px;color:#7A7A8C;line-height:1.6;margin-bottom:12px;" id="cardio-desc">A brisk walk to finish strong.</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <button onclick="skipCardio()" style="width:100%;padding:12px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;">🏠 I'm done, let me go home 😅</button>
-        <button onclick="doCardio()" style="width:100%;padding:12px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;cursor:pointer;">😤 I thought you weren't gonna challenge me!</button>
-      </div>
-    </div>
+    
 
   <div style="height:20px;"></div>
   <!-- REST TIMER -->
@@ -1733,7 +1717,7 @@ async function sendWelcomeEmail(name, email){
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer re_ewgyagbP_25DPCZHaoFDkFP73F3rTft6D'
+        'Authorization': 'Bearer re_4XV1htRG_7JB1grgu8ktjpetcbz6sFLwg'
       },
       body: JSON.stringify({
         from: 'Gisela @ Mood Moves <hello@moodmoves.app>',
@@ -2030,7 +2014,7 @@ function startRT(){
     }
   },1000);
 }
-function skipRT(){clearInterval(S.rtInterval);document.getElementById('rt-n').textContent='—';document.getElementById('rt-ph').textContent='Let\'s go! 💪';document.getElementById('rt-start').textContent='Start ▶';document.getElementById('rt-start').style.background='var(--teal)';}
+function skipRT(){clearInterval(S.rtInterval);document.getElementById('rt-n').textContent='—';document.getElementById('rt-ph').textContent='Lets go! 💪';document.getElementById('rt-start').textContent='Start ▶';document.getElementById('rt-start').style.background='var(--teal)';}
 function addExtraEx(){
   const extras=['Push-Up','Bodyweight Squat','Reverse Lunge','Plank','Glute Bridge'];
   const ex=extras[Math.floor(Math.random()*extras.length)];const cfg=MC[S.currentMood];
@@ -2595,50 +2579,188 @@ function showCardio(){
   var card = document.getElementById('cardio-card');
   if(btn) btn.style.display = 'none';
   if(!card) return;
+  card.innerHTML = ''; // clear previous content
 
-  // Always rebuild the card HTML fresh so it works regardless of what is in index.html
-  card.innerHTML =
-    '<div style="font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">&#127939; Optional Cardio</div>' +
-    '<div style="font-size:11px;font-weight:800;color:#7A7A8C;margin-bottom:8px;">What would you like to do?</div>' +
-    '<div id="cardio-picker" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"></div>' +
-    '<div style="font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:2px;font-family:serif" id="cardio-name">Walk</div>' +
-    '<div style="font-size:11px;color:#7A7A8C;margin-bottom:14px;" id="cardio-desc">Great choice! Pick your intensity and hit go.</div>' +
-    '<div style="font-size:11px;font-weight:800;color:#7A7A8C;margin-bottom:8px;">Intensity</div>' +
-    '<div style="display:flex;gap:8px;margin-bottom:16px;">' +
-      '<button onclick="setIntensity(&quot;easy&quot;,this)" id="int-easy" style="flex:1;padding:8px 4px;border:2px solid #EDE8E3;border-radius:10px;background:white;font-size:11px;font-weight:800;color:#7A7A8C;cursor:pointer;">&#128034; Easy</button>' +
-      '<button onclick="setIntensity(&quot;moderate&quot;,this)" id="int-moderate" style="flex:1;padding:8px 4px;border:2px solid #F5A042;border-radius:10px;background:#FFF8F0;font-size:11px;font-weight:800;color:#F5A042;cursor:pointer;">&#127939; Moderate</button>' +
-      '<button onclick="setIntensity(&quot;intense&quot;,this)" id="int-intense" style="flex:1;padding:8px 4px;border:2px solid #EDE8E3;border-radius:10px;background:white;font-size:11px;font-weight:800;color:#7A7A8C;cursor:pointer;">&#128293; Intense</button>' +
-    '</div>' +
-    '<div id="cardio-timer-section" style="display:none;background:white;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;border:1.5px solid #EDE8E3;">' +
-      '<div style="font-size:10px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Time</div>' +
-      '<div id="cardio-elapsed" style="font-size:48px;font-weight:600;color:#2C2C3A;line-height:1;font-family:serif">0:00</div>' +
-      '<div id="cardio-cals" style="font-size:12px;color:#4BBFB5;font-weight:800;margin-top:4px;">~0 cal burned</div>' +
-      '<div style="display:flex;gap:8px;margin-top:12px;">' +
-        '<button id="cardio-start-btn" onclick="startCardioTimer()" style="flex:1;padding:11px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">&#9654; Start</button>' +
-        '<button onclick="finishCardio()" style="flex:1;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">&#10003; Finish</button>' +
-      '</div>' +
-    '</div>' +
-    '<div style="display:flex;flex-direction:column;gap:8px;" id="cardio-action-btns">' +
-      '<button onclick="startDoCardio()" style="width:100%;padding:13px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">Lets go! &#128293;</button>' +
-      '<button onclick="skipCardio()" style="width:100%;padding:11px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;">I am done, take me home &#127968;</button>' +
-    '</div>';
+  var OPTS = [
+    {e:'🚶',n:'Walk',met:3.5,mins:20},{e:'🏃',n:'Run',met:9.8,mins:15},
+    {e:'🚴',n:'Bike',met:7.5,mins:20},{e:'🏊',n:'Swim',met:8.0,mins:20},
+    {e:'🪂',n:'Jump Rope',met:11.0,mins:10},{e:'💃',n:'Dance',met:5.0,mins:20},
+    {e:'🧗',n:'Stairs',met:8.0,mins:15},{e:'🚣',n:'Row',met:7.0,mins:20},
+    {e:'🛹',n:'Skate',met:7.0,mins:20},{e:'🥊',n:'Kickbox',met:10.0,mins:15}
+  ];
+  window.CARDIO_OPTIONS = OPTS;
+  window.cardioSelected = null;
+  window.cardioIntensity = 'moderate';
+  window.cardioMETmult = 1.0;
+  window.cardioSeconds = 0;
+  window.cardioRunning = false;
+
+  // Pick suggestion based on mood + goal
+  var mood = S.currentMood || 'neutral';
+  var goal = (S.user && S.user.goal) || 'feelgood';
+  var suggestions = {
+    angry:    {intense:{e:'🥊',n:'Kickbox',met:10.0,mins:15}, moderate:{e:'🏃',n:'Run',met:9.8,mins:15}, easy:{e:'🚶',n:'Walk',met:3.5,mins:20}},
+    stressed: {intense:{e:'🪂',n:'Jump Rope',met:11.0,mins:10}, moderate:{e:'💃',n:'Dance',met:5.0,mins:20}, easy:{e:'🚶',n:'Walk',met:3.5,mins:25}},
+    low:      {intense:{e:'💃',n:'Dance',met:5.0,mins:15}, moderate:{e:'🚶',n:'Walk',met:3.5,mins:20}, easy:{e:'🚶',n:'Walk',met:3.5,mins:15}},
+    happy:    {intense:{e:'🏃',n:'Run',met:9.8,mins:20}, moderate:{e:'🚴',n:'Bike',met:7.5,mins:20}, easy:{e:'💃',n:'Dance',met:5.0,mins:15}},
+    neutral:  {intense:{e:'🧗',n:'Stairs',met:8.0,mins:15}, moderate:{e:'🚴',n:'Bike',met:7.5,mins:20}, easy:{e:'🚶',n:'Walk',met:3.5,mins:20}}
+  };
+  // Adjust suggestion intensity based on goal
+  var sugIntensity = 'moderate';
+  if(goal === 'loseweight' || goal === 'strength') sugIntensity = 'intense';
+  if(goal === 'feelgood' || goal === 'recover') sugIntensity = 'easy';
+  var moodSugs = suggestions[mood] || suggestions.neutral;
+  var sug = moodSugs[sugIntensity] || moodSugs.moderate;
+  window.cardioSelected = sug;
+
+  var pickerOpen = false;
+
+  // Build card HTML using DOM manipulation - zero quote issues
+  var div = document.createElement('div');
+
+  // Header
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'font-size:9px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px;';
+  hdr.textContent = '\u{1F3C3} Optional Cardio';
+  card.appendChild(hdr);
+
+  // Suggestion box
+  var sugBox = document.createElement('div');
+  sugBox.style.cssText = 'background:white;border-radius:14px;padding:14px 16px;margin-bottom:14px;border:1.5px solid #EDE8E3;';
+
+  var sugLbl = document.createElement('div');
+  sugLbl.style.cssText = 'font-size:10px;font-weight:800;color:#4BBFB5;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;';
+  sugLbl.textContent = '\u2728 We suggest for you';
+  sugBox.appendChild(sugLbl);
+
+  var cardioName = document.createElement('div');
+  cardioName.id = 'cardio-name';
+  cardioName.style.cssText = 'font-size:22px;font-weight:700;color:#2C2C3A;margin-bottom:2px;';
+  cardioName.textContent = sug.e + ' ' + sug.mins + ' min ' + sug.n;
+  sugBox.appendChild(cardioName);
+
+  var cardioDesc = document.createElement('div');
+  cardioDesc.id = 'cardio-desc';
+  cardioDesc.style.cssText = 'font-size:11px;color:#7A7A8C;margin-bottom:12px;';
+  cardioDesc.textContent = 'Based on your mood and goal';
+  sugBox.appendChild(cardioDesc);
+
+  // Intensity label
+  var intLbl = document.createElement('div');
+  intLbl.style.cssText = 'font-size:11px;font-weight:800;color:#7A7A8C;margin-bottom:8px;';
+  intLbl.textContent = 'Pick your intensity';
+  sugBox.appendChild(intLbl);
+
+  // Intensity buttons
+  var intRow = document.createElement('div');
+  intRow.style.cssText = 'display:flex;gap:8px;margin-bottom:14px;';
+  [
+    {id:'int-easy', label:'\uD83D\uDC22 Easy', lvl:'easy'},
+    {id:'int-moderate', label:'\uD83C\uDFC3 Moderate', lvl:'moderate', active:true},
+    {id:'int-intense', label:'\uD83D\uDD25 Intense', lvl:'intense'}
+  ].forEach(function(btn){
+    var b = document.createElement('button');
+    b.id = btn.id;
+    b.type = 'button';
+    b.textContent = btn.label;
+    b.style.cssText = 'flex:1;padding:8px 4px;border:2px solid ' + (btn.active ? '#F5A042' : '#EDE8E3') + ';border-radius:10px;background:' + (btn.active ? '#FFF8F0' : 'white') + ';font-size:11px;font-weight:800;color:' + (btn.active ? '#F5A042' : '#7A7A8C') + ';cursor:pointer;';
+    b.addEventListener('click', (function(l){ return function(){ setIntensity(l, this); }; })(btn.lvl));
+    intRow.appendChild(b);
+  });
+  sugBox.appendChild(intRow);
+
+  // Action buttons
+  var actDiv = document.createElement('div');
+  actDiv.id = 'cardio-action-btns';
+  actDiv.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
+
+  var goBtn = document.createElement('button');
+  goBtn.type = 'button';
+  goBtn.textContent = 'Lets go! \uD83D\uDD25';
+  goBtn.style.cssText = 'width:100%;padding:13px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;';
+  goBtn.addEventListener('click', function(){ startDoCardio(); });
+  actDiv.appendChild(goBtn);
+
+  var skipBtn2 = document.createElement('button');
+  skipBtn2.type = 'button';
+  skipBtn2.textContent = 'Done, take me home \uD83C\uDFE0';
+  skipBtn2.style.cssText = 'width:100%;padding:11px;background:white;border:1.5px solid #EDE8E3;border-radius:12px;font-weight:700;font-size:12px;color:#7A7A8C;cursor:pointer;';
+  skipBtn2.addEventListener('click', function(){ skipCardio(); });
+  actDiv.appendChild(skipBtn2);
+
+  sugBox.appendChild(actDiv);
+  card.appendChild(sugBox);
+
+  // Timer section
+  var timerSec = document.createElement('div');
+  timerSec.id = 'cardio-timer-section';
+  timerSec.style.cssText = 'display:none;background:white;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;border:1.5px solid #EDE8E3;';
+  timerSec.innerHTML = '<div style="font-size:10px;font-weight:800;color:#F5A042;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Time</div>'
+    + '<div id="cardio-elapsed" style="font-size:52px;font-weight:600;color:#2C2C3A;line-height:1;">0:00</div>'
+    + '<div id="cardio-cals" style="font-size:12px;color:#4BBFB5;font-weight:800;margin-top:4px;">~0 cal burned</div>'
+    + '<div style="display:flex;gap:8px;margin-top:12px;">'
+    + '<button id="cardio-start-btn" onclick="startCardioTimer()" style="flex:1;padding:11px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">&#9654; Start</button>'
+    + '<button onclick="finishCardio()" style="flex:1;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;">&#10003; Finish</button>'
+    + '</div>';
+  card.appendChild(timerSec);
+
+  // Divider with toggle
+  var dividerWrap = document.createElement('div');
+  dividerWrap.style.cssText = 'position:relative;text-align:center;margin-bottom:12px;';
+  var dividerLine = document.createElement('div');
+  dividerLine.style.cssText = 'border-top:1px solid #EDE8E3;margin-top:11px;';
+  var toggleBtn = document.createElement('button');
+  toggleBtn.id = 'toggle-picker-btn';
+  toggleBtn.type = 'button';
+  toggleBtn.textContent = 'or pick your own \u25BC';
+  toggleBtn.style.cssText = 'position:relative;top:-11px;background:white;border:1.5px solid #EDE8E3;border-radius:20px;padding:4px 14px;font-size:11px;font-weight:800;color:#7A7A8C;cursor:pointer;display:inline-block;';
+  toggleBtn.addEventListener('click', function(){ toggleCardioPicker(); });
+  dividerWrap.appendChild(dividerLine);
+  dividerWrap.appendChild(toggleBtn);
+  card.appendChild(dividerWrap);
+
+  // Picker chips
+  var picker = document.createElement('div');
+  picker.id = 'cardio-picker';
+  picker.style.cssText = 'display:none;flex-wrap:wrap;gap:6px;margin-bottom:8px;';
+  OPTS.forEach(function(c, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = c.e + ' ' + c.n;
+    b.style.cssText = 'padding:6px 12px;border:2px solid #EDE8E3;border-radius:20px;background:white;font-size:12px;font-weight:800;color:#7A7A8C;cursor:pointer;margin-bottom:4px;';
+    b.addEventListener('click', (function(opt, chip){ return function(){
+      window.cardioSelected = opt;
+      var cn = document.getElementById('cardio-name');
+      var cd = document.getElementById('cardio-desc');
+      if(cn) cn.textContent = opt.e + ' ' + opt.mins + ' min ' + opt.n;
+      if(cd) cd.textContent = 'Great choice! Pick your intensity and hit go.';
+      Array.from(picker.children).forEach(function(ch){
+        ch.style.borderColor = '#EDE8E3'; ch.style.background = 'white'; ch.style.color = '#7A7A8C';
+      });
+      chip.style.borderColor = '#F5A042'; chip.style.background = '#FFF8F0'; chip.style.color = '#F5A042';
+    }; })(c, b));
+    picker.appendChild(b);
+  });
+  card.appendChild(picker);
+
+  // Toggle picker function
+  var pickerOpen = false;
+  window.toggleCardioPicker = function(){
+    pickerOpen = !pickerOpen;
+    picker.style.display = pickerOpen ? 'flex' : 'none';
+    var tb = document.getElementById('toggle-picker-btn');
+    if(tb) tb.textContent = pickerOpen ? 'hide options \u25B2' : 'or pick your own \u25BC';
+  };
+
+
+  // Intensity button listeners
+  ['easy','moderate','intense'].forEach(function(l){
+    var b = document.getElementById('int-' + l);
+    if(b) b.addEventListener('click', function(){ setIntensity(l, this); });
+  });
 
   // Build picker chips
-  var picker = document.getElementById('cardio-picker');
-  if(picker){
-    CARDIO_OPTIONS.forEach(function(c,i){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = c.e + ' ' + c.n;
-      b.setAttribute('onclick','pickCardio('+i+',this)');
-      b.style.cssText = 'padding:6px 12px;border:2px solid '+(i===0?'#F5A042':'#EDE8E3')+';border-radius:20px;background:'+(i===0?'#FFF8F0':'white')+';font-size:12px;font-weight:800;color:'+(i===0?'#F5A042':'#7A7A8C')+';cursor:pointer;';
-      picker.appendChild(b);
-    });
-  }
-
-  pickCardio(0, null);
-  cardioIntensity = 'moderate';
-  cardioMETmult = 1.0;
+    setIntensity('moderate', document.getElementById('int-moderate'));
 
   card.style.display = 'block';
   setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'center'}); }, 100);
