@@ -574,7 +574,7 @@ else{setAllLogos();setAllAvatars();}
     </div>
     <div id="signup-form" class="hidden">
       <div class="fg"><label class="fl">Your Name</label><input class="fi" type="text" id="signup-name" placeholder="What should we call you?"></div>
-      <div class="fg"><label class="fl">Email</label><input class="fi" type="email" placeholder="you@email.com"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="signup-email" placeholder="you@email.com"></div>
       <div class="fg"><label class="fl">Password</label><input class="fi" type="password" placeholder="Create a password"></div>
       <button class="bp" onclick="handleSignup()">Start Moving →</button>
     </div>
@@ -1702,7 +1702,7 @@ async function updateFounderCounter(){
 
 async function sendWelcomeEmail(name, email){
   if(!email) return;
-  // 1. Save to Supabase
+  // 1. Save to email_signups table
   try{
     await supa.from('email_signups').upsert({
       email: email,
@@ -1712,26 +1712,20 @@ async function sendWelcomeEmail(name, email){
     });
   }catch(e){ console.log('Supabase signup store failed:', e); }
 
-  // 2. Send welcome email via Resend
+  // 2. Call Supabase Edge Function (no CORS issues!)
   try{
     const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-    const emailHtml = getWelcomeEmailHTML(name, today);
-    const res = await fetch('https://api.resend.com/emails', {
+    const res = await fetch('https://gikhxwvkalmxhmnvxllj.supabase.co/functions/v1/send-welcome-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer re_4XV1htRG_7JB1grgu8ktjpetcbz6sFLwg'
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdpa2h4d3ZrYWxteGhtbnZ4bGxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0NDkxOTUsImV4cCI6MjA5MjAyNTE5NX0.AJmG160g6ufdfXL_qH9ftRJyX211pgAuZ2QD_MufwGE'
       },
-      body: JSON.stringify({
-        from: 'Gisela @ Mood Moves <hello@moodmoves.app>',
-        to: [email],
-        subject: 'Welcome to Mood Moves. Our Mood Moves Us. 🌊',
-        html: emailHtml
-      })
+      body: JSON.stringify({ name: name, email: email, date: today })
     });
     const data = await res.json();
-    console.log('Welcome email sent!', data);
-  }catch(e){ console.log('Resend email failed:', e); }
+    console.log('Welcome email result:', data);
+  }catch(e){ console.log('Edge function call failed:', e); }
 }
 
 
@@ -1760,7 +1754,11 @@ function handleLogin(){updateFounderCounter();
 }
 function handleSignup(){
   const n=document.getElementById('signup-name').value.trim();
-  if(n)S.user.name=n;
+  const e=document.getElementById('signup-email')?.value.trim()||'';
+  if(n) S.user.name=n;
+  if(e) S.user.email=e;
+  // Save to Supabase immediately with email
+  if(n||e) saveUserToSupabase(n,e);
   S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
   goTo('founding');
   setTimeout(function(){ updateFounderCounter(); },300);
@@ -1778,7 +1776,11 @@ function goToOb(){
   var name=nameEl?nameEl.value.trim():'';
   var email=emailEl?emailEl.value.trim():'';
   if(name) S.user.name=name;
-  if(name||email){ saveUserToSupabase(name,email); }
+  if(email) S.user.email=email;
+  // Only save if not already saved in handleSignup
+  if((name||email) && !localStorage.getItem('mm_uid')){
+    saveUserToSupabase(name,email);
+  }
   goTo('onboarding');startOb();
 }
 
