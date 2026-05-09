@@ -1527,6 +1527,10 @@ const EX={
     {n:'Weighted Push-Up',e:'Plate/Vest',l:'Intermediate/Advanced',m:'Chest, Triceps',c:['Place weight plate on upper back carefully','Perform standard push-up form with added load','Keep core rock solid, no sagging hips','Full range of motion, chest to floor']},
     {n:'Barbell Floor Press',e:'Barbell',l:'Intermediate/Advanced',m:'Chest, Triceps',c:['Lie on floor, bar in rack above you','Lower bar until upper arms rest on floor','Pause briefly, then press back to lockout','The floor limits range, protecting shoulders']}],
   vpush:[
+    {n:'Wall Shoulder Press',e:'Wall',l:'Beginner',m:'Shoulders, Triceps',c:['Stand facing a wall','Place hands on wall at shoulder height','Walk feet back until body is angled','Push through hands like a press','Great beginner shoulder exercise']},
+    {n:'Elevated Pike Push-Up',e:'No Equipment',l:'Intermediate',m:'Shoulders, Triceps',c:['Place feet on a chair or couch','Walk hands out so hips are high','Lower head toward floor','Push back up strongly','More shoulder work than regular pike']},
+    {n:'Pike Push-Up',e:'No Equipment',l:'Beginner',m:'Shoulders, Triceps',c:['Start in downward dog position','Hands shoulder-width apart','Bend elbows to lower head toward floor','Push back up to starting position','More shoulder than chest push-up']},
+    {n:'Shoulder Tap Plank',e:'No Equipment',l:'Beginner',m:'Shoulders, Core',c:['Start in high plank position','Keep hips square and stable','Lift one hand to tap opposite shoulder','Alternate sides with control','Avoid rotating the hips']},
     {n:'Dumbbell Lateral Raise',e:'Dumbbell',l:'Beginner',m:'Lateral Deltoid',c:['Slight bend in elbows','Raise to shoulder height only','Lead with elbows, not hands','Lower slowly with control']},
     {n:'Dumbbell Shoulder Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
     {n:'Arnold Press',e:'Dumbbell',l:'Intermediate',m:'All 3 Deltoid Heads',c:['Start palms facing you at chin','Rotate palms out as you press','Full rotation at top','Reverse on the way down']},
@@ -1541,6 +1545,9 @@ const EX={
     {n:'Dumbbell Z Press',e:'Dumbbell',l:'Intermediate/Advanced',m:'Shoulders, Core',c:['Sit on floor with legs straight out in front','Hold dumbbells at shoulder height','Press directly overhead, core must stabilize','No leg drive allowed, pure shoulder strength']},
     {n:'Single Arm Landmine Press',e:'Barbell/Landmine',l:'Intermediate/Advanced',m:'Shoulder, Core',c:['Hold landmine with one hand at shoulder height','Staggered stance for stability, brace core','Press at natural arc rotating slightly','Lower with control, no body lean']}],
   hpull:[
+    {n:'Inverted Row (Table)',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Lie under a sturdy table','Grip the edge shoulder-width','Keep body straight like a plank','Pull chest up to the table edge','Lower slowly with control']},
+    {n:'Superman Hold',e:'No Equipment',l:'Beginner',m:'Back, Glutes',c:['Lie face down, arms extended','Simultaneously lift arms and legs','Squeeze glutes and upper back','Hold 2-3 seconds at top','Lower slowly and repeat']},
+    {n:'Prone Y-T-W',e:'No Equipment',l:'Beginner',m:'Upper Back, Rear Delt',c:['Lie face down on floor','Form Y shape — arms overhead','Then T shape — arms out to sides','Then W shape — elbows bent','Squeeze shoulder blades throughout']},
     {n:'Band Row',e:'Band',l:'Beginner',m:'Rhomboids, Mid Traps',c:['Anchor band at chest height','Pull elbows back past ribs','Squeeze shoulder blades','Return with control']},
     {n:'Chest Supported Row',e:'Dumbbell',l:'Beginner/Intermediate',m:'Rhomboids, Lats',c:['Chest on incline bench','Let arms hang naturally','Pull elbows to ceiling','Squeeze shoulder blades at top']},
     {n:'Seated Cable Row',e:'Cable',l:'Beginner/Intermediate',m:'Lats, Rhomboids',c:['Sit tall, slight lean back','Pull handle to lower ribs','Squeeze lats and mid-back','Extend with control']},
@@ -1558,6 +1565,13 @@ const EX={
     {n:'Barbell Pendlay Row',e:'Barbell',l:'Intermediate/Advanced',m:'Lats, Rhomboids',c:['Bar on floor, hinge to horizontal position','Grip just outside shoulder-width, brace hard','Explosively pull bar to lower chest','Lower bar completely to floor each rep']},
     {n:'Seal Row',e:'Barbell/Bench',l:'Intermediate/Advanced',m:'Rhomboids, Lats',c:['Lie face down on elevated bench, arms hanging','Pull dumbbells or bar up to lower chest','Squeeze shoulder blades hard at top','Lower with full control, arms fully extend']}],
   vpull:[
+    {n:'Inverted Row (Table)',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Lie under a sturdy table','Grip the edge with both hands','Keep body straight like a plank','Pull chest up to the table edge','Lower slowly with control']},
+    {n:'Superman Hold',e:'No Equipment',l:'Beginner',m:'Upper Back, Glutes',c:['Lie face down arms extended','Simultaneously lift arms and legs','Squeeze upper back at the top','Hold 2-3 seconds','Lower slowly and repeat']},
+    {n:'Prone Y-T-W',e:'No Equipment',l:'Beginner',m:'Upper Back, Rear Delt',c:['Lie face down on floor','Form Y shape — arms overhead','Then T — arms out to sides','Then W — elbows bent 90 degrees','Squeeze shoulder blades each position']},
+    {n:'Doorframe Row',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Stand in a doorframe','Grip both sides at hip height','Lean back keeping body straight','Pull chest toward the frame','Like a horizontal row with bodyweight']},
+    {n:'Pike Push-Up',e:'No Equipment',l:'Beginner',m:'Shoulders, Triceps',c:['Start in downward dog position','Hands shoulder-width, hips high','Lower head toward floor between hands','Push back up to start','Targets shoulders like an overhead press']},
+    {n:'Band Pulldown',e:'Band',l:'Beginner',m:'Lats, Back',c:['Anchor band overhead to door or beam','Kneel or stand facing anchor point','Pull band down to chest level','Squeeze lats at bottom','Control the return slowly']},
+    {n:'Straight Arm Band Pulldown',e:'Band',l:'Beginner',m:'Lats, Core',c:['Anchor band at head height','Stand facing anchor with arms extended','Keep arms straight pull band to hips','Squeeze lats hard at bottom','Control the return to start']},
     {n:'Lat Pulldown',e:'Machine',l:'Beginner/Intermediate',m:'Lats',c:['Grip wider than shoulders','Slight lean back','Pull to upper chest','Let bar rise with control']},
     {n:'Assisted Pull-Up',e:'Machine',l:'Beginner/Intermediate',m:'Lats, Biceps',c:['Use assistance to learn the pattern','Start from dead hang','Pull chest to bar','Lower all the way down']},
     {n:'Band Assisted Pull-Up',e:'Band',l:'Intermediate',m:'Lats, Biceps',c:['Loop band around bar, step or knee in band','Hang with full arm extension, engage core','Pull chest to bar driving elbows down and back','Lower slowly using band to assist return']},
@@ -1853,7 +1867,7 @@ function selMood(mood){S.currentMood=mood;genWk(mood);goTo('workout');}
 function genWk(mood){window.scrollTo(0,0);
   const cfg=MC[mood];const lv=S.user.level;
   const loc=(S.user&&S.user.location)||'both';
-  const HOME_EQ=['No Equipment','Dumbbell','Band','Wall','Bench','Pull-Up Bar','Ab Wheel','Med Ball','TRX'];
+  const HOME_EQ=['No Equipment','Dumbbell','Band','Wall','Bench','Pull-Up Bar','Ab Wheel','Med Ball','TRX','Bodyweight/Weight'];
   const pick=arr=>{
     const f=arr.filter(e=>{
       const levelOk=lv==='new'?e.l.includes('Beginner'):lv==='some'?!e.l.includes('Advanced'):true;
