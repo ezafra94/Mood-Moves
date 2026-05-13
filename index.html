@@ -31,7 +31,7 @@
   --border:#EDE8E3;--r:20px;--rs:13px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;overflow-x:hidden;}
 .app{width:100%;max-width:430px;background:var(--cream);margin:0 auto;}
 .screen{display:none;}
 .screen.active{display:flex;flex-direction:column;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--cream);z-index:1;scrollbar-width:none;-ms-overflow-style:none;}
@@ -4412,10 +4412,7 @@ setTimeout(checkDailyNotifications, 3000);
       <button onclick="closeFixedTimer()" style="padding:7px 10px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;color:white;font-weight:700;font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif;">✕</button>
     </div>
   </div>
-
-
-
-
+</div>
 
 <script>
 function saveSetData(exIdx, idx, field, val) {
