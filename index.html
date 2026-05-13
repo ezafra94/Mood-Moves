@@ -2316,211 +2316,110 @@ function getExImg(n){
 }
 
 // ── MOOD MOVES SOUND ENGINE ──────────────────────────────────────
-const MM_AUDIO = {
-  ctx: null,
-  muted: false,
-  _timerAlarm: null,
+// ═══════════════════════════════════════════════════════
+// AUDIO — clean simple system
+// ═══════════════════════════════════════════════════════
+var MM_CTX = null;
+var MM_MUTED = (localStorage.getItem('mm_muted') === '1');
+var MM_TIMER_ALARM = null;
 
-  // Get a ready context — always returns a promise
-  _ready() {
-    var self = this;
-    return new Promise(function(resolve, reject) {
-      try {
-        if (!self.ctx) {
-          self.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (self.ctx.state === 'running') {
-          resolve(self.ctx);
-        } else {
-          self.ctx.resume().then(function() { resolve(self.ctx); }).catch(reject);
-        }
-      } catch(e) { reject(e); }
-    });
-  },
+function mmGetCtx() {
+  return new Promise(function(resolve, reject) {
+    try {
+      if (!MM_CTX) MM_CTX = new (window.AudioContext || window.webkitAudioContext)();
+      if (MM_CTX.state === 'running') { resolve(MM_CTX); return; }
+      MM_CTX.resume().then(function() { resolve(MM_CTX); }).catch(reject);
+    } catch(e) { reject(e); }
+  });
+}
 
-  play(type) {
-    if(this.muted) return;
-    var self = this;
-    this._ready().then(function(c) {
-      var t = c.currentTime;
-      self._playSound(c, t, type);
-    }).catch(function() {});
-  },
+// Keep context alive — resume on every tap
+document.addEventListener('touchstart', function() { if(MM_CTX) MM_CTX.resume(); }, {passive:true});
+document.addEventListener('touchend',   function() { if(MM_CTX) MM_CTX.resume(); }, {passive:true});
+document.addEventListener('click',      function() { if(MM_CTX) MM_CTX.resume(); });
 
-  _playSound(c, t, type) {
+function mmBeep(ctx, t, freq, dur, vol) {
+  var o = ctx.createOscillator(), g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = 'square';
+  o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(vol || 0.25, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.start(t); o.stop(t + dur + 0.01);
+}
 
-    switch(type) {
+function mmTone(ctx, t, freq1, freq2, dur, vol) {
+  var o = ctx.createOscillator(), g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = 'sine';
+  o.frequency.setValueAtTime(freq1, t);
+  if (freq2) o.frequency.exponentialRampToValueAtTime(freq2, t + dur * 0.5);
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol || 0.2, t + 0.04);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.start(t); o.stop(t + dur + 0.01);
+}
 
-      // 🎯 Set logged — soft high chime
-      case 'set': {
-        const o = c.createOscillator();
-        const g = c.createGain();
-        o.connect(g); g.connect(c.destination);
-        o.type = 'sine';
-        o.frequency.setValueAtTime(880, t);
-        o.frequency.exponentialRampToValueAtTime(1100, t + 0.08);
-        g.gain.setValueAtTime(0.18, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-        o.start(t); o.stop(t + 0.3);
-        break;
-      }
-
-      // ✅ Exercise done — warm double tone
-      case 'done': {
-        [440, 550].forEach((freq, i) => {
-          const o = c.createOscillator();
-          const g = c.createGain();
-          o.connect(g); g.connect(c.destination);
-          o.type = 'sine';
-          o.frequency.setValueAtTime(freq, t + i * 0.12);
-          g.gain.setValueAtTime(0, t + i * 0.12);
-          g.gain.linearRampToValueAtTime(0.2, t + i * 0.12 + 0.04);
-          g.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.4);
-          o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.4);
-        });
-        break;
-      }
-
-      // 🎉 Workout complete — triumphant ascending chime
-      case 'complete': {
-        const notes = [523, 659, 784, 1047];
-        notes.forEach((freq, i) => {
-          const o = c.createOscillator();
-          const g = c.createGain();
-          o.connect(g); g.connect(c.destination);
-          o.type = 'sine';
-          const st = t + i * 0.15;
-          o.frequency.setValueAtTime(freq, st);
-          g.gain.setValueAtTime(0, st);
-          g.gain.linearRampToValueAtTime(0.22, st + 0.05);
-          g.gain.exponentialRampToValueAtTime(0.001, st + 0.6);
-          o.start(st); o.stop(st + 0.6);
-        });
-        break;
-      }
-
-      // ⏱️ Rest timer beep beep — two sharp beeps
-      case 'timer': {
-        if(MM_AUDIO._timerAlarm) { clearInterval(MM_AUDIO._timerAlarm); MM_AUDIO._timerAlarm = null; }
-        var playBeeps = function() {
-          MM_AUDIO._ready().then(function(ctx) {
-            var now = ctx.currentTime;
-            [0, 0.22, 0.44].forEach(function(delay) {
-              var o = ctx.createOscillator();
-              var g = ctx.createGain();
-              o.connect(g); g.connect(ctx.destination);
-              o.type = 'square';
-              o.frequency.setValueAtTime(880, now + delay);
-              g.gain.setValueAtTime(0.25, now + delay);
-              g.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.2);
-              o.start(now + delay); o.stop(now + delay + 0.22);
-            });
-          }).catch(function(){});
-        };
-        playBeeps();
-        MM_AUDIO._timerAlarm = setInterval(playBeeps, 2500);
-        break;
-      }
-      case 'timer_stop': {
-        if(MM_AUDIO._timerAlarm) { clearInterval(MM_AUDIO._timerAlarm); MM_AUDIO._timerAlarm = null; }
-        break;
-      }
-
-      // 🌊 App open — ocean wave sweep
-      case 'wave': {
-        const o = c.createOscillator();
-        const g = c.createGain();
-        const filter = c.createBiquadFilter();
-        o.connect(filter); filter.connect(g); g.connect(c.destination);
-        o.type = 'sine';
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(200, t);
-        filter.frequency.exponentialRampToValueAtTime(800, t + 0.5);
-        filter.frequency.exponentialRampToValueAtTime(200, t + 1.2);
-        o.frequency.setValueAtTime(130, t);
-        o.frequency.exponentialRampToValueAtTime(180, t + 0.5);
-        o.frequency.exponentialRampToValueAtTime(130, t + 1.2);
-        g.gain.setValueAtTime(0, t);
-        g.gain.linearRampToValueAtTime(0.15, t + 0.4);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 1.4);
-        o.start(t); o.stop(t + 1.5);
-        break;
-      }
-
-      // 💪 Mood selected — satisfying soft click pop
-      case 'mood': {
-        // Click
-        const buf = c.createBuffer(1, c.sampleRate * 0.04, c.sampleRate);
-        const data = buf.getChannelData(0);
-        for(let i = 0; i < data.length; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (c.sampleRate * 0.005));
-        }
-        const src = c.createBufferSource();
-        const g = c.createGain();
-        const filter = c.createBiquadFilter();
-        src.buffer = buf;
-        src.connect(filter); filter.connect(g); g.connect(c.destination);
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(300, t);
-        g.gain.setValueAtTime(0.3, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-        src.start(t);
-        // Then a soft tone
-        const o = c.createOscillator();
-        const g2 = c.createGain();
-        o.connect(g2); g2.connect(c.destination);
-        o.type = 'sine';
-        o.frequency.setValueAtTime(440, t + 0.03);
-        o.frequency.exponentialRampToValueAtTime(540, t + 0.12);
-        g2.gain.setValueAtTime(0.12, t + 0.03);
-        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-        o.start(t + 0.03); o.stop(t + 0.25);
-        break;
-      }
+function mmPlaySound(type) {
+  if (MM_MUTED) return;
+  mmGetCtx().then(function(c) {
+    var t = c.currentTime;
+    if (type === 'set') {
+      mmTone(c, t, 880, 1100, 0.3, 0.2);
+    } else if (type === 'done') {
+      mmTone(c, t, 440, 550, 0.4, 0.2);
+      mmTone(c, t + 0.15, 550, 660, 0.4, 0.2);
+    } else if (type === 'complete') {
+      [523, 659, 784, 1047].forEach(function(f, i) { mmTone(c, t + i*0.15, f, f*1.05, 0.5, 0.22); });
+    } else if (type === 'mood') {
+      mmTone(c, t, 440, 660, 0.2, 0.15);
+    } else if (type === 'timer') {
+      mmBeep(c, t,      880, 0.18, 0.28);
+      mmBeep(c, t+0.22, 880, 0.18, 0.28);
+      mmBeep(c, t+0.44, 880, 0.18, 0.28);
     }
-  },
+  }).catch(function(){});
+}
 
-  toggleMute() {
-    this.muted = !this.muted;
-    const btn = document.getElementById('sound-toggle');
-    if(btn) {
-      btn.textContent = this.muted ? '🔇' : '🔊';
-      btn.style.background = this.muted ? '#FFF0F0' : 'white';
-      btn.style.borderColor = this.muted ? '#F4C5C0' : '#EDE8E3';
+function mmAlarmStart() {
+  mmAlarmStop();
+  mmPlaySound('timer');
+  MM_TIMER_ALARM = setInterval(function() { mmPlaySound('timer'); }, 2500);
+}
+function mmAlarmStop() {
+  if (MM_TIMER_ALARM) { clearInterval(MM_TIMER_ALARM); MM_TIMER_ALARM = null; }
+}
+
+// MM_AUDIO — keeps all existing call sites working
+var MM_AUDIO = {
+  get muted() { return MM_MUTED; },
+  play: function(type) {
+    if (type === 'timer_stop') { mmAlarmStop(); return; }
+    if (type === 'timer')      { mmAlarmStart(); return; }
+    mmPlaySound(type);
+  },
+  toggleMute: function() {
+    MM_MUTED = !MM_MUTED;
+    localStorage.setItem('mm_muted', MM_MUTED ? '1' : '0');
+    var btn = document.getElementById('sound-toggle');
+    if (btn) {
+      btn.textContent    = MM_MUTED ? '🔇' : '🔊';
+      btn.style.background   = MM_MUTED ? '#FFF0F0' : 'white';
+      btn.style.borderColor  = MM_MUTED ? '#F4C5C0' : '#EDE8E3';
     }
-    localStorage.setItem('mm_muted', this.muted ? '1' : '0');
-    if(!this.muted) {
-      // Test sound immediately on unmute so user hears confirmation
-      var self = this;
-      setTimeout(function(){ self.play('set'); }, 100);
-    }
+    if (!MM_MUTED) setTimeout(function() { mmPlaySound('set'); }, 50);
   }
 };
 
-// Load mute preference and sync button
-(function(){
-  var muted = localStorage.getItem('mm_muted') === '1';
-  MM_AUDIO.muted = muted;
-  // Sync button after DOM ready
-  window.addEventListener('DOMContentLoaded', function(){
-    var btn = document.getElementById('sound-toggle');
-    if(btn && muted){
-      btn.textContent = '🔇';
-      btn.style.background = '#FFF0F0';
-      btn.style.borderColor = '#F4C5C0';
-    }
-  });
-})();
-
-// Unlock audio on EVERY user interaction — not just first tap.
-// This is the only reliable cross-browser pattern.
-document.addEventListener('touchstart', function() {
-  if (MM_AUDIO.ctx && MM_AUDIO.ctx.state === 'suspended') MM_AUDIO.ctx.resume();
-}, { passive: true });
-document.addEventListener('click', function() {
-  if (MM_AUDIO.ctx && MM_AUDIO.ctx.state === 'suspended') MM_AUDIO.ctx.resume();
+// Sync button on load
+window.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('sound-toggle');
+  if (btn && MM_MUTED) {
+    btn.textContent = '🔇';
+    btn.style.background = '#FFF0F0';
+    btn.style.borderColor = '#F4C5C0';
+  }
 });
-
 function genWk(mood){window.scrollTo(0,0);
   const cfg=MC[mood];const lv=S.user.level;
   const loc=(S.user&&S.user.location)||'both';
@@ -4525,6 +4424,7 @@ function startInlineTimer(btn){
         btn.style.background = '#4BBFB5';
         btn.style.borderColor = '#4BBFB5';
         btn.style.color = 'white';
+        MM_AUDIO.play('timer'); // 🔔 alarm!
         setTimeout(function(){
           btn.textContent = '⏱️ Rest';
           btn.style.background = '#E8F7F5';
