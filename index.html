@@ -471,6 +471,111 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .mf-btn{padding:4px 9px;border-radius:20px;border:1.5px solid #EDE8E3;background:white;font-size:10px;font-weight:700;color:#7A7A8C;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;flex-shrink:0;}
 .mf-btn.mf-active{background:#4BBFB5;border-color:#4BBFB5;color:white;}
 #muscle-filters::-webkit-scrollbar{display:none;}
+
+/* ── AVATAR ANIMATIONS ─────────────────────────────── */
+.av-anim-wrap{width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.av-anim-wrap svg{width:100%;height:100%;}
+/* Home screen avatar button */
+#av-icon-btn .av-anim-wrap{width:36px;height:36px;}
+
+/* Wave — flowing water loops */
+@keyframes av-wave-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes av-wave-ripple{0%{transform:scaleX(1)}50%{transform:scaleX(1.08)}100%{transform:scaleX(1)}}
+.av-wave .bob{animation:av-wave-bob 2.2s ease-in-out infinite;}
+.av-wave .ripple{animation:av-wave-ripple 1.8s ease-in-out infinite;}
+
+/* Diamond — shimmer + rotate */
+@keyframes av-diamond-spin{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(4deg) scale(1.08)}}
+@keyframes av-diamond-shine{0%,80%,100%{opacity:0}40%{opacity:1}}
+.av-diamond .gem{animation:av-diamond-spin 3s ease-in-out infinite;}
+.av-diamond .shine{animation:av-diamond-shine 3s ease-in-out infinite;}
+
+/* Crown — gentle pulse + sparkle */
+@keyframes av-crown-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes av-crown-star{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
+.av-crown .crown{animation:av-crown-pulse 2s ease-in-out infinite;}
+.av-crown .star1{animation:av-crown-star 2s ease-in-out infinite 0s;}
+.av-crown .star2{animation:av-crown-star 2s ease-in-out infinite 0.6s;}
+.av-crown .star3{animation:av-crown-star 2s ease-in-out infinite 1.2s;}
+
+/* Fire — flicker */
+@keyframes av-fire-flicker{0%,100%{transform:scaleY(1) skewX(0deg)}25%{transform:scaleY(1.06) skewX(-3deg)}75%{transform:scaleY(0.96) skewX(2deg)}}
+@keyframes av-fire-inner{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.1)}}
+.av-fire .flame{animation:av-fire-flicker 0.8s ease-in-out infinite;transform-origin:bottom center;}
+.av-fire .inner{animation:av-fire-inner 0.6s ease-in-out infinite;transform-origin:bottom center;}
+
+/* Plant — grow and sway */
+@keyframes av-plant-sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes av-plant-leaf{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.1)}}
+.av-plant .stem{animation:av-plant-sway 2.5s ease-in-out infinite;transform-origin:bottom center;}
+.av-plant .leaf{animation:av-plant-leaf 2.5s ease-in-out infinite;}
+
+/* Moon — slow glow pulse + orbiting star */
+@keyframes av-moon-glow{0%,100%{filter:drop-shadow(0 0 3px #B8B0F0)}50%{filter:drop-shadow(0 0 10px #B8B0F0)}}
+@keyframes av-moon-orbit{0%{transform:rotate(0deg) translateX(22px) rotate(0deg)}100%{transform:rotate(360deg) translateX(22px) rotate(-360deg)}}
+.av-moon .moon{animation:av-moon-glow 3s ease-in-out infinite;}
+.av-moon .orbit-star{animation:av-moon-orbit 4s linear infinite;transform-origin:center;}
+
+/* ── HOME SCREEN ANIMATIONS ─────────────────────────────── */
+
+/* Card entrance — fade up staggered */
+@keyframes fadeUpIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.anim-card{opacity:0;animation:fadeUpIn 0.5s ease forwards;}
+
+/* Greeting slide in from left */
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+.anim-greet{animation:slideInLeft 0.4s ease forwards;}
+
+/* Avatar pop in */
+@keyframes popIn{from{opacity:0;transform:scale(0.6)}to{opacity:1;transform:scale(1)}}
+.anim-pop{animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+
+/* Start Workout button pulse */
+@keyframes btnPulse{0%,100%{box-shadow:0 4px 20px rgba(75,191,181,0.35),0 0 0 0 rgba(75,191,181,0.4)}70%{box-shadow:0 4px 20px rgba(75,191,181,0.35),0 0 0 10px rgba(75,191,181,0)}}
+.s-btn{animation:btnPulse 2.5s ease-in-out infinite;}
+
+/* Streak number count-up flash */
+@keyframes numFlash{0%{transform:scale(1)}30%{transform:scale(1.25);color:#4BBFB5}100%{transform:scale(1)}}
+.streak-flash{animation:numFlash 0.6s ease forwards;}
+
+/* Badge unlock pop */
+@keyframes badgePop{0%{transform:scale(0) rotate(-15deg);opacity:0}70%{transform:scale(1.15) rotate(3deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.badge-pop{animation:badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+
+/* Progress bar fill animation */
+@keyframes barFill{from{width:0%}to{width:var(--bar-w)}}
+.bar-anim{animation:barFill 1s ease 0.3s both;}
+
+/* Tip card shimmer */
+@keyframes tipShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.tip-card{background-size:200% 200%;}
+
+/* Weekly challenge card entrance */
+@keyframes challengeSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.ch-anim{animation:challengeSlide 0.5s ease 0.4s both;}
+
+/* Mood card tap bounce */
+@keyframes moodTap{0%{transform:scale(1)}40%{transform:scale(0.95)}100%{transform:scale(1)}}
+.mc:active{animation:moodTap 0.2s ease;}
+
+/* Confetti burst — bigger and more colorful */
+@keyframes cf2{
+  0%{transform:translateY(-20px) rotate(0deg) scale(1);opacity:1}
+  80%{opacity:1}
+  100%{transform:translateY(105vh) rotate(900deg) scale(0.5);opacity:0}
+}
+
+/* Calendar day pop */
+@keyframes calDayPop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.cal-done-anim{animation:calDayPop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+
+/* H-badge shimmer */
+@keyframes badgeShimmer{0%,100%{opacity:1}50%{opacity:0.7;transform:scale(1.04)}}
+.h-badge{animation:badgeShimmer 3s ease-in-out infinite;}
+
+/* Rest day button float */
+@keyframes floatBtn{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.r-btn{animation:floatBtn 3s ease-in-out infinite;}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -828,23 +933,23 @@ else{setAllLogos();setAllAvatars();}
       <div style="display:flex;align-items:center;gap:10px;">
         <img src="" class="mm-logo" style="width:36px;height:36px;object-fit:contain;border-radius:10px;" alt="MM">
         <div>
-          <div class="h-greet" id="h-greet">Good morning</div>
+          <div class="h-greet anim-greet" id="h-greet">Good morning</div>
           <div class="h-name" id="h-name">Hey there!</div>
           <div class="h-badge" id="h-badge">⭐ Rookie Mover</div>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;" onclick="openAvatarModal()">
-        <button id="av-icon-btn" type="button" style="width:46px;height:46px;border-radius:50%;border:2px solid #4BBFB5;background:#E8F7F5;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🌊</button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;" onclick="openAvatarModal()" class="anim-pop">
+        <button id="av-icon-btn" type="button" style="width:46px;height:46px;border-radius:50%;border:2px solid #4BBFB5;background:#E8F7F5;font-size:0;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;"></button>
         <span style="font-size:8px;font-weight:800;color:#4BBFB5;letter-spacing:0.3px;">YOUR AVATAR</span>
       </div>
     </div>
   </div>
   <div class="h-body">
-    <div class="tip-card"><div class="tip-em" id="tip-em">💡</div><div class="tip-lbl">Daily Tip</div><div class="tip-tx" id="tip-tx">Loading your daily dose...</div></div>
-    <button class="s-btn" onclick="goToMP()">▶ Start Today's Workout</button>
-    <button class="r-btn" onclick="goToRD()">🛡️ Rest Day — Still Moving</button>
+    <div class="tip-card anim-card" style="animation-delay:0.1s"><div class="tip-em" id="tip-em">💡</div><div class="tip-lbl">Daily Tip</div><div class="tip-tx" id="tip-tx">Loading your daily dose...</div></div>
+    <button class="s-btn anim-card" onclick="goToMP()" style="animation-delay:0.2s">▶ Start Today's Workout</button>
+    <button class="r-btn anim-card" onclick="goToRD()" style="animation-delay:0.25s">🛡️ Rest Day — Still Moving</button>
 
-    <div class="card">
+    <div class="card anim-card" style="animation-delay:0.3s">
       <div class="ct">🔥 Your Progress</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
@@ -863,7 +968,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
     <!-- WEEKLY CHALLENGE -->
-    <div style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;">
+    <div class="ch-anim" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">⚡ This Weeks Challenge</div>
         <div style="font-size:10px;opacity:0.6;" id="ch-days">⏰ 4 days left</div>
@@ -879,7 +984,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <button onclick="logChallenge()" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">+ Log Reps</button>
     </div>
-        <div class="card"><div class="ct">📅 This Month</div><div class="cal" id="cal"></div></div>
+        <div class="card anim-card" style="animation-delay:0.5s"><div class="ct">📅 This Month</div><div class="cal" id="cal"></div></div>
     
     <div class="card"><div class="ct">🏅 Badges & Rewards</div><div class="bg-grid" id="bg-grid"></div></div>
     <div class="card" style="cursor:pointer;" onclick="openJournal()">
@@ -1376,7 +1481,32 @@ const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration 
   {e:'💉',t:'Your body releases endorphins during exercise. The runner high is real — and free.'},
   {e:'🧂',t:'Electrolytes matter. Add a pinch of salt to your water during long or intense workouts.'},
   {e:'🎯',t:'Setting a specific goal increases the chance of achieving it by 42%. Write yours down.'},
-  {e:'🌙',t:'Training in the evening can improve performance due to higher body temperature and testosterone.'}];
+  {e:'🌙',t:'Training in the evening can improve performance due to higher body temperature and testosterone.'},
+  // ── Body composition facts ──────────────────────────────────────────
+  {e:'⚖️',t:'A safe fat loss rate is 0.5 to 1 lb per week. More than that and you risk losing muscle too.'},
+  {e:'💪',t:'Most women can gain 0.25 to 0.5 lbs of muscle per month with consistent training. Slow and real.'},
+  {e:'🔥',t:'A 500 calorie daily deficit leads to about 1 lb of fat loss per week. Sustainable and steady.'},
+  {e:'🥩',t:'Eating 0.7 to 1 gram of protein per pound of bodyweight preserves muscle while you lose fat.'},
+  {e:'📉',t:'Crash diets cause up to 25% of weight lost to come from muscle. Slower loss protects your gains.'},
+  {e:'💧',t:'The scale can fluctuate 2 to 4 lbs daily from water alone. One weigh-in means almost nothing.'},
+  {e:'🏋️',t:'Strength training boosts your resting metabolism by 7 to 8%. You burn more calories 24/7.'},
+  {e:'🌙',t:'Poor sleep raises hunger hormones by 24% and cuts fat burning. Sleep is a body composition tool.'},
+  {e:'🧬',t:'Muscle is denser than fat — the scale might not move but your body changes shape visibly.'},
+  {e:'📊',t:'Most people underestimate calories by 30 to 40%. Tracking for even one week is eye-opening.'},
+  {e:'🏃',t:'Adding 30 minutes of walking daily can create an extra 150 to 200 calorie deficit with zero effort.'},
+  {e:'⏰',t:'It takes 4 to 8 weeks of consistent training before visible muscle definition appears. Trust the process.'},
+  {e:'🫀',t:'Cardio burns calories during. Strength training burns calories for up to 48 hours after. Both matter.'},
+  {e:'🍽️',t:'Eating in a slight deficit of 200 to 300 calories is often more effective long-term than aggressive cuts.'},
+  {e:'💡',t:'Body fat percentage matters more than weight. Two people at the same weight can look completely different.'},
+  // ── Training science ─────────────────────────────────────────────────
+  {e:'🔁',t:'Push/Pull/Legs splits let each muscle group recover 48 hours before training it again. That is optimal.'},
+  {e:'🦵',t:'Leg day releases more growth hormone than any other workout. Skipping it slows your upper body gains too.'},
+  {e:'📅',t:'Upper/Lower splits train each muscle group twice a week — proven to build strength faster than once a week.'},
+  {e:'💥',t:'The last 2 reps of a hard set are where most of the muscle growth actually happens.'},
+  {e:'🎯',t:'Compound lifts like squats, deadlifts and rows stimulate more muscle in less time than any machine.'},
+  {e:'🧠',t:'Visualizing yourself lifting heavier before your set has been shown to increase actual strength output.'},
+  {e:'⏳',t:'Muscle protein synthesis stays elevated for 24 to 48 hours after training. Eat protein in that window.'},
+  {e:'🌡️',t:'A proper warm-up increases strength output by up to 20%. Never skip the first two sets.'}];
 const MC={
   low:{lb:'😞 Low Energy',co:'#4BBFB5',bg:'#E8F7F5',sets:'2',reps:'10-12',int:'Light',
     ph:["Low battery but still showing up","Gentle movement is still movement","You came. That is already a win.","Some days 10% is everything you have. Give it.","Not every day is a 100% day. This one counts too.","Tired and here. That is strength.","The hardest part was showing up. You did it.","Low energy, high character.","Even slow is forward.","Your body is here. That is enough to start.","Small effort today. Big habit forever.","You do not have to crush it. You just have to do it.","On hard days, showing up IS the workout.","Gentle is not weak. Gentle is wise.","Your future self thanks you for this moment.","Less than perfect still counts.","Progress does not require perfection.","One set at a time. One breath at a time.","The days you least want to move are the days it matters most.","Low energy day. High courage day.","You showed up tired. That is the whole point.","Soft day, strong soul.","Even embers keep the fire alive.","Rest if you must. But do not quit.","Slow and steady still laps everyone on the couch."],
@@ -1821,6 +1951,10 @@ function finishOb(){
   goTo('home');
   document.getElementById('bnav').classList.remove('hidden');
   save();
+  setTimeout(function(){ confetti(1.5); }, 400);
+  setTimeout(function(){ confetti(0.8); }, 900);
+  var nm = S.user.name || 'Queen';
+  setTimeout(function(){ showT('Welcome to Mood Moves, '+nm+'! You are about to become unstoppable.'); }, 600);
 }
 
 // HOME
@@ -1839,12 +1973,33 @@ function setupHome(){window.scrollTo(0,0);
   document.getElementById('pr-goal').textContent=GL[S.user.goal]||'—';
   document.getElementById('pr-lvl').textContent=LL[S.user.level]||'—';
   document.getElementById('pr-days').textContent=S.user.days?S.user.days+' days/week':'—';
-  document.getElementById('sk-n').textContent=S.streak;
+  var skEl=document.getElementById('sk-n');
+  if(skEl){
+    var prev=parseInt(skEl.textContent)||0;
+    skEl.textContent=S.streak;
+    if(S.streak>prev&&S.streak>0){
+      skEl.classList.remove('streak-flash');
+      void skEl.offsetWidth; // reflow to restart animation
+      skEl.classList.add('streak-flash');
+      setTimeout(function(){skEl.classList.remove('streak-flash');},700);
+    }
+  }
   document.getElementById('sk-msg').textContent=S.streak===0?'Start your streak today!':S.streak===1?'Day 1 — you started! 🌱':S.streak+' days strong 💪';
   document.getElementById('st-tot').textContent=S.total;
   document.getElementById('st-wk').textContent=S.weekW;
   const tm=topMood();document.getElementById('st-md').textContent=tm?ME[tm]:'😊';
   setTip();buildCal();renderBadges();updateRecap();setupChallenge();
+  // Re-trigger card entrance animations
+  setTimeout(function(){
+    var cards=document.querySelectorAll('#home .anim-card');
+    cards.forEach(function(el,i){
+      el.style.opacity='0';
+      el.style.animation='none';
+      void el.offsetWidth;
+      el.style.animation='fadeUpIn 0.5s ease forwards';
+      el.style.animationDelay=(0.05+i*0.06)+'s';
+    });
+  },60);
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -2051,15 +2206,26 @@ const MM_AUDIO = {
 
   init() {
     if(!this.ctx) {
-      try { this.ctx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){}
+      try {
+        this.ctx = new (window.AudioContext||window.webkitAudioContext)();
+      } catch(e){ return; }
     }
-    if(this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+    // Always try to resume — mobile browsers suspend on page load
+    if(this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
   },
 
   play(type) {
     if(this.muted) return;
     this.init();
     if(!this.ctx) return;
+    // If still suspended after init, wait for resume then retry once
+    if(this.ctx.state === 'suspended') {
+      var self = this;
+      this.ctx.resume().then(function() { self.play(type); }).catch(function(){});
+      return;
+    }
     const c = this.ctx;
     const t = c.currentTime;
 
@@ -2115,16 +2281,29 @@ const MM_AUDIO = {
 
       // ⏱️ Rest timer beep beep — two sharp beeps
       case 'timer': {
-        [0, 0.2].forEach(delay => {
-          const o = c.createOscillator();
-          const g = c.createGain();
-          o.connect(g); g.connect(c.destination);
-          o.type = 'square';
-          o.frequency.setValueAtTime(660, t + delay);
-          g.gain.setValueAtTime(0.12, t + delay);
-          g.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.15);
-          o.start(t + delay); o.stop(t + delay + 0.15);
-        });
+        // Repeating alarm — 3 beeps, then repeat every 2.5s until dismissed
+        if(this._timerAlarm) { clearInterval(this._timerAlarm); this._timerAlarm = null; }
+        const playBeeps = () => {
+          const ctx = this.ctx;
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          [0, 0.22, 0.44].forEach(delay => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.type = 'square';
+            o.frequency.setValueAtTime(880, now + delay);
+            g.gain.setValueAtTime(0.18, now + delay);
+            g.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.18);
+            o.start(now + delay); o.stop(now + delay + 0.2);
+          });
+        };
+        playBeeps();
+        this._timerAlarm = setInterval(playBeeps, 2500);
+        break;
+      }
+      case 'timer_stop': {
+        if(this._timerAlarm) { clearInterval(this._timerAlarm); this._timerAlarm = null; }
         break;
       }
 
@@ -2195,10 +2374,33 @@ const MM_AUDIO = {
   if(localStorage.getItem('mm_muted') === '1') MM_AUDIO.muted = true;
 })();
 
-// Play wave on app ready
-window.addEventListener('load', function(){
-  setTimeout(function(){ MM_AUDIO.play('wave'); }, 800);
-});
+// Unlock AudioContext on first tap anywhere — required by all mobile browsers
+(function(){
+  var unlocked = false;
+  function unlockAudio() {
+    if (unlocked) return;
+    unlocked = true;
+    MM_AUDIO.init();
+    // Play a completely silent buffer — this unlocks the context permanently
+    if (MM_AUDIO.ctx) {
+      var buf = MM_AUDIO.ctx.createBuffer(1, 1, 22050);
+      var src = MM_AUDIO.ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(MM_AUDIO.ctx.destination);
+      src.start(0);
+    }
+    document.removeEventListener('touchstart', unlockAudio);
+    document.removeEventListener('touchend', unlockAudio);
+    document.removeEventListener('click', unlockAudio);
+  }
+  document.addEventListener('touchstart', unlockAudio, { passive: true });
+  document.addEventListener('touchend', unlockAudio, { passive: true });
+  document.addEventListener('click', unlockAudio);
+})();
+
+// Audio is initialized on first user interaction only.
+// Do NOT call MM_AUDIO.play() on load — browsers block audio before a user gesture
+// and it permanently suspends the AudioContext.
 
 function genWk(mood){window.scrollTo(0,0);
   const cfg=MC[mood];const lv=S.user.level;
@@ -2213,13 +2415,61 @@ function genWk(mood){window.scrollTo(0,0);
     return f[Math.floor(Math.random()*f.length)]||arr[0];
   };
   const cnt={low:4,neutral:5,happy:5,angry:6,stressed:5}[mood]||5;
-  const pats=['squat','hinge','hpush','hpull','lunge','core'];
-  S.currentWorkout=pats.slice(0,cnt).map((p,i)=>{const ex=pick(EX[p]);return{id:i,n:ex.n,m:ex.m,e:ex.e,p,sets:cfg.sets,reps:cfg.reps,done:false,w:''};});
+
+  // ── Smart splits based on training days & day of week ──────────────────
+  const days = S.user.days || 3;
+  const dow = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
+  // How many workouts done this week (approximate using weekW)
+  const wkDone = S.weekW || 0;
+
+  var splitLabel, pats;
+
+  if(days <= 3){
+    // 3 days: always Full Body
+    splitLabel = 'Full Body';
+    pats = ['squat','hinge','hpush','hpull','lunge','core'];
+
+  } else if(days === 4){
+    // 4 days: Upper / Lower alternating
+    const isLower = (wkDone % 2 === 0);
+    if(isLower){
+      splitLabel = 'Lower Body';
+      pats = ['squat','hinge','lunge','squat','hinge','core'];
+    } else {
+      splitLabel = 'Upper Body';
+      pats = ['hpush','hpull','vpush','vpull','hpush','core'];
+    }
+
+  } else {
+    // 5 days: Push / Pull / Legs / Upper / Full Body rotation
+    const rotation = wkDone % 5;
+    if(rotation === 0){
+      splitLabel = 'Push Day 💪';
+      pats = ['hpush','vpush','hpush','vpush','core','hpush'];
+    } else if(rotation === 1){
+      splitLabel = 'Pull Day 🏋️';
+      pats = ['hpull','vpull','hpull','vpull','core','hpull'];
+    } else if(rotation === 2){
+      splitLabel = 'Leg Day 🦵';
+      pats = ['squat','hinge','lunge','squat','hinge','core'];
+    } else if(rotation === 3){
+      splitLabel = 'Upper Body';
+      pats = ['hpush','hpull','vpush','vpull','hpush','core'];
+    } else {
+      splitLabel = 'Full Body';
+      pats = ['squat','hinge','hpush','hpull','lunge','core'];
+    }
+  }
+
+  S.currentWorkout = pats.slice(0,cnt).map((p,i) => {
+    const ex = pick(EX[p]);
+    return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:cfg.sets, reps:cfg.reps, done:false, w:''};
+  });
+
   const chip=document.getElementById('wk-chip');chip.textContent=cfg.lb;chip.style.background=cfg.bg;chip.style.color=cfg.co;
   document.getElementById('wk-title').textContent='Your '+cfg.int+' Workout';
-  const sp=S.user.days<=3?'Full Body':'Upper Body';
   const goal=S.user.goal||'feelgood';const sr=cfg.rs[goal]||60;
-  document.getElementById('wk-sub').textContent=sp+' · '+cfg.int+' · '+cnt+' exercises · '+sr+'s rest/set';
+  document.getElementById('wk-sub').textContent=splitLabel+' · '+cfg.int+' · '+cnt+' exercises · '+sr+'s rest/set';
   renderWk();// rtbar disableddocument.getElementById('rt-n').textContent=sr+'s';S.rtMax=sr;
   document.getElementById('ex-tip').style.display='none';
   showWorkoutGuide();
@@ -2267,8 +2517,7 @@ function renderWk(){
         + '<div class="ex-nb">' + (i + 1) + '</div>'
         + '<div style="flex:1">'
           + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
-            + (typeof EX_IMAGES!=='undefined'&&EX_IMAGES[ex.n]?'<div style="text-align:center;margin-bottom:8px;"><img src="'+EX_IMAGES[ex.n]+'" alt="'+ex.n+'" style="width:100%;max-height:120px;object-fit:cover;border-radius:10px;border:1px solid #EDE8E3;" onerror="this.style.display=\'none\';" loading="lazy"></div>':'')
-            + '<div class="ex-nm">' + ex.n + '</div>' + '<a href="https://www.youtube.com/results?search_query=' + encodeURIComponent('how to ' + ex.n + ' jeff nippard') + '" target="_blank" type="button" style="padding:2px 8px;background:#FF0000;border:none;border-radius:20px;font-size:9px;font-weight:800;color:white;cursor:pointer;text-decoration:none;">▶ How To</a>'
+            + '<div class="ex-nm">' + ex.n + '</div>'
             + '<button onclick="showFormTips(' + i + ')" type="button" style="padding:2px 8px;background:#E8F7F5;border:1.5px solid #4BBFB5;border-radius:20px;font-size:9px;font-weight:800;color:#2D9E94;cursor:pointer;">Form tips</button>'
           + '</div>'
           + '<div class="ex-ms">' + ex.m + '</div>'
@@ -2400,14 +2649,30 @@ function openSwap(i){
   var homeOpts=filtered.filter(function(e){ return HOME_EQ.some(function(eq){ return e.e&&e.e.includes(eq); }); });
   var gymOpts=filtered.filter(function(e){ return !HOME_EQ.some(function(eq){ return e.e&&e.e.includes(eq); }); });
   
-  // Always mix home + gym options so everyone sees both
-  var mixed=[];
-  var h=0,g=0;
-  while(mixed.length<6&&(h<homeOpts.length||g<gymOpts.length)){
-    if(h<homeOpts.length){mixed.push(homeOpts[h]);h++;}
-    if(g<gymOpts.length&&mixed.length<6){mixed.push(gymOpts[g]);g++;}
-  }
-  swOpts=mixed.length>0?mixed:filtered.slice(0,6);
+  // Exactly 3 options: prioritise 1 no-equipment + 1 gym variation + 1 wildcard
+  // Shuffle each pool for variety each time
+  function shuffle(arr){ return arr.slice().sort(function(){ return Math.random()-0.5; }); }
+  var hShuf=shuffle(homeOpts);
+  var gShuf=shuffle(gymOpts);
+  var noEqOpts=hShuf.filter(function(e){ return e.e==='No Equipment'||e.e==='Bodyweight'||e.e==='Bodyweight/Weight'; });
+  var equipHomeOpts=hShuf.filter(function(e){ return !noEqOpts.includes(e); });
+  
+  var chosen=[];
+  // Slot 1: no-equipment/bodyweight option
+  if(noEqOpts.length>0) chosen.push(noEqOpts[0]);
+  else if(hShuf.length>0) chosen.push(hShuf[0]);
+  
+  // Slot 2: gym/equipment option
+  if(gShuf.length>0) chosen.push(gShuf[0]);
+  else if(equipHomeOpts.length>0) chosen.push(equipHomeOpts[0]);
+  
+  // Slot 3: best remaining (different from already chosen)
+  var remaining=filtered.filter(function(e){ return !chosen.includes(e); });
+  if(remaining.length>0) chosen.push(remaining[Math.floor(Math.random()*remaining.length)]);
+  
+  // Fallback: just take first 3 from filtered
+  if(chosen.length===0) chosen=filtered.slice(0,3);
+  swOpts=chosen.slice(0,3);
   
   document.getElementById('sw-opts').innerHTML=swOpts.map(function(s,si){
     var isHome=HOME_EQ.some(function(eq){ return s.e&&s.e.includes(eq); });
@@ -2577,7 +2842,28 @@ function addPh(slot){S.phSlot=slot;document.getElementById('ph-inp').click();}
 function handlePh(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{const g=document.getElementById('ph-grid');const slots=g.querySelectorAll('.ph-slot');const idx=S.phSlot==='before'?0:1;slots[idx].innerHTML='<img src="'+ev.target.result+'" alt="'+S.phSlot+'">';};r.readAsDataURL(file);}
 
 // CONFETTI
-function confetti(){const cols=['#4BBFB5','#F5A042','#8BB8A0','#F4C5C0','#B8A9D9','#FFD700'];for(let i=0;i<50;i++){const el=document.createElement('div');el.className='confetti-p';el.style.cssText='left:'+Math.random()*100+'vw;background:'+cols[Math.floor(Math.random()*cols.length)]+';width:'+(5+Math.random()*7)+'px;height:'+(5+Math.random()*7)+'px;animation:cf '+(2+Math.random()*2)+'s linear '+(Math.random()*0.5)+'s forwards;border-radius:'+(Math.random()>0.5?'50%':'2px')+';';document.body.appendChild(el);setTimeout(()=>el.remove(),4000);}}
+function confetti(intensity){
+  intensity = intensity || 1;
+  var cols=['#4BBFB5','#F5A042','#8BB8A0','#F4C5C0','#B8A9D9','#FFD700','#FF6B9D','#4ECDC4'];
+  var count = Math.floor(80 * intensity);
+  for(var i=0;i<count;i++){
+    var el=document.createElement('div');
+    el.className='confetti-p';
+    var size = 5+Math.random()*9;
+    var isCircle = Math.random()>0.6;
+    var isStrip = !isCircle && Math.random()>0.5;
+    el.style.cssText=
+      'left:'+Math.random()*100+'vw;'+
+      'background:'+cols[Math.floor(Math.random()*cols.length)]+';'+
+      'width:'+(isStrip?size*0.4:size)+'px;'+
+      'height:'+(isStrip?size*2:size)+'px;'+
+      'animation:cf2 '+(2+Math.random()*2)+'s cubic-bezier(0.25,0.46,0.45,0.94) '+(Math.random()*0.8)+'s forwards;'+
+      'border-radius:'+(isCircle?'50%':'3px')+';'+
+      'transform-origin:center;';
+    document.body.appendChild(el);
+    setTimeout(function(e){e.remove();},5000,el);
+  }
+}
 
 // TOAST - 7 seconds
 let toastT=null;
@@ -2780,23 +3066,124 @@ window.addEventListener('DOMContentLoaded',function(){
 </script>
 
 <script>
+// ── AVATAR SVG ANIMATIONS ──────────────────────────────
+function getAvSVG(animClass, size) {
+  size = size || 56;
+  var svgs = {
+    'av-wave': '<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" class="av-wave">'+
+      '<circle cx="28" cy="28" r="26" fill="#E8F7F5"/>'+
+      '<g class="bob">'+
+        '<ellipse class="ripple" cx="28" cy="34" rx="16" ry="5" fill="#4BBFB5" opacity="0.25"/>'+
+        '<path d="M12 30 Q17 24 22 30 Q27 36 32 30 Q37 24 44 30 L44 42 Q37 38 32 42 Q27 46 22 42 Q17 38 12 42 Z" fill="#4BBFB5"/>'+
+        '<path d="M14 27 Q19 21 24 27 Q29 33 34 27 Q39 21 44 27" fill="none" stroke="#2D9E94" stroke-width="2.5" stroke-linecap="round"/>'+
+        '<path d="M10 32 Q15 26 20 32 Q25 38 30 32 Q35 26 42 32" fill="none" stroke="#4BBFB5" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>'+
+      '</g>'+
+    '</svg>',
+
+    'av-diamond': '<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" class="av-diamond">'+
+      '<circle cx="28" cy="28" r="26" fill="#F0EDFF"/>'+
+      '<g class="gem">'+
+        '<polygon points="28,10 42,24 28,46 14,24" fill="#A78BFA"/>'+
+        '<polygon points="28,10 42,24 28,28" fill="#C4B5FD"/>'+
+        '<polygon points="28,10 14,24 28,28" fill="#8B5CF6"/>'+
+        '<polygon points="14,24 28,28 28,46" fill="#7C3AED" opacity="0.8"/>'+
+        '<polygon points="42,24 28,28 28,46" fill="#9333EA" opacity="0.8"/>'+
+        '<line x1="28" y1="10" x2="28" y2="28" stroke="white" stroke-width="0.5" opacity="0.4"/>'+
+        '<line x1="14" y1="24" x2="42" y2="24" stroke="white" stroke-width="0.5" opacity="0.4"/>'+
+      '</g>'+
+      '<circle class="shine" cx="22" cy="18" r="2" fill="white" opacity="0"/>'+
+    '</svg>',
+
+    'av-crown': '<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" class="av-crown">'+
+      '<circle cx="28" cy="28" r="26" fill="#FEF3E8"/>'+
+      '<g class="crown">'+
+        '<path d="M10 36 L14 20 L22 30 L28 14 L34 30 L42 20 L46 36 Z" fill="#F5A042"/>'+
+        '<rect x="10" y="36" width="36" height="6" rx="2" fill="#E8832A"/>'+
+        '<circle cx="28" cy="18" r="3" fill="#FFD700"/>'+
+        '<circle cx="14" cy="22" r="2.5" fill="#FFD700"/>'+
+        '<circle cx="42" cy="22" r="2.5" fill="#FFD700"/>'+
+      '</g>'+
+      '<g class="star1" style="transform-origin:18px 12px"><polygon points="18,8 19,11 22,11 20,13 21,16 18,14 15,16 16,13 14,11 17,11" fill="#FFD700" transform="scale(0.7)"/></g>'+
+      '<g class="star2" style="transform-origin:40px 10px"><polygon points="40,6 41,9 44,9 42,11 43,14 40,12 37,14 38,11 36,9 39,9" fill="#FFD700" transform="scale(0.5)"/></g>'+
+      '<g class="star3" style="transform-origin:46px 22px"><polygon points="46,18 47,21 50,21 48,23 49,26 46,24 43,26 44,23 42,21 45,21" fill="#FFD700" transform="scale(0.5)"/></g>'+
+    '</svg>',
+
+    'av-fire': '<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" class="av-fire">'+
+      '<circle cx="28" cy="28" r="26" fill="#FFF0E8"/>'+
+      '<g class="flame">'+
+        '<path d="M28 44 C18 44 12 38 12 30 C12 22 18 18 22 14 C22 20 24 22 26 20 C24 16 26 10 28 8 C30 12 28 18 32 20 C34 18 34 14 34 10 C38 16 44 22 44 30 C44 38 38 44 28 44 Z" fill="#F5A042"/>'+
+        '<g class="inner">'+
+          '<path d="M28 40 C22 40 18 36 18 30 C18 26 22 22 24 20 C24 24 26 26 28 24 C30 22 30 18 30 16 C34 20 38 26 38 30 C38 36 34 40 28 40 Z" fill="#FF6B2B"/>'+
+        '</g>'+
+        '<path d="M28 36 C24 36 22 33 22 30 C22 28 24 26 26 24 C26 27 28 28 28 26 C30 28 34 29 34 30 C34 33 32 36 28 36 Z" fill="#FFD700"/>'+
+      '</g>'+
+    '</svg>',
+
+    'av-plant': '<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" class="av-plant">'+
+      '<circle cx="28" cy="28" r="26" fill="#EEF5F1"/>'+
+      '<ellipse cx="28" cy="46" rx="12" ry="4" fill="#8BB8A0" opacity="0.3"/>'+
+      '<g class="stem">'+
+        '<line x1="28" y1="44" x2="28" y2="22" stroke="#5A8C72" stroke-width="3" stroke-linecap="round"/>'+
+        '<g class="leaf">'+
+          '<ellipse cx="20" cy="30" rx="9" ry="5" fill="#8BB8A0" transform="rotate(-30 20 30)"/>'+
+          '<ellipse cx="36" cy="26" rx="9" ry="5" fill="#5A8C72" transform="rotate(30 36 26)"/>'+
+        '</g>'+
+        '<circle cx="28" cy="18" r="7" fill="#4BBFB5"/>'+
+        '<circle cx="28" cy="16" r="3" fill="#8BB8A0"/>'+
+        '<circle cx="24" cy="20" r="2" fill="#8BB8A0"/>'+
+        '<circle cx="32" cy="20" r="2" fill="#5A8C72"/>'+
+      '</g>'+
+    '</svg>',
+
+    'av-moon': '<svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" class="av-moon">'+
+      '<circle cx="28" cy="28" r="26" fill="#1E1B3A"/>'+
+      '<g class="moon">'+
+        '<circle cx="30" cy="26" r="14" fill="#B8B0F0"/>'+
+        '<circle cx="36" cy="20" r="10" fill="#1E1B3A"/>'+
+      '</g>'+
+      '<g style="transform-origin:28px 28px" class="orbit-star">'+
+        '<circle cx="28" cy="28" r="2.5" fill="white"/>'+
+      '</g>'+
+      '<circle cx="14" cy="16" r="1.5" fill="white" opacity="0.7"/>'+
+      '<circle cx="44" cy="38" r="1" fill="white" opacity="0.5"/>'+
+      '<circle cx="42" cy="14" r="1.5" fill="white" opacity="0.6"/>'+
+      '<circle cx="12" cy="40" r="1" fill="white" opacity="0.4"/>'+
+    '</svg>'
+  };
+  return '<div class="av-anim-wrap" style="width:'+size+'px;height:'+size+'px">'+(svgs[animClass]||'')+'</div>';
+}
+
 var AV=[
-  {e:'🌊',n:'The Flow',p:'I move at my own pace and that is more than enough.'},
-  {e:'💎',n:'The Diamond',p:'I am being built under pressure. Watch me shine.'},
-  {e:'👑',n:'Badass Queen',p:'I do not chase. I attract. And I never skip leg day.'},
-  {e:'🔥',n:'The Spark',p:'Once I start, nothing can stop me.'},
-  {e:'🌱',n:'The Grower',p:'Every rep is a promise to my future self.'},
-  {e:'🌙',n:'The Night Owl',p:'I show up even when no one is watching. Especially then.'}
+  {e:'🌊',n:'The Flow',p:'I move at my own pace and that is more than enough.',anim:'av-wave'},
+  {e:'💎',n:'The Diamond',p:'I am being built under pressure. Watch me shine.',anim:'av-diamond'},
+  {e:'👑',n:'Badass Queen',p:'I do not chase. I attract. And I never skip leg day.',anim:'av-crown'},
+  {e:'🔥',n:'The Spark',p:'Once I start, nothing can stop me.',anim:'av-fire'},
+  {e:'🌱',n:'The Grower',p:'Every rep is a promise to my future self.',anim:'av-plant'},
+  {e:'🌙',n:'The Night Owl',p:'I show up even when no one is watching. Especially then.',anim:'av-moon'}
 ];
 function openAvatarModal(){
-  // Refresh selection state
+  // Rebuild list fresh (ensures SVGs render)
+  var list=document.getElementById('av-btn-list');
+  if(list){
+    list.innerHTML=AV.map(function(a,i){
+      return '<button id="avb'+i+'" type="button" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:2px solid #EDE8E3;border-radius:14px;background:white;width:100%;text-align:left;cursor:pointer;margin-bottom:8px;">'+
+        getAvSVG(a.anim,52)+
+        '<span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">'+a.n+'</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">'+a.p+'</span></span>'+
+      '</button>';
+    }).join('');
+  }
+  // Re-attach click handlers
   var cur=(S.user.avatar&&S.user.avatar.e)||'🌊';
   AV.forEach(function(a,i){
     var b=document.getElementById('avb'+i);
-    if(b){
-      b.style.borderColor=a.e===cur?'#4BBFB5':'#EDE8E3';
-      b.style.background=a.e===cur?'#E8F7F5':'white';
-    }
+    if(!b)return;
+    if(a.e===cur){b.style.borderColor='#4BBFB5';b.style.background='#E8F7F5';}
+    b.addEventListener('click',function(){
+      AV.forEach(function(_,j){var bb=document.getElementById('avb'+j);if(bb){bb.style.borderColor='#EDE8E3';bb.style.background='white';}});
+      this.style.borderColor='#4BBFB5';this.style.background='#E8F7F5';
+      S.user.avatar={e:a.e,n:a.n,anim:a.anim};
+      save();updateAvIcon();setTimeout(closeAvatarModal,400);
+    });
   });
   document.getElementById('av-modal').style.display='flex';
   document.body.style.overflow='hidden';
@@ -2806,6 +3193,17 @@ function closeAvatarModal(){
   document.body.style.overflow='';
 }
 function initAv(){
+  // Build avatar buttons dynamically with SVG animations
+  var list = document.getElementById('av-btn-list');
+  if(list){
+    list.innerHTML = AV.map(function(a,i){
+      return '<button id="avb'+i+'" type="button" style="display:flex;align-items:center;gap:12px;padding:11px 14px;border:2px solid #EDE8E3;border-radius:14px;background:white;width:100%;text-align:left;cursor:pointer;margin-bottom:8px;">'+
+        getAvSVG(a.anim, 52)+
+        '<span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">'+a.n+'</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">'+a.p+'</span></span>'+
+      '</button>';
+    }).join('');
+  }
+
   AV.forEach(function(a,i){
     var btn=document.getElementById('avb'+i);
     if(!btn)return;
@@ -2818,15 +3216,15 @@ function initAv(){
       this.style.borderColor='#4BBFB5';
       this.style.background='#E8F7F5';
       // Save
-      S.user.avatar={e:a.e,n:a.n};
+      S.user.avatar={e:a.e,n:a.n,anim:a.anim};
       save();
-      // Update header icon
-      var icon=document.getElementById('av-icon-btn');
-      if(icon)icon.textContent=a.e;
+      // Update header icon with animated SVG
+      updateAvIcon();
       // Close after short delay
       setTimeout(closeAvatarModal,400);
     });
   });
+
   // Close modal when tapping backdrop
   var modal=document.getElementById('av-modal');
   if(modal){
@@ -2835,9 +3233,26 @@ function initAv(){
     });
   }
   // Set initial icon from saved state
-  var saved=(S.user.avatar&&S.user.avatar.e)||'🌊';
+  updateAvIcon();
+  // Highlight current selection
+  var cur=(S.user.avatar&&S.user.avatar.e)||'🌊';
+  AV.forEach(function(a,i){
+    var b=document.getElementById('avb'+i);
+    if(b&&a.e===cur){b.style.borderColor='#4BBFB5';b.style.background='#E8F7F5';}
+  });
+}
+
+function updateAvIcon(){
   var icon=document.getElementById('av-icon-btn');
-  if(icon)icon.textContent=saved;
+  if(!icon)return;
+  var saved=S.user&&S.user.avatar;
+  var anim=(saved&&saved.anim)||(function(){
+    var e=(saved&&saved.e)||'🌊';
+    var found=AV.find(function(a){return a.e===e;});
+    return found?found.anim:'av-wave';
+  })();
+  icon.innerHTML=getAvSVG(anim,36);
+  icon.style.fontSize='0'; // hide any leftover emoji
 }
 window.addEventListener('DOMContentLoaded',function(){
   // Make journal screen scrollable
@@ -2859,30 +3274,7 @@ window.addEventListener('DOMContentLoaded',function(){
     <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">Who are you today?</div>
     <div style="font-size:12px;color:#7A7A8C;margin-bottom:16px;">Your avatar. Your energy. Pick one.</div>
     <div style="display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;">
-      <button id="avb0" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
-        <span style="font-size:26px;">🌊</span>
-        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Flow</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I move at my own pace and that is more than enough.</span></span>
-      </button>
-      <button id="avb1" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
-        <span style="font-size:26px;">💎</span>
-        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Diamond</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I am being built under pressure. Watch me shine.</span></span>
-      </button>
-      <button id="avb2" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
-        <span style="font-size:26px;">👑</span>
-        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">Badass Queen</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I do not chase. I attract. And I never skip leg day.</span></span>
-      </button>
-      <button id="avb3" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
-        <span style="font-size:26px;">🔥</span>
-        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Spark</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">Once I start, nothing can stop me.</span></span>
-      </button>
-      <button id="avb4" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
-        <span style="font-size:26px;">🌱</span>
-        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Grower</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">Every rep is a promise to my future self.</span></span>
-      </button>
-      <button id="avb5" type="button" style="display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;">
-        <span style="font-size:26px;">🌙</span>
-        <span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A;">The Night Owl</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic;">I show up even when no one is watching. Especially then.</span></span>
-      </button>
+      <div id="av-btn-list"></div>
     </div>
   </div>
 </div>
@@ -3298,6 +3690,7 @@ function startFixedTimer(){
 }
 
 function runFixedTimer(){
+  MM_AUDIO.play('timer_stop'); // stop alarm if repeating
   var secs = 60;
   try{
     var mood = S.currentMood || 'neutral';
@@ -3332,6 +3725,7 @@ function runFixedTimer(){
 
 function closeFixedTimer(){
   if(ftInterval) clearInterval(ftInterval);
+  MM_AUDIO.play('timer_stop');
   var timer = document.getElementById('fixed-timer');
   if(timer) timer.style.display = 'none';
 }
@@ -3346,34 +3740,34 @@ function getCardioPhrase(arr){
 
 var CHALLENGES={
   new:[
-    {icon:"💪",name:"20 Push-Up Challenge",phrase:"You vs You. Lets go.",target:20},
-    {icon:"🦵",name:"50 Squat Challenge",phrase:"Strong legs, strong life.",target:50},
-    {icon:"🌉",name:"50 Glute Bridge Challenge",phrase:"Build that foundation.",target:50},
-    {icon:"🔥",name:"10 Burpee Challenge",phrase:"Just 10. You got this.",target:10},
-    {icon:"🧘",name:"Plank Challenge (sec)",phrase:"Hold it. Breathe. Grow.",target:60},
-    {icon:"🦵",name:"30 Lunge Challenge",phrase:"One leg at a time.",target:30},
-    {icon:"⬆️",name:"10 Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:10},
-    {icon:"🏃",name:"30,000 Step Challenge",phrase:"Move more. Feel better.",target:30000},
+    {icon:"💪",name:"Push-Up Challenge",phrase:"You vs You. Lets go.",target:20,unit:"reps",action:"Log Push-Ups"},
+    {icon:"🦵",name:"Squat Challenge",phrase:"Strong legs, strong life.",target:50,unit:"reps",action:"Log Squats"},
+    {icon:"🌉",name:"Glute Bridge Challenge",phrase:"Build that foundation.",target:50,unit:"reps",action:"Log Bridges"},
+    {icon:"🔥",name:"Burpee Challenge",phrase:"Just 10. You got this.",target:10,unit:"reps",action:"Log Burpees"},
+    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:60,unit:"seconds",action:"Log Seconds"},
+    {icon:"🦵",name:"Lunge Challenge",phrase:"One leg at a time.",target:30,unit:"reps",action:"Log Lunges"},
+    {icon:"⬆️",name:"Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:10,unit:"reps",action:"Log Pike Push-Ups"},
+    {icon:"🏃",name:"Step Challenge",phrase:"Move more. Feel better.",target:30000,unit:"steps",action:"Log Steps"},
   ],
   some:[
-    {icon:"💪",name:"50 Push-Up Challenge",phrase:"You vs You. Lets go.",target:50},
-    {icon:"🦵",name:"100 Squat Challenge",phrase:"Strong legs, strong life.",target:100},
-    {icon:"🌉",name:"150 Glute Bridge Challenge",phrase:"Build that foundation.",target:150},
-    {icon:"🔥",name:"25 Burpee Challenge",phrase:"Burn it. Own it.",target:25},
-    {icon:"🧘",name:"Plank Challenge (sec)",phrase:"Hold it. Breathe. Grow.",target:135},
-    {icon:"🦵",name:"75 Lunge Challenge",phrase:"One leg at a time.",target:75},
-    {icon:"⬆️",name:"25 Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:25},
-    {icon:"🏃",name:"50,000 Step Challenge",phrase:"Move more. Feel better.",target:50000},
+    {icon:"💪",name:"Push-Up Challenge",phrase:"You vs You. Lets go.",target:50,unit:"reps",action:"Log Push-Ups"},
+    {icon:"🦵",name:"Squat Challenge",phrase:"Strong legs, strong life.",target:100,unit:"reps",action:"Log Squats"},
+    {icon:"🌉",name:"Glute Bridge Challenge",phrase:"Build that foundation.",target:150,unit:"reps",action:"Log Bridges"},
+    {icon:"🔥",name:"Burpee Challenge",phrase:"Burn it. Own it.",target:25,unit:"reps",action:"Log Burpees"},
+    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:135,unit:"seconds",action:"Log Seconds"},
+    {icon:"🦵",name:"Lunge Challenge",phrase:"One leg at a time.",target:75,unit:"reps",action:"Log Lunges"},
+    {icon:"⬆️",name:"Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:25,unit:"reps",action:"Log Pike Push-Ups"},
+    {icon:"🏃",name:"Step Challenge",phrase:"Move more. Feel better.",target:50000,unit:"steps",action:"Log Steps"},
   ],
   regular:[
-    {icon:"💪",name:"100 Push-Up Challenge",phrase:"You vs You. Lets go.",target:100},
-    {icon:"🦵",name:"200 Squat Challenge",phrase:"Strong legs, strong life.",target:200},
-    {icon:"🌉",name:"250 Glute Bridge Challenge",phrase:"Build that foundation.",target:250},
-    {icon:"🔥",name:"50 Burpee Challenge",phrase:"Burn it. Own it.",target:50},
-    {icon:"🧘",name:"Plank Challenge (sec)",phrase:"Hold it. Breathe. Grow.",target:270},
-    {icon:"🦵",name:"150 Lunge Challenge",phrase:"One leg at a time.",target:150},
-    {icon:"⬆️",name:"50 Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:50},
-    {icon:"🏃",name:"70,000 Step Challenge",phrase:"Move more. Feel better.",target:70000},
+    {icon:"💪",name:"Push-Up Challenge",phrase:"You vs You. Lets go.",target:100,unit:"reps",action:"Log Push-Ups"},
+    {icon:"🦵",name:"Squat Challenge",phrase:"Strong legs, strong life.",target:200,unit:"reps",action:"Log Squats"},
+    {icon:"🌉",name:"Glute Bridge Challenge",phrase:"Build that foundation.",target:250,unit:"reps",action:"Log Bridges"},
+    {icon:"🔥",name:"Burpee Challenge",phrase:"Burn it. Own it.",target:50,unit:"reps",action:"Log Burpees"},
+    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:270,unit:"seconds",action:"Log Seconds"},
+    {icon:"🦵",name:"Lunge Challenge",phrase:"One leg at a time.",target:150,unit:"reps",action:"Log Lunges"},
+    {icon:"⬆️",name:"Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:50,unit:"reps",action:"Log Pike Push-Ups"},
+    {icon:"🏃",name:"Step Challenge",phrase:"Move more. Feel better.",target:70000,unit:"steps",action:"Log Steps"},
   ],
 };
 
@@ -3422,12 +3816,36 @@ function setupChallenge(){
   var prog=document.getElementById("ch-prog");
   var days=document.getElementById("ch-days");
   
+  var unit = ch.unit || 'reps';
+  var action = ch.action || 'Log Progress';
+  // Format large numbers (steps)
+  function fmtNum(n){ return n>=1000?(n/1000).toFixed(n%1000===0?0:1)+'k':n; }
+  var unitLabel = unit==='seconds' ? 'sec' : unit==='steps' ? 'steps' : 'reps';
+
   if(icon)icon.textContent=ch.icon;
-  if(name)name.textContent=(round>0?ch.name+" (Round "+(round+1)+")":ch.name);
-  if(phrase)phrase.textContent=ch.phrase;
-  if(bar)bar.style.width=pct+"%";
-  if(prog)prog.textContent=done+" / "+target+" done";
+  if(name)name.textContent=(round>0?ch.name+' — Round '+(round+1):ch.name);
+  if(phrase){
+    // Show target clearly in the subtitle
+    var targetStr = unit==='seconds'
+      ? ch.icon+' Goal: '+target+' seconds total this week'
+      : unit==='steps'
+      ? ch.icon+' Goal: '+fmtNum(target)+' steps this week'
+      : ch.icon+' Goal: '+target+' '+unit+' total this week';
+    phrase.innerHTML = ch.phrase+'<br><span style="font-size:10px;opacity:0.6;font-style:normal;font-weight:800;letter-spacing:0.3px;">'+targetStr+'</span>';
+  }
+  if(bar){bar.style.width="0%";setTimeout(function(){bar.style.transition="width 1s ease";bar.style.width=pct+"%";},200);}
+  if(prog){
+    var doneStr = unit==='seconds'
+      ? done+'s / '+target+'s ('+pct+'%)'
+      : unit==='steps'
+      ? fmtNum(done)+' / '+fmtNum(target)+' steps'
+      : done+' / '+target+' '+unit;
+    prog.textContent=doneStr;
+  }
   if(days)days.textContent="⏰ "+left+" day"+(left===1?"":"s")+" left";
+  // Update log button label
+  var logBtn=document.querySelector('[onclick="logChallenge()"]');
+  if(logBtn)logBtn.textContent='+ '+action;
   
   if(done>=target&&!S.challengeComplete){
     S.challengeComplete=true;
@@ -3448,14 +3866,24 @@ function logChallenge(){
   var target=Math.round(ch.target+(ch.target*0.2*round));
   var done=S.challengeDone||0;
   var remaining=target-done;
-  var reps=prompt(ch.icon+" How many did you complete? ("+done+"/"+target+" done, "+remaining+" left)");
+  var unit = ch.unit || 'reps';
+  function fmtN(n){ return n>=1000?(n/1000).toFixed(n%1000===0?0:1)+'k':String(n); }
+  var unitWord = unit==='seconds'?'seconds':unit==='steps'?'steps':'reps';
+  var prompt_msg = ch.icon+' '+ch.name+'\n\nHow many '+unitWord+' did you complete this session?\n('+done+' / '+target+' '+unitWord+' total so far, '+remaining+' left)';
+  var reps=prompt(prompt_msg);
   if(!reps||isNaN(parseInt(reps)))return;
   var num=Math.max(0,parseInt(reps));
   S.challengeDone=Math.min(target,done+num);
   S.challengeComplete=false;
   save();
   setupChallenge();
-  showT("💪 "+num+" logged! "+S.challengeDone+"/"+target+" total!");
+  var newDone=S.challengeDone;
+  var toast = unit==='seconds'
+    ? '⏱ '+num+'s logged! '+newDone+'s / '+target+'s total'
+    : unit==='steps'
+    ? '🏃 '+fmtN(num)+' steps logged! '+fmtN(newDone)+' / '+fmtN(target)+' total'
+    : '💪 '+num+' '+unitWord+' logged! '+newDone+' / '+target+' total';
+  showT(toast);
 }
 
 // AVATAR ONBOARDING
@@ -3486,10 +3914,9 @@ function buildAvOb(){
       btn.style.borderColor = '#4BBFB5';
       btn.style.background = '#E8F7F5';
       // Save
-      S.user.avatar = {e: av.e, n: av.n};
-      // Update header icon
-      var icon = document.getElementById('av-icon-btn');
-      if(icon) icon.textContent = av.e;
+      S.user.avatar = {e: av.e, n: av.n, anim: av.anim};
+      // Update header icon with animated SVG
+      updateAvIcon();
     });
     list.appendChild(btn);
   });
@@ -3923,6 +4350,7 @@ var inlinePaused = {};
 var inlineRemaining = {};
 function startInlineTimer(btn){
   var key = btn.id || 'timer';
+  MM_AUDIO.play('timer_stop'); // stop any repeating alarm on any tap
 
   // If running → PAUSE
   if(inlineTimers[key]){
@@ -4001,6 +4429,98 @@ function startInlineTimer(btn){
     }
   }, 1000);
 }
+
+// ═══════════════════════════════════════════
+// BACKGROUND TIMER FIX — Page Visibility API
+// When user switches to Instagram etc, save exact timestamp.
+// On return, calculate real elapsed time and sync all timers.
+// ═══════════════════════════════════════════
+var _visibilityHiddenAt = null;
+
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) {
+    _visibilityHiddenAt = Date.now();
+  } else {
+    // Must wait for AudioContext to fully resume before playing sound
+    // resume() is async — wrap everything in a function we call after it resolves
+    function onReturn() {
+      if (_visibilityHiddenAt === null) return;
+      var elapsed = Math.floor((Date.now() - _visibilityHiddenAt) / 1000);
+      _visibilityHiddenAt = null;
+      if (elapsed <= 0) return;
+
+      var needsAlarm = false;
+
+      // ── Fix inline Rest timers ──────────────────
+      Object.keys(inlineRemaining).forEach(function(key) {
+        if (inlineRemaining[key] === null || inlineRemaining[key] === undefined) return;
+        if (inlinePaused[key]) return;
+
+        var newRemaining = inlineRemaining[key] - elapsed;
+        if (newRemaining <= 0) {
+          if (inlineTimers[key]) { clearInterval(inlineTimers[key]); inlineTimers[key] = null; }
+          inlineRemaining[key] = null;
+          inlinePaused[key] = false;
+          var btn = document.getElementById(key);
+          if (btn) {
+            btn.textContent = '💪 GO!';
+            btn.style.background = '#4BBFB5';
+            btn.style.borderColor = '#4BBFB5';
+            btn.style.color = 'white';
+            setTimeout(function() {
+              btn.textContent = '⏱️ Rest';
+              btn.style.background = '#E8F7F5';
+              btn.style.borderColor = '#4BBFB5';
+              btn.style.color = '#2D9E94';
+            }, 5000);
+          }
+          needsAlarm = true;
+        } else {
+          inlineRemaining[key] = newRemaining;
+          var btn = document.getElementById(key);
+          if (btn) btn.textContent = '⏸ ' + newRemaining + 's';
+        }
+      });
+
+      // ── Fix fixed mini timer ────────────────────
+      if (ftInterval) {
+        var secsEl = document.getElementById('ft-secs');
+        if (secsEl) {
+          var cur = parseInt(secsEl.textContent) || 0;
+          var newVal = cur - elapsed;
+          if (newVal <= 0) {
+            clearInterval(ftInterval); ftInterval = null;
+            secsEl.textContent = 'GO!';
+            var msgEl = document.getElementById('ft-msg');
+            var startBtn = document.getElementById('ft-start');
+            if (msgEl) msgEl.textContent = 'Next set! 💪';
+            if (startBtn) { startBtn.textContent = 'Again ▶'; startBtn.style.background = '#4BBFB5'; }
+            needsAlarm = true;
+          } else {
+            secsEl.textContent = newVal + 's';
+          }
+        }
+      }
+
+      // Play alarm ONCE after all state is updated, context is ready
+      if (needsAlarm) {
+        MM_AUDIO.play('timer');
+      }
+    }
+
+    // Resume AudioContext first, THEN run logic
+    try {
+      if (MM_AUDIO.ctx && MM_AUDIO.ctx.state === 'suspended') {
+        MM_AUDIO.ctx.resume().then(onReturn).catch(function() { onReturn(); });
+      } else {
+        // Already running — but still need a tiny delay for mobile
+        setTimeout(onReturn, 80);
+      }
+    } catch(e) {
+      onReturn();
+    }
+  }
+});
 
 // ═══════════════════════════════════════════
 // PUSH NOTIFICATIONS
