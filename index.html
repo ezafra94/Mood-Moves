@@ -782,13 +782,15 @@ else{setAllLogos();setAllAvatars();}
       <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="login-pw" placeholder="••••••••"></div>
       <div class="rem"><input type="checkbox" id="rem" checked><label for="rem">Remember me</label></div>
       <button class="bp" onclick="handleLogin()">Log In →</button>
-    <div style="text-align:center;margin-top:14px;font-size:10px;color:#B0B0C0;">By continuing you agree to our <span onclick="document.getElementById('terms-modal').style.display='flex'" style="color:#4BBFB5;cursor:pointer;font-weight:700;text-decoration:underline;">Terms</span> and <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="color:#4BBFB5;cursor:pointer;font-weight:700;text-decoration:underline;">Privacy Policy</span></div>
+    <div style="text-align:center;margin-top:12px;font-size:12px;color:#7A7A8C;">Don't have an account? <span onclick="switchAuth('signup')" style="color:#4BBFB5;font-weight:800;cursor:pointer;">Sign up free →</span></div>
+    <div style="text-align:center;margin-top:10px;font-size:10px;color:#B0B0C0;">By continuing you agree to our <span onclick="document.getElementById('terms-modal').style.display='flex'" style="color:#4BBFB5;cursor:pointer;font-weight:700;text-decoration:underline;">Terms</span> and <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="color:#4BBFB5;cursor:pointer;font-weight:700;text-decoration:underline;">Privacy Policy</span></div>
     </div>
     <div id="signup-form" class="hidden">
       <div class="fg"><label class="fl">Your Name</label><input class="fi" type="text" id="signup-name" placeholder="What should we call you?"></div>
       <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="signup-email" placeholder="you@email.com"></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" placeholder="Create a password"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="signup-pw" placeholder="At least 6 characters"></div>
       <button class="bp" onclick="handleSignup()">Start Moving →</button>
+      <div style="text-align:center;margin-top:12px;font-size:12px;color:#7A7A8C;">Already have an account? <span onclick="switchAuth('login')" style="color:#4BBFB5;font-weight:800;cursor:pointer;">Log in →</span></div>
     </div>
   </div>
 </div>
@@ -1940,6 +1942,20 @@ function goToMP(){
 function goToRD(){window.scrollTo(0,0);document.getElementById('rd-moods').style.display='flex';document.getElementById('rd-moods').style.flexDirection='column';document.getElementById('rd-acts').style.display='none';goTo('restday');}
 
 // AUTH
+function showAuthError(msg){
+  var el = document.getElementById('auth-error');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'auth-error';
+    el.style.cssText = 'background:#FFF0F0;border:1.5px solid #F4C5C0;border-radius:10px;padding:10px 14px;font-size:12px;color:#C08080;font-weight:700;margin-bottom:12px;text-align:center;';
+    var body = document.querySelector('.auth-body');
+    if(body) body.insertBefore(el, body.firstChild);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 4000);
+}
+
 function switchAuth(t){
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   event.target.classList.add('on');
@@ -2009,18 +2025,87 @@ async function saveUserToSupabase(name, email){
   }catch(e){ console.log('Supabase save failed:', e); }
 }
 
-function handleLogin(){updateFounderCounter();
-  try{const d=localStorage.getItem('mm_v3');if(d){Object.assign(S,JSON.parse(d));if(S.onboarded){setupHome();buildEl();goTo('home');document.getElementById('bnav').classList.remove('hidden');return;}}}catch(e){}
+function handleLogin(){
+  var email = (document.getElementById('login-email').value||'').trim();
+  var pw    = (document.getElementById('login-pw').value||'').trim();
+
+  // Must fill both fields
+  if(!email || !pw){
+    showAuthError('Please enter your email and password.');
+    return;
+  }
+  if(!email.includes('@')){
+    showAuthError('Please enter a valid email address.');
+    return;
+  }
+  if(pw.length < 6){
+    showAuthError('Password must be at least 6 characters.');
+    return;
+  }
+
+  updateFounderCounter();
+
+  // Check if this email matches a saved account
+  try{
+    const d=localStorage.getItem('mm_v3');
+    if(d){
+      const saved=JSON.parse(d);
+      // If saved email matches → log in
+      if(saved.user && saved.user.email && saved.user.email.toLowerCase()===email.toLowerCase()){
+        Object.assign(S,saved);
+        if(S.onboarded){
+          setupHome();buildEl();goTo('home');
+          document.getElementById('bnav').classList.remove('hidden');
+          return;
+        }
+        goTo('founding');
+        setTimeout(function(){ updateFounderCounter(); },300);
+        return;
+      } else if(saved.user && saved.user.email && saved.user.email !== '') {
+        // Different email — don't let in
+        showAuthError('No account found with that email. Please sign up first.');
+        return;
+      }
+      // No email saved yet (old account) — let through
+      if(saved.onboarded){
+        Object.assign(S,saved);
+        setupHome();buildEl();goTo('home');
+        document.getElementById('bnav').classList.remove('hidden');
+        return;
+      }
+    } else {
+      // No saved data at all — must sign up
+      showAuthError('No account found. Please sign up first!');
+      switchAuth('signup');
+      return;
+    }
+  }catch(e){}
+
   S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
   goTo('founding');
   setTimeout(function(){ updateFounderCounter(); },300);
 }
 function handleSignup(){
-  const n=document.getElementById('signup-name').value.trim();
-  const e=document.getElementById('signup-email')?.value.trim()||'';
-  if(n) S.user.name=n;
-  if(e) S.user.email=e;
-  // Save to Supabase immediately with email
+  var n = document.getElementById('signup-name').value.trim();
+  var e = (document.getElementById('signup-email')?.value||'').trim();
+  var pw = document.getElementById('signup-pw');
+  var pwVal = pw ? pw.value.trim() : '';
+
+  if(!n){
+    showAuthError('Please enter your name so we can personalize your experience!');
+    return;
+  }
+  if(!e || !e.includes('@')){
+    showAuthError('Please enter a valid email address.');
+    return;
+  }
+  if(!pwVal || pwVal.length < 6){
+    showAuthError('Password must be at least 6 characters.');
+    return;
+  }
+
+  S.user.name = n;
+  S.user.email = e;
   if(n||e) saveUserToSupabase(n,e);
   S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
   goTo('founding');
@@ -2366,26 +2451,35 @@ document.addEventListener('touchstart', function() { if(MM_CTX) MM_CTX.resume();
 document.addEventListener('touchend',   function() { if(MM_CTX) MM_CTX.resume(); }, {passive:true});
 document.addEventListener('click',      function() { if(MM_CTX) MM_CTX.resume(); });
 
-function mmBeep(ctx, t, freq, dur, vol) {
-  var o = ctx.createOscillator(), g = ctx.createGain();
-  o.connect(g); g.connect(ctx.destination);
-  o.type = 'square';
-  o.frequency.setValueAtTime(freq, t);
-  g.gain.setValueAtTime(vol || 0.25, t);
-  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-  o.start(t); o.stop(t + dur + 0.01);
-}
+// ── Pretty sound engine — layered harmonics make it feel like a real instrument
+function mmChime(ctx, t, freq, dur, vol) {
+  // A chime = fundamental + 2 harmonics + gentle attack
+  // This is what makes marimba/bell/xylophone sound vs a plain beep
+  var master = ctx.createGain();
+  master.connect(ctx.destination);
+  master.gain.setValueAtTime(0, t);
+  master.gain.linearRampToValueAtTime(vol || 0.18, t + 0.008); // instant attack
+  master.gain.exponentialRampToValueAtTime(0.001, t + dur);
 
-function mmTone(ctx, t, freq1, freq2, dur, vol) {
-  var o = ctx.createOscillator(), g = ctx.createGain();
-  o.connect(g); g.connect(ctx.destination);
-  o.type = 'sine';
-  o.frequency.setValueAtTime(freq1, t);
-  if (freq2) o.frequency.exponentialRampToValueAtTime(freq2, t + dur * 0.5);
-  g.gain.setValueAtTime(0, t);
-  g.gain.linearRampToValueAtTime(vol || 0.2, t + 0.04);
-  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-  o.start(t); o.stop(t + dur + 0.01);
+  // Fundamental
+  var o1 = ctx.createOscillator();
+  o1.type = 'sine'; o1.frequency.setValueAtTime(freq, t);
+  var g1 = ctx.createGain(); g1.gain.setValueAtTime(1, t);
+  o1.connect(g1); g1.connect(master);
+
+  // 2nd harmonic (octave up) — gives brightness
+  var o2 = ctx.createOscillator();
+  o2.type = 'sine'; o2.frequency.setValueAtTime(freq * 2, t);
+  var g2 = ctx.createGain(); g2.gain.setValueAtTime(0.35, t);
+  o2.connect(g2); g2.connect(master);
+
+  // 3rd harmonic — gives warmth
+  var o3 = ctx.createOscillator();
+  o3.type = 'sine'; o3.frequency.setValueAtTime(freq * 3, t);
+  var g3 = ctx.createGain(); g3.gain.setValueAtTime(0.12, t);
+  o3.connect(g3); g3.connect(master);
+
+  [o1, o2, o3].forEach(function(o) { o.start(t); o.stop(t + dur + 0.05); });
 }
 
 function mmPlaySound(type) {
@@ -2394,38 +2488,32 @@ function mmPlaySound(type) {
     var t = c.currentTime;
 
     if (type === 'set') {
-      // Cute ascending ding — like a little xylophone hit
-      mmTone(c, t,      523, 659, 0.18, 0.15); // C→E
-      mmTone(c, t+0.1,  659, 784, 0.18, 0.12); // E→G
+      // ✨ Soft marimba tap — light, satisfying, one quick note
+      mmChime(c, t, 784, 0.5, 0.16);        // G5 — bright but not sharp
 
     } else if (type === 'done') {
-      // Soft two-tone chime — gentle "yay"
-      mmTone(c, t,      784, 784, 0.3, 0.18);  // G
-      mmTone(c, t+0.2,  1047, 1047, 0.4, 0.16); // C high
+      // 🎵 Two-note chime — like marking something complete
+      mmChime(c, t,       659, 0.6, 0.14);  // E5
+      mmChime(c, t + 0.18, 988, 0.8, 0.14); // B5
 
     } else if (type === 'complete') {
-      // Happy little fanfare — C major arpeggio
-      [523, 659, 784, 1047, 1319].forEach(function(f, i) {
-        mmTone(c, t + i*0.12, f, f, 0.35, 0.18);
+      // 🎉 Victory chime — ascending 4-note melody, feels like an achievement
+      var notes = [523, 659, 784, 1047]; // C E G C
+      notes.forEach(function(f, i) {
+        mmChime(c, t + i * 0.14, f, 0.9 - i*0.1, 0.15);
       });
+      // Final sparkle
+      mmChime(c, t + 0.65, 1568, 0.6, 0.1); // G6 — tiny bright note at end
 
     } else if (type === 'mood') {
-      // Soft sparkle — two quick high notes
-      mmTone(c, t,     1047, 1319, 0.15, 0.12);
-      mmTone(c, t+0.1, 1319, 1047, 0.15, 0.1);
+      // 💫 Single gentle sparkle — light and airy
+      mmChime(c, t,       1047, 0.4, 0.10); // C6
+      mmChime(c, t + 0.1, 1319, 0.3, 0.07); // E6 softer
 
     } else if (type === 'timer') {
-      // Cute triple bell — like a kitchen timer 🔔
-      [0, 0.25, 0.5].forEach(function(delay) {
-        var o = c.createOscillator(), g = c.createGain();
-        o.connect(g); g.connect(c.destination);
-        o.type = 'sine';
-        o.frequency.setValueAtTime(1047, t + delay);       // high C
-        o.frequency.exponentialRampToValueAtTime(880, t + delay + 0.15); // fade to A
-        g.gain.setValueAtTime(0, t + delay);
-        g.gain.linearRampToValueAtTime(0.28, t + delay + 0.02);
-        g.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.35);
-        o.start(t + delay); o.stop(t + delay + 0.36);
+      // 🔔 Three warm bells — like a gentle doorbell, not an alarm
+      [0, 0.28, 0.56].forEach(function(delay) {
+        mmChime(c, t + delay, 880, 0.7, 0.2); // A5
       });
     }
   }).catch(function(){});
@@ -4571,22 +4659,26 @@ function startInlineTimer(btn){
 
   inlineTimers[key] = setInterval(function(){
     inlineRemaining[key]--;
-    btn.textContent = '⏸ ' + inlineRemaining[key] + 's';
+    btn.textContent = '⏱ ' + inlineRemaining[key] + 's — tap to stop';
     if(inlineRemaining[key] <= 0){
       clearInterval(inlineTimers[key]);
       inlineTimers[key] = null;
       inlinePaused[key] = false;
-      btn.textContent = '💪 GO!';
-      btn.style.background = '#4BBFB5';
-      btn.style.borderColor = '#4BBFB5';
-      btn.style.color = 'white';
+      // Glow + alarm — same as paused path
+      btn.textContent = '💪 GO! — tap me!';
+      btn.classList.add('rest-btn-active');
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+      MM_AUDIO.play('timer');
       setTimeout(function(){
+        btn.classList.remove('rest-btn-active');
         btn.textContent = '⏱️ Rest';
         btn.style.background = '#E8F7F5';
         btn.style.borderColor = '#4BBFB5';
         btn.style.color = '#2D9E94';
         inlineRemaining[key] = null;
-      }, 5000);
+      }, 8000);
     }
   }, 1000);
 }
@@ -4622,22 +4714,24 @@ document.addEventListener('visibilitychange', function() {
           inlinePaused[key] = false;
           var btn = document.getElementById(key);
           if (btn) {
-            btn.textContent = '💪 GO!';
-            btn.style.background = '#4BBFB5';
-            btn.style.borderColor = '#4BBFB5';
-            btn.style.color = 'white';
+            btn.textContent = '💪 GO! — tap me!';
+            btn.classList.add('rest-btn-active');
+            btn.style.background = '';
+            btn.style.borderColor = '';
+            btn.style.color = '';
             setTimeout(function() {
+              btn.classList.remove('rest-btn-active');
               btn.textContent = '⏱️ Rest';
               btn.style.background = '#E8F7F5';
               btn.style.borderColor = '#4BBFB5';
               btn.style.color = '#2D9E94';
-            }, 5000);
+            }, 8000);
           }
           needsAlarm = true;
         } else {
           inlineRemaining[key] = newRemaining;
           var btn = document.getElementById(key);
-          if (btn) btn.textContent = '⏸ ' + newRemaining + 's';
+          if (btn) btn.textContent = '⏱ ' + newRemaining + 's — tap to stop';
         }
       });
 
