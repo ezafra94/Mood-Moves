@@ -654,6 +654,19 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 /* Progress emoji — wiggle */
 @keyframes em-progress-fire{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.2) rotate(10deg)}}
 .em-prog-fire{display:inline-block;animation:em-progress-fire 1.5s ease-in-out infinite;}
+
+/* ── ACTIVE REST BUTTON GLOW ─────────────────────────── */
+@keyframes restGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(75,191,181,0.5),0 0 0 0 rgba(75,191,181,0.3);}
+  50%{box-shadow:0 0 0 6px rgba(75,191,181,0.2),0 0 0 12px rgba(75,191,181,0.08);}
+}
+.rest-btn-active{
+  animation:restGlow 1.2s ease-in-out infinite!important;
+  background:#4BBFB5!important;
+  color:white!important;
+  border-color:#4BBFB5!important;
+  font-size:12px!important;
+}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -1225,14 +1238,14 @@ else{setAllLogos();setAllAvatars();}
 <!-- PROFILE -->
 <div class="screen" id="profile-tab">
   <div class="pr-hero">
-    <div class="pr-av">🙂</div>
+    <div class="pr-av" id="pr-av" onclick="openAvatarModal()" style="cursor:pointer;overflow:hidden;"></div>
     <div class="pr-nm" id="pr-nm">Your Name</div>
     <div class="pr-tb" id="pr-tb">⭐ Rookie Mover</div>
   </div>
   <div class="pr-body">
-    <div class="pr-row"><div class="pr-l"><div class="pr-ic">🎯</div><div><div class="pr-tt">Goal</div><div class="pr-ds" id="pr-goal">—</div></div></div><div class="pr-ar">›</div></div>
-    <div class="pr-row"><div class="pr-l"><div class="pr-ic">📊</div><div><div class="pr-tt">Fitness Level</div><div class="pr-ds" id="pr-lvl">—</div></div></div><div class="pr-ar">›</div></div>
-    <div class="pr-row"><div class="pr-l"><div class="pr-ic">🗓️</div><div><div class="pr-tt">Training Days</div><div class="pr-ds" id="pr-days">—</div></div></div><div class="pr-ar">›</div></div>
+    <div class="pr-row" onclick="editProfileField('goal')" style="cursor:pointer;"><div class="pr-l"><div class="pr-ic">🎯</div><div><div class="pr-tt">Goal</div><div class="pr-ds" id="pr-goal">—</div></div></div><div class="pr-ar" style="color:#4BBFB5;">›</div></div>
+    <div class="pr-row" onclick="editProfileField('level')" style="cursor:pointer;"><div class="pr-l"><div class="pr-ic">📊</div><div><div class="pr-tt">Fitness Level</div><div class="pr-ds" id="pr-lvl">—</div></div></div><div class="pr-ar" style="color:#4BBFB5;">›</div></div>
+    <div class="pr-row" onclick="editProfileField('days')" style="cursor:pointer;"><div class="pr-l"><div class="pr-ic">🗓️</div><div><div class="pr-tt">Training Days</div><div class="pr-ds" id="pr-days">—</div></div></div><div class="pr-ar" style="color:#4BBFB5;">›</div></div>
     <div class="pm-card"><div class="pm-b">✨ Coming Soon</div><div class="pm-t">Mood Moves Premium</div><div class="pm-s">Advanced features launching soon. Founding members get exclusive early access.</div><button class="pm-btn">Join the Waitlist 🚀</button></div>
     <div class="pr-row" onclick="signOut()" style="border-color:#F4C5C0;"><div class="pr-l"><div class="pr-ic">🚪</div><div><div class="pr-tt" style="color:#C08080;">Sign Out</div><div class="pr-ds">Come back anytime</div></div></div><div class="pr-ar">›</div></div>
     <div class="pr-row" onclick="resetApp()"><div class="pr-l"><div class="pr-ic">🔄</div><div><div class="pr-tt">Reset App</div><div class="pr-ds">Clear all data & start fresh</div></div></div><div class="pr-ar">›</div></div>
@@ -2076,6 +2089,17 @@ function setupHome(){window.scrollTo(0,0);
   document.getElementById('pr-goal').textContent=GL[S.user.goal]||'—';
   document.getElementById('pr-lvl').textContent=LL[S.user.level]||'—';
   document.getElementById('pr-days').textContent=S.user.days?S.user.days+' days/week':'—';
+  // Animated avatar on profile — same as home
+  var prAv = document.getElementById('pr-av');
+  if(prAv && typeof getAvSVG === 'function'){
+    var saved = S.user && S.user.avatar;
+    var anim = (saved && saved.anim) || (function(){
+      var e = (saved && saved.e) || '🌊';
+      var found = AV.find(function(a){ return a.e === e; });
+      return found ? found.anim : 'av-wave';
+    })();
+    prAv.innerHTML = getAvSVG(anim, 60);
+  }
   var skEl=document.getElementById('sk-n');
   if(skEl){
     var prev=parseInt(skEl.textContent)||0;
@@ -2368,19 +2392,41 @@ function mmPlaySound(type) {
   if (MM_MUTED) return;
   mmGetCtx().then(function(c) {
     var t = c.currentTime;
+
     if (type === 'set') {
-      mmTone(c, t, 880, 1100, 0.3, 0.2);
+      // Cute ascending ding — like a little xylophone hit
+      mmTone(c, t,      523, 659, 0.18, 0.15); // C→E
+      mmTone(c, t+0.1,  659, 784, 0.18, 0.12); // E→G
+
     } else if (type === 'done') {
-      mmTone(c, t, 440, 550, 0.4, 0.2);
-      mmTone(c, t + 0.15, 550, 660, 0.4, 0.2);
+      // Soft two-tone chime — gentle "yay"
+      mmTone(c, t,      784, 784, 0.3, 0.18);  // G
+      mmTone(c, t+0.2,  1047, 1047, 0.4, 0.16); // C high
+
     } else if (type === 'complete') {
-      [523, 659, 784, 1047].forEach(function(f, i) { mmTone(c, t + i*0.15, f, f*1.05, 0.5, 0.22); });
+      // Happy little fanfare — C major arpeggio
+      [523, 659, 784, 1047, 1319].forEach(function(f, i) {
+        mmTone(c, t + i*0.12, f, f, 0.35, 0.18);
+      });
+
     } else if (type === 'mood') {
-      mmTone(c, t, 440, 660, 0.2, 0.15);
+      // Soft sparkle — two quick high notes
+      mmTone(c, t,     1047, 1319, 0.15, 0.12);
+      mmTone(c, t+0.1, 1319, 1047, 0.15, 0.1);
+
     } else if (type === 'timer') {
-      mmBeep(c, t,      880, 0.18, 0.28);
-      mmBeep(c, t+0.22, 880, 0.18, 0.28);
-      mmBeep(c, t+0.44, 880, 0.18, 0.28);
+      // Cute triple bell — like a kitchen timer 🔔
+      [0, 0.25, 0.5].forEach(function(delay) {
+        var o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.type = 'sine';
+        o.frequency.setValueAtTime(1047, t + delay);       // high C
+        o.frequency.exponentialRampToValueAtTime(880, t + delay + 0.15); // fade to A
+        g.gain.setValueAtTime(0, t + delay);
+        g.gain.linearRampToValueAtTime(0.28, t + delay + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.35);
+        o.start(t + delay); o.stop(t + delay + 0.36);
+      });
     }
   }).catch(function(){});
 }
@@ -3047,6 +3093,63 @@ function closeVisual(){
 }
 
 // SIGN OUT
+
+// ── EDIT PROFILE FIELD ───────────────────────────────────
+function editProfileField(field) {
+  if (field === 'goal') {
+    var opts = [
+      {v:'feelgood', l:'Feel Good', d:'Move for energy and mood'},
+      {v:'muscle',   l:'Build Muscle', d:'Get stronger and more defined'},
+      {v:'lose',     l:'Lose Weight', d:'Burn fat, feel lighter'},
+      {v:'athletic', l:'Athletic Performance', d:'Train like an athlete'}
+    ];
+    showPickerModal('🎯 Change Your Goal', opts, S.user.goal, function(val){
+      S.user.goal = val; save(); setupProfile(); setupHome();
+      showT('Goal updated! 🎯');
+    });
+  } else if (field === 'level') {
+    var opts = [
+      {v:'new',     l:'Beginner', d:'New to working out'},
+      {v:'some',    l:'Intermediate', d:'Been training a while'},
+      {v:'regular', l:'Advanced', d:'I train consistently'}
+    ];
+    showPickerModal('📊 Change Fitness Level', opts, S.user.level, function(val){
+      S.user.level = val; save(); setupProfile(); setupHome();
+      showT('Fitness level updated! 💪');
+    });
+  } else if (field === 'days') {
+    var opts = [
+      {v:3, l:'3 days/week', d:'Full Body every session'},
+      {v:4, l:'4 days/week', d:'Upper / Lower split'},
+      {v:5, l:'5 days/week', d:'Push / Pull / Legs rotation'}
+    ];
+    showPickerModal('🗓️ Change Training Days', opts, S.user.days, function(val){
+      S.user.days = val; save(); setupProfile(); setupHome();
+      showT('Training days updated!');
+    });
+  }
+}
+
+function showPickerModal(title, opts, current, onSelect) {
+  // Remove existing picker
+  var old = document.getElementById('picker-modal');
+  if(old) old.remove();
+
+  var html = '<div id="picker-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)this.remove();">';
+  html += '<div style="background:white;border-radius:24px 24px 0 0;padding:20px 16px 36px;width:100%;max-width:430px;">';
+  html += '<div style="width:36px;height:4px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>';
+  html += '<div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:16px;text-align:center;">'+title+'</div>';
+  opts.forEach(function(o){
+    var isSelected = String(o.v) === String(current);
+    html += '<div onclick="document.getElementById('picker-modal').remove();('+onSelect.toString()+')(''+o.v+'')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:2px solid '+(isSelected?'#4BBFB5':'#EDE8E3')+';border-radius:14px;margin-bottom:8px;cursor:pointer;background:'+(isSelected?'#E8F7F5':'white')+';">';
+    html += '<div><div style="font-weight:800;font-size:13px;color:#2C2C3A;">'+o.l+'</div><div style="font-size:11px;color:#7A7A8C;">'+o.d+'</div></div>';
+    html += (isSelected ? '<div style="color:#4BBFB5;font-size:18px;">✓</div>' : '');
+    html += '</div>';
+  });
+  html += '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
 function signOut(){
   if(confirm('Sign out? Your data will be saved for when you come back.')){
     try{
@@ -4427,18 +4530,20 @@ function startInlineTimer(btn){
         clearInterval(inlineTimers[key]);
         inlineTimers[key] = null;
         inlinePaused[key] = false;
-        btn.textContent = '💪 GO!';
-        btn.style.background = '#4BBFB5';
-        btn.style.borderColor = '#4BBFB5';
-        btn.style.color = 'white';
+        btn.textContent = '💪 GO! — tap me!';
+        btn.classList.add('rest-btn-active');
+        btn.style.background = '';
+        btn.style.borderColor = '';
+        btn.style.color = '';
         MM_AUDIO.play('timer'); // 🔔 alarm!
         setTimeout(function(){
+          btn.classList.remove('rest-btn-active');
           btn.textContent = '⏱️ Rest';
           btn.style.background = '#E8F7F5';
           btn.style.borderColor = '#4BBFB5';
           btn.style.color = '#2D9E94';
           inlineRemaining[key] = null;
-        }, 5000);
+        }, 8000);
       }
     }, 1000);
     return;
@@ -4454,10 +4559,11 @@ function startInlineTimer(btn){
 
   inlineRemaining[key] = secs;
   inlinePaused[key] = false;
+  btn.classList.remove('rest-btn-active');
   btn.style.background = '#FEF3E8';
   btn.style.borderColor = '#F5A042';
   btn.style.color = '#E8832A';
-  btn.textContent = '⏸ ' + secs + 's';
+  btn.textContent = '⏱ ' + secs + 's — tap to stop';
 
   // Schedule system notification in case user leaves app
   var exName = btn.closest ? (btn.closest('[data-exname]')||{}).dataset&&(btn.closest('[data-exname]')||{}).dataset.exname : '';
