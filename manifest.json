@@ -1,12 +1,13 @@
 {
   "name": "Mood Moves",
-  "short_name": "Mood Moves",
-  "description": "Your mood-based fitness app. Our Mood Moves Us.",
+  "short_name": "MoodMoves",
+  "description": "Workouts that match how you feel",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF8F5",
+  "background_color": "#F5F0EB",
   "theme_color": "#4BBFB5",
   "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -21,11 +22,15 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": [
-    "health",
-    "fitness",
-    "lifestyle"
-  ],
+  "categories": ["health", "fitness", "lifestyle"],
   "screenshots": [],
-  "lang": "en-US"
+  "shortcuts": [
+    {
+      "name": "Start Workout",
+      "short_name": "Workout",
+      "description": "Jump straight into today's workout",
+      "url": "/?action=workout",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }
