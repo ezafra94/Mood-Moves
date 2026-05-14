@@ -803,7 +803,7 @@ else{setAllLogos();setAllAvatars();}
     <div class="f-sub">Welcome to the Mood Moves founding family. Full access — forever. Free.</div>
     <div class="spots" id="spots-counter">🔥 loading...</div>
     <div class="f-deal">
-      <p>We just ask <strong>one thing</strong> in return.<br><br>Share Mood Moves with someone who needs it. A friend, a sister, someone struggling to stay consistent.<br><br><em>"That's the deal. We keep ours if you keep yours. 🤝"</em></p>
+      <p>We just ask <strong>one thing</strong> in return.<br><br>Share Mood Moves with someone who needs it. A friend, a teammate, someone struggling to stay consistent.<br><br><em>"That's the deal. We keep ours if you keep yours. 🤝"</em></p>
     </div>
     <button class="b-share" onclick="shareApp()">I'm in — Share Now 🚀</button>
     <button class="b-later" onclick="goToOb()">I'll share later (we'll remind you 👀)</button>
@@ -855,7 +855,7 @@ else{setAllLogos();setAllAvatars();}
         </div>
         <div class="intro-slide" data-color="orange" id="is-1">
           <div class="intro-icon-anim">🔥</div>
-          <div class="intro-txt"><div class="intro-tt">Streak & Badges</div><div class="intro-ds">Show up daily, earn badges, unlock titles. Consistency Queen is waiting for you.</div></div>
+          <div class="intro-txt"><div class="intro-tt">Streak & Badges</div><div class="intro-ds">Show up daily, earn badges, unlock titles. Consistency Champ is waiting for you.</div></div>
         </div>
         <div class="intro-slide" data-color="blush" id="is-2">
           <div class="intro-icon-anim">📅</div>
@@ -1048,7 +1048,7 @@ else{setAllLogos();setAllAvatars();}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-      <button id="sound-toggle" onclick="MM_AUDIO.toggleMute()" type="button" style="width:34px;height:34px;border-radius:50%;border:1.5px solid #EDE8E3;background:white;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Sound">🔊</button>
+      <button id="sound-toggle" onclick="MM_AUDIO.toggleMute()" type="button" style="width:34px;height:34px;border-radius:50%;border:1.5px solid #4BBFB5;background:#E8F7F5;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(75,191,181,0.2);" title="Tap to test sound">🔊</button>
       <div style="display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;" onclick="openAvatarModal()" class="anim-pop">
         <button id="av-icon-btn" type="button" style="width:46px;height:46px;border-radius:50%;border:2px solid #4BBFB5;background:#E8F7F5;font-size:0;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;"></button>
         <span style="font-size:8px;font-weight:800;color:#4BBFB5;letter-spacing:0.3px;">YOUR AVATAR</span>
@@ -1555,7 +1555,7 @@ const GL={muscle:'Build Muscle 💪',feelgood:'Feel Good ✨',losefat:'Lose Fat 
 const GI={muscle:'💪',feelgood:'✨',losefat:'🔥'};
 const LL={new:'New to fitness 🌱',some:'Some experience ⚡',regular:'I train regularly 🏆'};
 const ME={low:'😞',neutral:'😐',happy:'😊',angry:'😤',stressed:'😵‍💫'};
-const TITLES=[{m:0,t:'Rookie Mover',i:'⭐'},{m:3,t:'Getting Warmed Up',i:'🔥'},{m:7,t:'Streak Starter',i:'💫'},{m:14,t:'Mood Warrior',i:'⚔️'},{m:21,t:'Consistency Queen',i:'👑'},{m:30,t:'Mood Moves Legend',i:'🏆'}];
+const TITLES=[{m:0,t:'Rookie Mover',i:'⭐'},{m:3,t:'Getting Warmed Up',i:'🔥'},{m:7,t:'Streak Starter',i:'💫'},{m:14,t:'Mood Warrior',i:'⚔️'},{m:21,t:'Consistency Champ',i:'👑'},{m:30,t:'Mood Moves Legend',i:'🏆'}];
 const BADGES=[
   {id:'first',ic:'🌟',lb:'First Workout',hw:'Complete your first workout'},
   {id:'three',ic:'🔥',lb:'3 Day Streak',hw:'Keep a 3-day streak'},
@@ -1595,10 +1595,10 @@ const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration 
   {e:'💉',t:'Your body releases endorphins during exercise. The runner high is real — and free.'},
   {e:'🧂',t:'Electrolytes matter. Add a pinch of salt to your water during long or intense workouts.'},
   {e:'🎯',t:'Setting a specific goal increases the chance of achieving it by 42%. Write yours down.'},
-  {e:'🌙',t:'Training in the evening can improve performance due to higher body temperature and testosterone.'},
+  {e:'🌙',t:'Training in the evening can improve performance due to higher body temperature and natural hormone levels.'},
   // ── Body composition facts ──────────────────────────────────────────
   {e:'⚖️',t:'A safe fat loss rate is 0.5 to 1 lb per week. More than that and you risk losing muscle too.'},
-  {e:'💪',t:'Most women can gain 0.25 to 0.5 lbs of muscle per month with consistent training. Slow and real.'},
+  {e:'💪',t:'Most people can gain 0.25 to 0.5 lbs of muscle per month with consistent training. Slow and real.'},
   {e:'🔥',t:'A 500 calorie daily deficit leads to about 1 lb of fat loss per week. Sustainable and steady.'},
   {e:'🥩',t:'Eating 0.7 to 1 gram of protein per pound of bodyweight preserves muscle while you lose fat.'},
   {e:'📉',t:'Crash diets cause up to 25% of weight lost to come from muscle. Slower loss protects your gains.'},
@@ -1636,7 +1636,7 @@ const MC={
     rs:{muscle:75,feelgood:60,losefat:40},re:{muscle:90,feelgood:75,losefat:60}},
   happy:{lb:'😊 Happy',co:'#D4847C',bg:'#FDF0EE',sets:'3',reps:'12-15',int:'High',
     ph:["Let us enjoy the movement","Good vibes = great workout","Today feels good. Let us use it.","Happy energy is a gift. Spend it well.","This is what peak performance feels like. Stay here.","Good mood activated. Let us make it count.","When you feel this good, the weights feel lighter.","Ride this wave all the way to the end.","Energy is high. Standards are higher.","Happy legs move faster. Happy minds lift heavier.","Today is one of those days. Do not waste it.","You woke up feeling good. The gym gets all of it.","This feeling right here is why we train.","High energy day. High effort day.","You are unstoppable on days like this.","Let your mood power your movement.","Smile and lift. It hits different.","Channel this joy into every rep.","Good energy is rare. Do not waste a drop.","This is your best self showing up.","Happy training is the best training.","Enjoy every single rep today.","The best workout of your life might be today.","Good vibes in. Great session out.","Today you are exactly where you need to be."],
-    pt:['Happy energy, happy workout!','You were absolutely glowing.','That is what peak performance looks like.','Best version of you just trained.','You rode that wave perfectly.'],pm:['Bottle that feeling. That is why we move. 😊','THIS is the version of you that shows up.','Remember this feeling for the harder days.','High energy in. Even higher confidence out.','You just set the bar for your next session.'],
+    pt:['Happy energy, happy workout!','You were absolutely on fire.','That is what peak performance looks like.','Best version of you just trained.','You rode that wave perfectly.'],pm:['Bottle that feeling. That is why we move. 😊','THIS is the version of you that shows up.','Remember this feeling for the harder days.','High energy in. Even higher confidence out.','You just set the bar for your next session.'],
     hyd:'Match your energy with good hydration. Drink up! 😊',slp:'Great workout + good sleep = results tomorrow.',ref:'Stay in this feeling a little longer. You earned it.',
     sh:'"Happy days + great workouts with Mood Moves. This app gets me. 😊"',
     rs:{muscle:60,feelgood:50,losefat:30},re:{muscle:75,feelgood:60,losefat:45}},
@@ -2029,7 +2029,6 @@ function handleLogin(){
   var email = (document.getElementById('login-email').value||'').trim();
   var pw    = (document.getElementById('login-pw').value||'').trim();
 
-  // Must fill both fields
   if(!email || !pw){
     showAuthError('Please enter your email and password.');
     return;
@@ -2043,47 +2042,42 @@ function handleLogin(){
     return;
   }
 
+  // Check saved account — NO fallthrough allowed
+  var d = localStorage.getItem('mm_v3');
+  if(!d){
+    showAuthError('No account found. Please sign up first!');
+    switchAuth('signup');
+    return;
+  }
+
+  var saved;
+  try { saved = JSON.parse(d); } catch(e) {
+    showAuthError('Something went wrong. Please sign up again.');
+    return;
+  }
+
+  // Must have a saved email to log in
+  if(!saved.user || !saved.user.email){
+    showAuthError('No account found. Please sign up first!');
+    switchAuth('signup');
+    return;
+  }
+
+  if(saved.user.email.toLowerCase() !== email.toLowerCase()){
+    showAuthError('No account found with that email. Please sign up first.');
+    return;
+  }
+
+  // Valid login
+  Object.assign(S, saved);
   updateFounderCounter();
-
-  // Check if this email matches a saved account
-  try{
-    const d=localStorage.getItem('mm_v3');
-    if(d){
-      const saved=JSON.parse(d);
-      // If saved email matches → log in
-      if(saved.user && saved.user.email && saved.user.email.toLowerCase()===email.toLowerCase()){
-        Object.assign(S,saved);
-        if(S.onboarded){
-          setupHome();buildEl();goTo('home');
-          document.getElementById('bnav').classList.remove('hidden');
-          return;
-        }
-        goTo('founding');
-        setTimeout(function(){ updateFounderCounter(); },300);
-        return;
-      } else if(saved.user && saved.user.email && saved.user.email !== '') {
-        // Different email — don't let in
-        showAuthError('No account found with that email. Please sign up first.');
-        return;
-      }
-      // No email saved yet (old account) — let through
-      if(saved.onboarded){
-        Object.assign(S,saved);
-        setupHome();buildEl();goTo('home');
-        document.getElementById('bnav').classList.remove('hidden');
-        return;
-      }
-    } else {
-      // No saved data at all — must sign up
-      showAuthError('No account found. Please sign up first!');
-      switchAuth('signup');
-      return;
-    }
-  }catch(e){}
-
-  S.earnedBadges.includes('founder')||S.earnedBadges.push('founder');
-  goTo('founding');
-  setTimeout(function(){ updateFounderCounter(); },300);
+  if(S.onboarded){
+    setupHome(); buildEl(); goTo('home');
+    document.getElementById('bnav').classList.remove('hidden');
+  } else {
+    goTo('founding');
+    setTimeout(function(){ updateFounderCounter(); }, 300);
+  }
 }
 function handleSignup(){
   var n = document.getElementById('signup-name').value.trim();
@@ -2154,8 +2148,8 @@ function finishOb(){
   save();
   setTimeout(function(){ confetti(1.5); }, 400);
   setTimeout(function(){ confetti(0.8); }, 900);
-  var nm = S.user.name || 'Queen';
-  setTimeout(function(){ showT('Welcome to Mood Moves, '+nm+'! You are about to become unstoppable.'); }, 600);
+  var nm = S.user.name || 'Champion';
+  setTimeout(function(){ showT('Welcome to Mood Moves, '+nm+'! Your journey starts now. 💪'); }, 600);
 }
 
 // HOME
@@ -2433,7 +2427,9 @@ function getExImg(n){
 // AUDIO — clean simple system
 // ═══════════════════════════════════════════════════════
 var MM_CTX = null;
-var MM_MUTED = (localStorage.getItem('mm_muted') === '1');
+// Default: sound ON. Only mute if user explicitly chose it.
+var _savedMute = localStorage.getItem('mm_muted');
+var MM_MUTED = (_savedMute === '1'); // only true if explicitly set
 var MM_TIMER_ALARM = null;
 
 function mmGetCtx() {
@@ -2541,21 +2537,24 @@ var MM_AUDIO = {
     localStorage.setItem('mm_muted', MM_MUTED ? '1' : '0');
     var btn = document.getElementById('sound-toggle');
     if (btn) {
-      btn.textContent    = MM_MUTED ? '🔇' : '🔊';
-      btn.style.background   = MM_MUTED ? '#FFF0F0' : 'white';
-      btn.style.borderColor  = MM_MUTED ? '#F4C5C0' : '#EDE8E3';
+      btn.textContent      = MM_MUTED ? '🔇' : '🔊';
+      btn.style.background = MM_MUTED ? '#FFF0F0' : '#E8F7F5';
+      btn.style.borderColor= MM_MUTED ? '#F4C5C0' : '#4BBFB5';
     }
-    if (!MM_MUTED) setTimeout(function() { mmPlaySound('set'); }, 50);
+    if (!MM_MUTED) {
+      // Small delay so the tap event fully resolves first (iOS requirement)
+      setTimeout(function() { mmPlaySound('complete'); }, 150);
+    }
   }
 };
 
 // Sync button on load
 window.addEventListener('DOMContentLoaded', function() {
   var btn = document.getElementById('sound-toggle');
-  if (btn && MM_MUTED) {
-    btn.textContent = '🔇';
-    btn.style.background = '#FFF0F0';
-    btn.style.borderColor = '#F4C5C0';
+  if (btn) {
+    btn.textContent      = MM_MUTED ? '🔇' : '🔊';
+    btn.style.background = MM_MUTED ? '#FFF0F0' : '#E8F7F5';
+    btn.style.borderColor= MM_MUTED ? '#F4C5C0' : '#4BBFB5';
   }
 });
 function genWk(mood){window.scrollTo(0,0);
@@ -3057,7 +3056,7 @@ function startIntroAuto() {
 var avatarPhrases = {
   low: ["You showed up. That's already the win. 💙", "Low energy? We go gentle. Still counts.", "Just breathe and move. That's it. 🌿", "I'm proud of you for being here today."],
   neutral: ["Steady and ready. Let's get it done! ⚡", "Nice and consistent. This is how it's built.", "You're in the zone. I love to see it. 😊", "Balanced energy = solid workout. Let's go!"],
-  happy: ["YES! This energy is everything! 🔥", "You're glowing and I'm here for it!", "Channel that happiness into every rep!", "Happy you = best workout ever. Let's GO! ✨"],
+  happy: ["YES! This energy is everything! 🔥", "You're bringing that energy and I'm here for it!", "Channel that happiness into every rep!", "Happy you = best workout ever. Let's GO! ✨"],
   angry: ["Okay okay... let's PUT IT IN THE WEIGHTS. 😤", "That energy? That's your superpower today.", "Let the bar feel it. Every. Single. Rep.", "I see that fire. Don't waste it — USE it! 🔥"],
   stressed: ["Hey. Breathe. You've got this. 💜", "One rep at a time. That's all we need.", "Movement is medicine. We're resetting you.", "You came here instead of spiraling. That's strength. 💪"],
 };
@@ -3255,6 +3254,16 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
+  // Audio debug — shows in browser console
+  console.log('[MM Audio] muted:', MM_MUTED, '| localStorage mm_muted:', localStorage.getItem('mm_muted'));
+  // Auto-clear stuck mute state that may have been set by a bug
+  // If mm_muted is anything other than exactly '1', clear it
+  var mv = localStorage.getItem('mm_muted');
+  if(mv !== null && mv !== '1' && mv !== '0'){
+    localStorage.removeItem('mm_muted');
+    MM_MUTED = false;
+    console.log('[MM Audio] Cleared corrupt mute state:', mv);
+  }
   // Make journal screen scrollable
   var js = document.getElementById('journal-screen');
   if(js) js.style.overflowY = 'auto';
@@ -3369,7 +3378,7 @@ function getAvSVG(animClass, size) {
 var AV=[
   {e:'🌊',n:'The Flow',p:'I move at my own pace and that is more than enough.',anim:'av-wave'},
   {e:'💎',n:'The Diamond',p:'I am being built under pressure. Watch me shine.',anim:'av-diamond'},
-  {e:'👑',n:'Badass Queen',p:'I do not chase. I attract. And I never skip leg day.',anim:'av-crown'},
+  {e:'👑',n:'The Champion',p:'I do not chase. I attract. And I never skip leg day.',anim:'av-crown'},
   {e:'🔥',n:'The Spark',p:'Once I start, nothing can stop me.',anim:'av-fire'},
   {e:'🌱',n:'The Grower',p:'Every rep is a promise to my future self.',anim:'av-plant'},
   {e:'🌙',n:'The Night Owl',p:'I show up even when no one is watching. Especially then.',anim:'av-moon'}
