@@ -1913,7 +1913,11 @@ function setNav(k){
   const m={home:'nav-home',exercises:'nav-exercises',profile:'nav-profile'};
   if(m[k])document.getElementById(m[k]).classList.add('on');
 }
-function goToMP(){window.scrollTo(0,0);
+function goToMP(){
+  // Request notification permission proactively so timer alerts work
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }window.scrollTo(0,0);
   Object.keys(MC).forEach(m=>{
     const el=document.getElementById('mp-'+m);
     var dn=Math.floor(new Date().getTime()/(1000*60*60*24));if(el)el.textContent=MC[m].ph[dn%MC[m].ph.length];
@@ -3734,6 +3738,7 @@ function runFixedTimer(){
   }catch(e){ secs = 60; }
 
   if(ftInterval) clearInterval(ftInterval);
+  scheduleTimerNotif(secs, 'rest');
   
   var secsEl = document.getElementById('ft-secs');
   var msgEl = document.getElementById('ft-msg');
@@ -3761,6 +3766,7 @@ function runFixedTimer(){
 function closeFixedTimer(){
   if(ftInterval) clearInterval(ftInterval);
   MM_AUDIO.play('timer_stop');
+  cancelTimerNotif();
   var timer = document.getElementById('fixed-timer');
   if(timer) timer.style.display = 'none';
 }
@@ -4394,6 +4400,7 @@ var inlineRemaining = {};
 function startInlineTimer(btn){
   var key = btn.id || 'timer';
   MM_AUDIO.play('timer_stop'); // stop any repeating alarm on any tap
+  cancelTimerNotif(); // cancel pending notification on any tap
 
   // If running → PAUSE
   if(inlineTimers[key]){
@@ -4451,6 +4458,10 @@ function startInlineTimer(btn){
   btn.style.borderColor = '#F5A042';
   btn.style.color = '#E8832A';
   btn.textContent = '⏸ ' + secs + 's';
+
+  // Schedule system notification in case user leaves app
+  var exName = btn.closest ? (btn.closest('[data-exname]')||{}).dataset&&(btn.closest('[data-exname]')||{}).dataset.exname : '';
+  scheduleTimerNotif(secs, exName || 'your exercise');
 
   inlineTimers[key] = setInterval(function(){
     inlineRemaining[key]--;
@@ -4854,6 +4865,65 @@ async function scheduleNotifications(workoutHour, workoutMin){
     localStorage.setItem('mm_notif_enabled', '1');
     showT('🔔 Notifications enabled!');
   }catch(e){ console.log('SW not ready:', e); }
+}
+
+// ── REST TIMER NOTIFICATION ─────────────────────────────
+// Schedules a system notification for when rest timer ends.
+// Works even when user switches to Instagram/other apps.
+var _timerNotifTimeout = null;
+
+function scheduleTimerNotif(seconds, exerciseName) {
+  cancelTimerNotif();
+  if (!('Notification' in window)) return;
+
+  // Request permission if not yet granted
+  if (Notification.permission === 'default') {
+    Notification.requestPermission();
+    return;
+  }
+  if (Notification.permission !== 'granted') return;
+
+  var label = exerciseName || 'your exercise';
+
+  // PRIMARY: use Service Worker — works even when iOS/Android kills the tab
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'SCHEDULE_TIMER_NOTIF',
+      seconds: seconds,
+      label: label
+    });
+    // Also set a JS fallback timeout for when app stays in foreground
+    _timerNotifTimeout = setTimeout(function() { _timerNotifTimeout = null; }, seconds * 1000);
+    return;
+  }
+
+  // FALLBACK: plain setTimeout notification (works when tab stays active)
+  _timerNotifTimeout = setTimeout(function() {
+    if (document.hidden) {
+      try {
+        new Notification('💪 Rest done! Time to go!', {
+          body: 'Next set of ' + label + ' is ready. Get after it!',
+          icon: '/icon-192.png',
+          badge: '/icon-192.png',
+          tag: 'mm-rest-timer',
+          renotify: true,
+          silent: false
+        });
+      } catch(e) {}
+    }
+    _timerNotifTimeout = null;
+  }, seconds * 1000);
+}
+
+function cancelTimerNotif() {
+  if (_timerNotifTimeout) {
+    clearTimeout(_timerNotifTimeout);
+    _timerNotifTimeout = null;
+  }
+  // Also tell SW to cancel
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'CANCEL_TIMER_NOTIF' });
+  }
 }
 
 // Send immediate notification (for testing)
