@@ -3218,23 +3218,55 @@ function editProfileField(field) {
 }
 
 function showPickerModal(title, opts, current, onSelect) {
-  // Remove existing picker
   var old = document.getElementById('picker-modal');
   if(old) old.remove();
 
-  var html = '<div id="picker-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;" onclick="if(event.target===this)this.remove();">';
-  html += '<div style="background:white;border-radius:24px 24px 0 0;padding:20px 16px 36px;width:100%;max-width:430px;">';
-  html += '<div style="width:36px;height:4px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>';
-  html += '<div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:16px;text-align:center;">'+title+'</div>';
+  var modal = document.createElement('div');
+  modal.id = 'picker-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
+  modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+
+  var sheet = document.createElement('div');
+  sheet.style.cssText = 'background:white;border-radius:24px 24px 0 0;padding:20px 16px 36px;width:100%;max-width:430px;';
+
+  var handle = document.createElement('div');
+  handle.style.cssText = 'width:36px;height:4px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;';
+  sheet.appendChild(handle);
+
+  var ttl = document.createElement('div');
+  ttl.style.cssText = 'font-family:"Cormorant Garamond",serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:16px;text-align:center;';
+  ttl.textContent = title;
+  sheet.appendChild(ttl);
+
   opts.forEach(function(o){
     var isSelected = String(o.v) === String(current);
-    html += '<div onclick="document.getElementById('picker-modal').remove();('+onSelect.toString()+')(''+o.v+'')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:2px solid '+(isSelected?'#4BBFB5':'#EDE8E3')+';border-radius:14px;margin-bottom:8px;cursor:pointer;background:'+(isSelected?'#E8F7F5':'white')+';">';
-    html += '<div><div style="font-weight:800;font-size:13px;color:#2C2C3A;">'+o.l+'</div><div style="font-size:11px;color:#7A7A8C;">'+o.d+'</div></div>';
-    html += (isSelected ? '<div style="color:#4BBFB5;font-size:18px;">✓</div>' : '');
-    html += '</div>';
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border:2px solid '+(isSelected?'#4BBFB5':'#EDE8E3')+';border-radius:14px;margin-bottom:8px;cursor:pointer;background:'+(isSelected?'#E8F7F5':'white')+';';
+    row.addEventListener('click', function(){
+      modal.remove();
+      onSelect(o.v);
+    });
+    var left = document.createElement('div');
+    var label = document.createElement('div');
+    label.style.cssText = 'font-weight:800;font-size:13px;color:#2C2C3A;';
+    label.textContent = o.l;
+    var desc = document.createElement('div');
+    desc.style.cssText = 'font-size:11px;color:#7A7A8C;';
+    desc.textContent = o.d;
+    left.appendChild(label);
+    left.appendChild(desc);
+    row.appendChild(left);
+    if(isSelected){
+      var tick = document.createElement('div');
+      tick.style.cssText = 'color:#4BBFB5;font-size:18px;font-weight:800;';
+      tick.textContent = '✓';
+      row.appendChild(tick);
+    }
+    sheet.appendChild(row);
   });
-  html += '</div></div>';
-  document.body.insertAdjacentHTML('beforeend', html);
+
+  modal.appendChild(sheet);
+  document.body.appendChild(modal);
 }
 
 function signOut(){
