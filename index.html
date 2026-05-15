@@ -18,7 +18,25 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Mood Moves</title>
+<title>Mood Moves — Workouts That Match How You Feel</title>
+<meta name="description" content="Mood Moves is a free workout app that adapts to your energy. Pick your mood, get a personalized workout, track your progress and build a fitness lifestyle that actually sticks.">
+<meta name="keywords" content="workout app, mood fitness, personalized workouts, free fitness app, strength training, home workout">
+<meta name="author" content="Mood Moves">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph — controls how it looks when shared on WhatsApp, Instagram, etc -->
+<meta property="og:title" content="Mood Moves — Workouts That Match How You Feel">
+<meta property="og:description" content="Pick your mood. Get your workout. Free personalized fitness app that adapts to how you actually feel every day.">
+<meta property="og:image" content="https://moodmoves.app/icon-512.png">
+<meta property="og:url" content="https://moodmoves.app">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mood Moves">
+
+<!-- Twitter/X card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mood Moves — Workouts That Match How You Feel">
+<meta name="twitter:description" content="Pick your mood. Get your workout. Free personalized fitness app.">
+<meta name="twitter:image" content="https://moodmoves.app/icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1111,10 +1129,10 @@ else{setAllLogos();setAllAvatars();}
     </div>
         <div class="card anim-card" style="animation-delay:0.5s"><div class="ct"><span class="em-cal">📅</span> This Month</div><div class="cal" id="cal"></div></div>
     
-    <div class="card anim-card" style="animation-delay:0.6s"><div class="ct"><span class="em-badge">🏅</span> Badges &amp; Rewards</div><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 8px;display:block;"></div><div class="bg-grid" id="bg-grid"></div></div>
+    <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges &amp; Rewards</div><div class="bg-grid" id="bg-grid"></div></div>
     <div class="card" style="cursor:pointer;" onclick="openJournal()">
-      <div class="ct"><span class="em-book">📖</span> My Journal</div>
-      <div id="lottie-journal" style="width:90px;height:90px;margin:0 auto 8px;display:block;"></div>
+      <div id="lottie-journal" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div>
+      <div class="ct" style="text-align:center;margin-bottom:6px;">My Journal</div>
       <div style="font-size:13px;color:#7A7A8C;line-height:1.6;margin-bottom:10px;">A note to yourself. A memory.<br>A feeling. Whatever today needs.</div>
       <div id="j-preview" style="display:none;background:#FAF8F5;border-radius:10px;padding:10px;margin-bottom:10px;border:1px solid #EDE8E3;">
         <div style="font-size:10px;font-weight:800;color:#2D9E94;" id="j-preview-date"></div>
@@ -1123,8 +1141,8 @@ else{setAllLogos();setAllAvatars();}
       <button type="button" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">✏️ Write Today's Entry</button>
     </div>
     <div class="card" style="cursor:pointer;" onclick="openProgress()">
-      <div class="ct"><span class="em-muscle">💪</span> My Transformation</div>
-      <div id="lottie-transform" style="width:90px;height:90px;margin:0 auto 8px;display:block;"></div>
+      <div id="lottie-transform" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div>
+      <div class="ct" style="text-align:center;margin-bottom:6px;">My Transformation</div>
       <div style="font-size:13px;color:#7A7A8C;line-height:1.6;margin-bottom:10px;">Your secret diary. Your glow up. Private, powerful, yours. 🔐</div>
       <button type="button" style="width:100%;padding:11px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">📸 Open My Transformation Diary</button>
     </div></div>
@@ -1343,7 +1361,7 @@ else{setAllLogos();setAllAvatars();}
   <div class="j-hdr">
     <button style="position:absolute;top:13px;left:13px;width:32px;height:32px;background:white;border:1.5px solid #EDE8E3;border-radius:9px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;" onclick="goTo('home')">←</button>
     <div style="text-align:center;padding:44px 20px 16px;">
-      <div style="font-size:28px;margin-bottom:6px;">📖</div>
+      <div id="lottie-journal-hdr" style="width:90px;height:90px;margin:0 auto 4px;"></div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#2C2C3A;">My Journal</div>
       <div style="font-size:12px;color:#7A7A8C;margin-top:4px;line-height:1.6;">A note to yourself. A memory.<br>A feeling. Whatever today needs.</div>
     </div>
@@ -1400,7 +1418,7 @@ else{setAllLogos();setAllAvatars();}
   <div style="position:relative;">
     <button class="back" onclick="goTo('home')" style="position:absolute;top:13px;left:13px;z-index:10;">←</button>
     <div style="text-align:center;padding:44px 20px 16px;background:linear-gradient(160deg,#FDF0EE,#FAF8F5 60%,#E8F7F5);">
-      <div style="font-size:28px;margin-bottom:6px;">💪</div>
+      <div id="lottie-transform-hdr" style="width:90px;height:90px;margin:0 auto 4px;"></div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#2C2C3A;">My Transformation</div>
       <div style="font-size:12px;color:#7A7A8C;margin-top:4px;line-height:1.6;">Every photo tells a story.<br>This one is yours. 🔐</div>
     </div>
@@ -1463,7 +1481,10 @@ else{setAllLogos();setAllAvatars();}
 <div id="form-tips-modal" style="display:none;position:fixed;z-index:20;inset:0;background:rgba(44,44,58,0.5);z-index:200;align-items:flex-end;justify-content:center;">
   <div style="background:white;border-radius:20px 20px 0 0;padding:20px 18px 36px;width:100%;max-width:430px;">
     <div style="width:30px;height:3px;background:#EDE8E3;border-radius:2px;margin:0 auto 14px;"></div>
-    <div id="ft-ex-name" style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:2px;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
+      <div id="ft-ex-name" style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#2C2C3A;flex:1;"></div>
+      <button id="ft-mw-btn" onclick="openMuscleWiki(document.getElementById('ft-ex-name').textContent)" type="button" style="margin-left:10px;padding:6px 10px;background:#E8F7F5;border:1.5px solid #4BBFB5;border-radius:20px;font-size:16px;cursor:pointer;flex-shrink:0;" title="Watch on MuscleWiki">📺</button>
+    </div>
     <div id="ft-ex-muscles" style="font-size:11px;color:#7A7A8C;margin-bottom:14px;"></div>
     <div style="font-size:10px;font-weight:800;color:#2D9E94;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">💪 Form Tips</div>
     <div id="ft-cues-list" style="display:flex;flex-direction:column;gap:7px;margin-bottom:18px;max-height:300px;overflow-y:auto;"></div>
@@ -2766,7 +2787,7 @@ function renderWk(){
         + '<div style="flex:1">'
           + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
             + '<div class="ex-nm">' + ex.n + '</div>'
-            + '<button onclick="showFormTips(' + i + ')" type="button" style="padding:2px 8px;background:#E8F7F5;border:1.5px solid #4BBFB5;border-radius:20px;font-size:9px;font-weight:800;color:#2D9E94;cursor:pointer;">Form tips</button>'
+            + '<button onclick="showFormTips(' + i + ')" type="button" style="padding:2px 8px;background:#E8F7F5;border:1.5px solid #4BBFB5;border-radius:20px;font-size:9px;font-weight:800;color:#2D9E94;cursor:pointer;">Form tips</button>'        + '<a href="' + muscleWikiUrl(ex.n) + '" target="_blank" rel="noopener" style="padding:2px 8px;background:#F0EDFF;border:1.5px solid #A78BFA;border-radius:20px;font-size:11px;font-weight:800;color:#7C3AED;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">📺</a>'
           + '</div>'
           + '<div class="ex-ms">' + ex.m + '</div>'
         + '</div>'
@@ -2931,7 +2952,8 @@ function openSwap(i){
       'background:#F5F5F5;color:#7A7A8C';
     var equipLabel=s.e==='No Equipment'?'Bodyweight':s.e.length>12?s.e.substring(0,10)+'..':s.e;
     var badge='<span style="'+equipColor+';font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;margin-left:6px;">'+equipLabel+'</span>';
-    return '<div class="sw-opt" onclick="doSwap('+si+')"><div class="sw-nm">'+s.n+badge+'</div><div class="sw-mt">'+s.m+'</div></div>';
+    var mwLink = '<a href="'+muscleWikiUrl(s.n)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;background:#F0EDFF;border:1.5px solid #A78BFA;border-radius:20px;font-size:10px;font-weight:800;color:#7C3AED;text-decoration:none;margin-top:4px;">📺 Watch</a>';
+    return '<div class="sw-opt" onclick="doSwap('+si+')"><div class="sw-nm">'+s.n+badge+'</div><div class="sw-mt">'+s.m+'</div>'+mwLink+'</div>';
   }).join('');
   
   document.getElementById('sw-modal').classList.add('on');
@@ -3668,8 +3690,10 @@ window.addEventListener('DOMContentLoaded',function(){
   setTimeout(function(){
     initLottie('tip-robot', LOTTIE_ROBOT);
     initLottie('lottie-journal', LOTTIE_BLOG);
+    initLottie('lottie-journal-hdr', LOTTIE_BLOG);
     initLottie('lottie-badges', LOTTIE_REWARDS);
     initLottie('lottie-transform', LOTTIE_TRANSFORM);
+    initLottie('lottie-transform-hdr', LOTTIE_TRANSFORM);
   }, 500);
 });
 </script>
@@ -4304,40 +4328,40 @@ function logChallenge(){
   showT(toast);
 }
 
-// AVATAR ONBOARDING
+// AVATAR ONBOARDING — uses same AV array + getAvSVG as home picker
 function buildAvOb(){
   var list = document.getElementById('av-ob-list');
   if(!list) return;
-  var avatars = [
-    {e:'🌊', n:'The Flow',      p:'I move at my own pace and that is more than enough.'},
-    {e:'💎', n:'The Diamond',   p:'I am being built under pressure. Watch me shine.'},
-    {e:'👑', n:'Badass Queen',  p:'I do not chase. I attract. And I never skip leg day.'},
-    {e:'🔥', n:'The Spark',     p:'Once I start, nothing can stop me.'},
-    {e:'🌱', n:'The Grower',    p:'Every rep is a promise to my future self.'},
-    {e:'🌙', n:'The Night Owl', p:'I show up even when no one is watching. Especially then.'}
-  ];
   list.innerHTML = '';
-  avatars.forEach(function(av, i){
+  AV.forEach(function(av, i){
     var btn = document.createElement('button');
     btn.type = 'button';
-    btn.style.cssText = 'display:flex;align-items:center;gap:12px;padding:13px 14px;border:2px solid #EDE8E3;border-radius:12px;background:white;width:100%;text-align:left;cursor:pointer;font-family:Nunito,sans-serif;';
-    btn.innerHTML = '<span style="font-size:26px">' + av.e + '</span><span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A">' + av.n + '</strong><span style="font-size:11px;color:#7A7A8C;font-style:italic">' + av.p + '</span></span>';
+    btn.style.cssText = 'display:flex;align-items:center;gap:12px;padding:11px 14px;border:2px solid #EDE8E3;border-radius:14px;background:white;width:100%;text-align:left;cursor:pointer;font-family:Nunito,sans-serif;margin-bottom:0;';
+    // Use exact same animated SVG as home picker
+    btn.innerHTML = getAvSVG(av.anim, 52) +
+      '<span style="flex:1"><strong style="display:block;font-size:13px;color:#2C2C3A">' + av.n + '</strong>' +
+      '<span style="font-size:11px;color:#7A7A8C;font-style:italic">' + av.p + '</span></span>';
     btn.addEventListener('click', function(){
-      // Reset all
       list.querySelectorAll('button').forEach(function(b){
         b.style.borderColor = '#EDE8E3';
         b.style.background = 'white';
       });
-      // Select this
       btn.style.borderColor = '#4BBFB5';
       btn.style.background = '#E8F7F5';
-      // Save
+      // Save with anim — same structure as home picker
       S.user.avatar = {e: av.e, n: av.n, anim: av.anim};
-      // Update header icon with animated SVG
       updateAvIcon();
     });
     list.appendChild(btn);
   });
+  // Pre-select first one so user always has an avatar even if they skip
+  if(list.firstChild){
+    list.firstChild.style.borderColor = '#4BBFB5';
+    list.firstChild.style.background = '#E8F7F5';
+    if(!S.user.avatar || !S.user.avatar.e){
+      S.user.avatar = {e: AV[0].e, n: AV[0].n, anim: AV[0].anim};
+    }
+  }
 }
 
 // PLAN CARD - builds personalized plan based on goal + level + days
@@ -4670,6 +4694,184 @@ function handleMilestonePhoto(e){
   r.readAsDataURL(file);
 }
 
+
+// MuscleWiki direct exercise URLs — matched to every workout exercise
+var MW_SLUGS = {
+  'Ab Wheel Rollout':'ab-wheel-rollout',
+  'Archer Pull-Up':'archer-pull-up',
+  'Archer Push-Up':'archer-push-up',
+  'Arnold Press':'arnold-press',
+  'Assisted Pistol Squat':'assisted-pistol-squat',
+  'Assisted Pull-Up':'assisted-pull-up',
+  'Band Assisted Pull-Up':'band-assisted-pull-up',
+  'Band Pallof Press':'pallof-press',
+  'Band Pull-Apart':'band-pull-apart',
+  'Band Pulldown':'straight-arm-pulldown',
+  'Band Row':'band-row',
+  'Band Squat':'goblet-squat',
+  'Barbell Back Squat':'barbell-back-squat',
+  'Barbell Bench Press':'barbell-bench-press',
+  'Barbell Bent Over Row':'barbell-bent-over-row',
+  'Barbell Floor Press':'barbell-floor-press',
+  'Barbell Front Squat':'barbell-front-squat',
+  'Barbell Incline Press':'barbell-incline-bench-press',
+  'Barbell Overhead Press':'barbell-overhead-press',
+  'Barbell Pendlay Row':'pendlay-row',
+  'Barbell Reverse Lunge':'barbell-reverse-lunge',
+  'Barbell Romanian Deadlift':'barbell-romanian-deadlift',
+  'Barbell Static Lunge':'barbell-static-lunge',
+  'Barbell Walking Lunge':'barbell-walking-lunge',
+  'Belt Squat':'belt-squat',
+  'Bicycle Crunch':'bicycle-crunch',
+  'Bird Dog':'bird-dog',
+  'Bodyweight Squat':'bodyweight-squat',
+  'Box Squat':'box-squat',
+  'Bulgarian Split Squat':'bulgarian-split-squat',
+  'Bulgarian Split Squat (Barbell)':'barbell-bulgarian-split-squat',
+  'Cable Chest Fly':'cable-chest-fly',
+  'Cable Crunch':'cable-crunch',
+  'Cable Face Pull':'cable-face-pull',
+  'Cable Lateral Raise':'cable-lateral-raise',
+  'Cable Lunge':'cable-lunge',
+  'Cable Pull-Through':'cable-pull-through',
+  'Cable Rotation':'cable-rotation',
+  'Chest Supported Row':'chest-supported-row',
+  'Chest to Bar Pull-Up':'chest-to-bar-pull-up',
+  'Chin-Up':'chin-up',
+  'Close Grip Bench Press':'close-grip-bench-press',
+  'Conventional Deadlift':'conventional-deadlift',
+  'Crunch':'crunch',
+  'Curtsy Lunge':'curtsy-lunge',
+  'Dead Bug':'dead-bug',
+  'Decline Push-Up':'decline-push-up',
+  'Deficit Reverse Lunge':'deficit-reverse-lunge',
+  'Doorframe Row':'inverted-row',
+  'Double Dumbbell Squat':'goblet-squat',
+  'Dragon Flag':'dragon-flag',
+  'Dumbbell Bench Press':'dumbbell-bench-press',
+  'Dumbbell Chest Fly':'dumbbell-chest-fly',
+  'Dumbbell Curtsy Lunge':'dumbbell-curtsy-lunge',
+  'Dumbbell Forward Lunge':'dumbbell-forward-lunge',
+  'Dumbbell Incline Press':'dumbbell-incline-press',
+  'Dumbbell Lateral Lunge':'dumbbell-lateral-lunge',
+  'Dumbbell Lateral Raise':'dumbbell-lateral-raise',
+  'Dumbbell Reverse Lunge':'dumbbell-reverse-lunge',
+  'Dumbbell Shoulder Press':'dumbbell-shoulder-press',
+  'Dumbbell Split Squat':'dumbbell-split-squat',
+  'Dumbbell Static Lunge':'dumbbell-static-lunge',
+  'Dumbbell Z Press':'dumbbell-z-press',
+  'Elevated Pike Push-Up':'elevated-pike-push-up',
+  'Farmer Carry':'farmers-carry',
+  'Forward Lunge':'forward-lunge',
+  'Glute Bridge':'glute-bridge',
+  'Glute Bridge (Barbell)':'barbell-glute-bridge',
+  'Glute Bridge (Bodyweight)':'glute-bridge',
+  'Glute Ham Raise':'glute-ham-raise',
+  'Goblet Squat':'goblet-squat',
+  'Good Morning':'good-morning',
+  'Good Mornings':'good-morning',
+  'Hack Squat':'hack-squat',
+  'Half Kneeling Cable Rotation':'cable-rotation',
+  'Half Kneeling Pallof Press':'pallof-press',
+  'Handstand Push-Up':'handstand-push-up',
+  'Hanging Leg Raise':'hanging-leg-raise',
+  'Hip Hinge (Band)':'romanian-deadlift',
+  'Hip Hinge (Bodyweight)':'romanian-deadlift',
+  'Hip Thrust (Barbell)':'barbell-hip-thrust',
+  'Hip Thrust (Dumbbell)':'dumbbell-hip-thrust',
+  'Hip Thrust (Machine)':'machine-hip-thrust',
+  'Hollow Body Hold':'hollow-body-hold',
+  'Incline Push-Up':'incline-push-up',
+  'Inverted Row (Table)':'inverted-row',
+  'Jump Lunge':'jump-lunge',
+  'Jump Squat':'jump-squat',
+  'Kettlebell Swing':'kettlebell-swing',
+  'L-Sit Pull-Up':'l-sit-pull-up',
+  'Landmine Press':'landmine-press',
+  'Landmine Rotation':'landmine-rotation',
+  'Landmine Shoulder Press':'landmine-shoulder-press',
+  'Lat Pulldown':'lat-pulldown',
+  'Lateral Lunge':'lateral-lunge',
+  'Lateral Step-Up':'lateral-step-up',
+  'Meadows Row':'meadows-row',
+  'Med Ball Rotational Throw':'medicine-ball-rotational-throw',
+  'Medicine Ball Slam':'medicine-ball-slam',
+  'Nordic Hamstring Curl':'nordic-hamstring-curl',
+  'Pallof Press':'pallof-press',
+  'Pause Squat':'pause-squat',
+  'Pendlay Row':'pendlay-row',
+  'Pike Push-Up':'pike-push-up',
+  'Pistol Squat':'pistol-squat',
+  'Plank':'plank',
+  'Prone Y-T-W':'prone-y-t-w',
+  'Pull-Up':'pull-up',
+  'Push Press':'push-press',
+  'Push-Up':'push-up',
+  'Push-Up Plus':'push-up-plus',
+  'RKC Plank':'rkc-plank',
+  'Rear Foot Elevated Squat':'rear-foot-elevated-split-squat',
+  'Reverse Lunge':'reverse-lunge',
+  'Romanian Deadlift (Barbell)':'barbell-romanian-deadlift',
+  'Romanian Deadlift (Cable)':'cable-romanian-deadlift',
+  'Romanian Deadlift (Dumbbell)':'dumbbell-romanian-deadlift',
+  'Row':'seated-cable-row',
+  'Russian Twist':'russian-twist',
+  'Safety Bar Squat':'safety-bar-squat',
+  'Seal Row':'seal-row',
+  'Seated Cable Row':'seated-cable-row',
+  'Shoulder Tap Plank':'plank',
+  'Side Plank':'side-plank',
+  'Side Plank + Hip Abduction':'side-plank',
+  'Single Arm Cable Rotation':'cable-rotation',
+  'Single Arm Cable Row':'single-arm-cable-row',
+  'Single Arm Dumbbell Row':'single-arm-dumbbell-row',
+  'Single Arm Landmine Press':'landmine-press',
+  'Single Arm Lat Pulldown':'single-arm-lat-pulldown',
+  'Single Leg Glute Bridge':'single-leg-glute-bridge',
+  'Single Leg Hip Thrust':'single-leg-hip-thrust',
+  'Single Leg Hip Thrust (Dumbbell)':'dumbbell-single-leg-hip-thrust',
+  'Single Leg RDL':'single-leg-romanian-deadlift',
+  'Single Leg RDL (Barbell)':'single-leg-romanian-deadlift',
+  'Single Leg RDL (Bodyweight)':'single-leg-romanian-deadlift',
+  'Single Leg RDL (Cable)':'single-leg-romanian-deadlift',
+  'Single Leg RDL (Dumbbell)':'single-leg-romanian-deadlift',
+  'Skater Squat':'skater-squat',
+  'Smith Machine Lunge':'smith-machine-lunge',
+  'Smith Machine Squat':'smith-machine-squat',
+  'Split Squat':'split-squat',
+  'Static Lunge':'static-lunge',
+  'Step-Up':'step-up',
+  'Stiff Leg Deadlift':'stiff-leg-deadlift',
+  'Straight Arm Band Pulldown':'straight-arm-pulldown',
+  'Straight Arm Pulldown':'straight-arm-pulldown',
+  'Suitcase Carry':'suitcase-carry',
+  'Sumo Deadlift':'sumo-deadlift',
+  'Superman Hold':'superman-hold',
+  'TRX Fallout':'trx-fallout',
+  'TRX Row':'trx-row',
+  'Trap Bar Deadlift':'trap-bar-deadlift',
+  'V-Up':'v-up',
+  'Walking Lunge':'walking-lunge',
+  'Wall Push-Up':'wall-push-up',
+  'Wall Shoulder Press':'overhead-press',
+  'Weighted Dip':'dip',
+  'Weighted Pull-Up':'weighted-pull-up',
+  'Weighted Push-Up':'weighted-push-up',
+  'Wide Grip Lat Pulldown':'wide-grip-lat-pulldown',
+  'Woodchop (High to Low)':'cable-woodchop',
+  'Woodchop (Low to High)':'cable-woodchop',
+  'Z-Press':'z-press'
+};
+
+function muscleWikiUrl(exerciseName) {
+  var slug = MW_SLUGS[exerciseName];
+  if (slug) return 'https://musclewiki.com/exercise/' + slug;
+  // Fallback to search for any unmapped exercise
+  return 'https://musclewiki.com/search?term=' + encodeURIComponent(exerciseName);
+}
+function openMuscleWiki(exerciseName) {
+  window.open(muscleWikiUrl(exerciseName), '_blank', 'noopener');
+}
 function showFormTips(idx){
   var ex = S.currentWorkout[parseInt(idx)];
   if(!ex) return;
