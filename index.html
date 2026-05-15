@@ -2507,7 +2507,8 @@ function mmPlaySound(type) {
       mmChime(c, t + 0.1, 1319, 0.3, 0.07); // E6 softer
 
     } else if (type === 'timer') {
-      // 🔔 Three warm bells — like a gentle doorbell, not an alarm
+      // 🔔 Three warm bells — only play if alarm is still active
+      if (!MM_ALARM_ACTIVE) return;
       [0, 0.28, 0.56].forEach(function(delay) {
         mmChime(c, t + delay, 880, 0.7, 0.2); // A5
       });
@@ -2515,13 +2516,24 @@ function mmPlaySound(type) {
   }).catch(function(){});
 }
 
+var MM_ALARM_ACTIVE = false;
+
 function mmAlarmStart() {
   mmAlarmStop();
+  MM_ALARM_ACTIVE = true;
   mmPlaySound('timer');
-  MM_TIMER_ALARM = setInterval(function() { mmPlaySound('timer'); }, 2500);
+  MM_TIMER_ALARM = setInterval(function() {
+    if (!MM_ALARM_ACTIVE) return; // extra guard — never fire after stop
+    mmPlaySound('timer');
+  }, 2500);
 }
+
 function mmAlarmStop() {
-  if (MM_TIMER_ALARM) { clearInterval(MM_TIMER_ALARM); MM_TIMER_ALARM = null; }
+  MM_ALARM_ACTIVE = false; // set FIRST before clearing interval
+  if (MM_TIMER_ALARM) {
+    clearInterval(MM_TIMER_ALARM);
+    MM_TIMER_ALARM = null;
+  }
 }
 
 // MM_AUDIO — keeps all existing call sites working
@@ -2751,7 +2763,7 @@ function startRT(){
       document.getElementById('rt-n').textContent=S.rtCurrent+'s';
       document.getElementById('rt-fg').style.strokeDashoffset=(283*(1-S.rtCurrent/S.rtMax));
       if(S.rtCurrent<=0){
-        MM_AUDIO.play('timer');clearInterval(S.rtInterval);S.rtInterval=null;S.rtPaused=false;
+        mmAlarmStart();clearInterval(S.rtInterval);S.rtInterval=null;S.rtPaused=false;
         document.getElementById('rt-n').textContent='GO!';
         document.getElementById('rt-ph').textContent='Time\'s up! Next set 💪';
         document.getElementById('rt-start').textContent='Start ▶';
@@ -2770,7 +2782,7 @@ function startRT(){
     document.getElementById('rt-n').textContent=S.rtCurrent+'s';
     document.getElementById('rt-fg').style.strokeDashoffset=(283*(1-S.rtCurrent/S.rtMax));
     if(S.rtCurrent<=0){
-      MM_AUDIO.play('timer');clearInterval(S.rtInterval);S.rtInterval=null;S.rtPaused=false;
+      mmAlarmStart();clearInterval(S.rtInterval);S.rtInterval=null;S.rtPaused=false;
       document.getElementById('rt-n').textContent='GO!';
       document.getElementById('rt-ph').textContent='Time\'s up! Next set 💪';
       document.getElementById('rt-start').textContent='Start ▶';
@@ -3961,7 +3973,7 @@ function startFixedTimer(){
 }
 
 function runFixedTimer(){
-  MM_AUDIO.play('timer_stop'); // stop alarm if repeating
+  mmAlarmStop(); // stop alarm immediately
   var secs = 60;
   try{
     var mood = S.currentMood || 'neutral';
@@ -3997,7 +4009,7 @@ function runFixedTimer(){
 
 function closeFixedTimer(){
   if(ftInterval) clearInterval(ftInterval);
-  MM_AUDIO.play('timer_stop');
+  mmAlarmStop();
   cancelTimerNotif();
   var timer = document.getElementById('fixed-timer');
   if(timer) timer.style.display = 'none';
@@ -4631,7 +4643,7 @@ var inlinePaused = {};
 var inlineRemaining = {};
 function startInlineTimer(btn){
   var key = btn.id || 'timer';
-  MM_AUDIO.play('timer_stop'); // stop any repeating alarm on any tap
+  mmAlarmStop(); // immediately kill alarm — flag set to false FIRST
   cancelTimerNotif(); // cancel pending notification on any tap
 
   // If running → PAUSE
