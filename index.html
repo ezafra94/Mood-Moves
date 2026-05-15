@@ -4766,10 +4766,52 @@ function deleteProgressPhoto(idx){
 var inlineTimers = {};
 var inlinePaused = {};
 var inlineRemaining = {};
+// Track which buttons are in "done" state (alarm firing, waiting for tap)
+var inlineDone = {};
+
+function resetInlineBtn(btn, key){
+  mmAlarmStop();
+  cancelTimerNotif();
+  if(inlineTimers[key]){ clearInterval(inlineTimers[key]); inlineTimers[key] = null; }
+  inlinePaused[key] = false;
+  inlineDone[key] = false;
+  inlineRemaining[key] = null;
+  btn.classList.remove('rest-btn-active');
+  btn.textContent = '⏱️ Rest';
+  btn.style.background = '#E8F7F5';
+  btn.style.borderColor = '#4BBFB5';
+  btn.style.color = '#2D9E94';
+}
+
+function finishInlineTimer(btn, key){
+  // Called when countdown hits zero
+  clearInterval(inlineTimers[key]);
+  inlineTimers[key] = null;
+  inlinePaused[key] = false;
+  inlineDone[key] = true; // mark as done — next tap just resets
+  btn.textContent = '💪 GO! — tap me!';
+  btn.classList.add('rest-btn-active');
+  btn.style.background = '';
+  btn.style.borderColor = '';
+  btn.style.color = '';
+  MM_AUDIO.play('timer');
+  // Auto-reset after 8 seconds if not tapped
+  setTimeout(function(){
+    if(inlineDone[key]){ resetInlineBtn(btn, key); }
+  }, 8000);
+}
+
 function startInlineTimer(btn){
   var key = btn.id || 'timer';
-  mmAlarmStop(); // immediately kill alarm — flag set to false FIRST
-  cancelTimerNotif(); // cancel pending notification on any tap
+
+  // DONE state — tap just resets, never starts a new timer
+  if(inlineDone[key]){
+    resetInlineBtn(btn, key);
+    return;
+  }
+
+  mmAlarmStop();
+  cancelTimerNotif();
 
   // If running → PAUSE
   if(inlineTimers[key]){
@@ -4791,26 +4833,8 @@ function startInlineTimer(btn){
     btn.style.color = '#E8832A';
     inlineTimers[key] = setInterval(function(){
       inlineRemaining[key]--;
-      btn.textContent = '⏸ ' + inlineRemaining[key] + 's';
-      if(inlineRemaining[key] <= 0){
-        clearInterval(inlineTimers[key]);
-        inlineTimers[key] = null;
-        inlinePaused[key] = false;
-        btn.textContent = '💪 GO! — tap me!';
-        btn.classList.add('rest-btn-active');
-        btn.style.background = '';
-        btn.style.borderColor = '';
-        btn.style.color = '';
-        MM_AUDIO.play('timer'); // 🔔 alarm!
-        setTimeout(function(){
-          btn.classList.remove('rest-btn-active');
-          btn.textContent = '⏱️ Rest';
-          btn.style.background = '#E8F7F5';
-          btn.style.borderColor = '#4BBFB5';
-          btn.style.color = '#2D9E94';
-          inlineRemaining[key] = null;
-        }, 8000);
-      }
+      btn.textContent = '⏱ ' + inlineRemaining[key] + 's — tap to stop';
+      if(inlineRemaining[key] <= 0){ finishInlineTimer(btn, key); }
     }, 1000);
     return;
   }
@@ -4825,41 +4849,25 @@ function startInlineTimer(btn){
 
   inlineRemaining[key] = secs;
   inlinePaused[key] = false;
+  inlineDone[key] = false;
   btn.classList.remove('rest-btn-active');
   btn.style.background = '#FEF3E8';
   btn.style.borderColor = '#F5A042';
   btn.style.color = '#E8832A';
   btn.textContent = '⏱ ' + secs + 's — tap to stop';
 
-  // Schedule system notification in case user leaves app
   var exName = btn.closest ? (btn.closest('[data-exname]')||{}).dataset&&(btn.closest('[data-exname]')||{}).dataset.exname : '';
   scheduleTimerNotif(secs, exName || 'your exercise');
 
   inlineTimers[key] = setInterval(function(){
     inlineRemaining[key]--;
     btn.textContent = '⏱ ' + inlineRemaining[key] + 's — tap to stop';
-    if(inlineRemaining[key] <= 0){
-      clearInterval(inlineTimers[key]);
-      inlineTimers[key] = null;
-      inlinePaused[key] = false;
-      // Glow + alarm — same as paused path
-      btn.textContent = '💪 GO! — tap me!';
-      btn.classList.add('rest-btn-active');
-      btn.style.background = '';
-      btn.style.borderColor = '';
-      btn.style.color = '';
-      MM_AUDIO.play('timer');
-      setTimeout(function(){
-        btn.classList.remove('rest-btn-active');
-        btn.textContent = '⏱️ Rest';
-        btn.style.background = '#E8F7F5';
-        btn.style.borderColor = '#4BBFB5';
-        btn.style.color = '#2D9E94';
-        inlineRemaining[key] = null;
-      }, 8000);
-    }
+    if(inlineRemaining[key] <= 0){ finishInlineTimer(btn, key); }
   }, 1000);
 }
+
+// DEAD CODE BELOW — kept for reference only, never reached
+
 
 // ═══════════════════════════════════════════
 // BACKGROUND TIMER FIX — Page Visibility API
@@ -4891,21 +4899,8 @@ document.addEventListener('visibilitychange', function() {
           inlineRemaining[key] = null;
           inlinePaused[key] = false;
           var btn = document.getElementById(key);
-          if (btn) {
-            btn.textContent = '💪 GO! — tap me!';
-            btn.classList.add('rest-btn-active');
-            btn.style.background = '';
-            btn.style.borderColor = '';
-            btn.style.color = '';
-            setTimeout(function() {
-              btn.classList.remove('rest-btn-active');
-              btn.textContent = '⏱️ Rest';
-              btn.style.background = '#E8F7F5';
-              btn.style.borderColor = '#4BBFB5';
-              btn.style.color = '#2D9E94';
-            }, 8000);
-          }
-          needsAlarm = true;
+          if (btn) { finishInlineTimer(btn, key); }
+          needsAlarm = false; // finishInlineTimer starts alarm itself
         } else {
           inlineRemaining[key] = newRemaining;
           var btn = document.getElementById(key);
