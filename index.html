@@ -779,7 +779,10 @@ else{setAllLogos();setAllAvatars();}
     </div>
     <div id="login-form">
       <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="login-email" placeholder="you@email.com"></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="login-pw" placeholder="••••••••"></div>
+      <div class="fg"><label class="fl">Password</label><div style="position:relative;">
+        <input class="fi" type="password" id="login-pw" placeholder="••••••••" style="padding-right:44px;width:100%;">
+        <button type="button" onclick="togglePwVis('login-pw',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#B0B0C0;padding:0;line-height:1;">👁</button>
+      </div></div>
       <div class="rem"><input type="checkbox" id="rem" checked><label for="rem">Remember me</label></div>
       <button class="bp" onclick="handleLogin()">Log In →</button>
     <div style="text-align:center;margin-top:12px;font-size:12px;color:#7A7A8C;">Don't have an account? <span onclick="switchAuth('signup')" style="color:#4BBFB5;font-weight:800;cursor:pointer;">Sign up free →</span></div>
@@ -788,7 +791,10 @@ else{setAllLogos();setAllAvatars();}
     <div id="signup-form" class="hidden">
       <div class="fg"><label class="fl">Your Name</label><input class="fi" type="text" id="signup-name" placeholder="What should we call you?"></div>
       <div class="fg"><label class="fl">Email</label><input class="fi" type="email" id="signup-email" placeholder="you@email.com"></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="signup-pw" placeholder="At least 6 characters"></div>
+      <div class="fg"><label class="fl">Password</label><div style="position:relative;">
+        <input class="fi" type="password" id="signup-pw" placeholder="At least 6 characters" style="padding-right:44px;width:100%;">
+        <button type="button" onclick="togglePwVis('signup-pw',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:#B0B0C0;padding:0;line-height:1;">👁</button>
+      </div></div>
       <button class="bp" onclick="handleSignup()">Start Moving →</button>
       <div style="text-align:center;margin-top:12px;font-size:12px;color:#7A7A8C;">Already have an account? <span onclick="switchAuth('login')" style="color:#4BBFB5;font-weight:800;cursor:pointer;">Log in →</span></div>
     </div>
@@ -1956,6 +1962,20 @@ function showAuthError(msg){
   setTimeout(function(){ el.style.display = 'none'; }, 4000);
 }
 
+function togglePwVis(inputId, btn) {
+  var input = document.getElementById(inputId);
+  if(!input) return;
+  if(input.type === 'password'){
+    input.type = 'text';
+    btn.textContent = '🙈';
+    btn.style.color = '#4BBFB5';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁';
+    btn.style.color = '#B0B0C0';
+  }
+}
+
 function switchAuth(t){
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
   event.target.classList.add('on');
@@ -2017,7 +2037,7 @@ async function saveUserToSupabase(name, email){
       name: name,
       email: email,
       created_at: new Date().toISOString(),
-      data: {}
+      data: JSON.parse(localStorage.getItem('mm_v3')||'{}')
     });
     localStorage.setItem('mm_uid', userId);
     sendWelcomeEmail(name, email);
@@ -2042,42 +2062,78 @@ function handleLogin(){
     return;
   }
 
-  // Check saved account — NO fallthrough allowed
+  // Try local data first
   var d = localStorage.getItem('mm_v3');
-  if(!d){
-    showAuthError('No account found. Please sign up first!');
-    switchAuth('signup');
-    return;
+  if(d){
+    var saved;
+    try { saved = JSON.parse(d); } catch(e) { saved = null; }
+    if(saved && saved.user && saved.user.email &&
+       saved.user.email.toLowerCase() === email.toLowerCase()){
+      // Valid local login
+      Object.assign(S, saved);
+      // Remember Me
+      var rememberMe = document.getElementById('rem');
+      if(rememberMe && rememberMe.checked){
+        localStorage.setItem('mm_remembered_email', email);
+      } else {
+        localStorage.removeItem('mm_remembered_email');
+      }
+      updateFounderCounter();
+      if(S.onboarded){
+        setupHome(); buildEl(); goTo('home');
+        document.getElementById('bnav').classList.remove('hidden');
+      } else {
+        goTo('founding');
+        setTimeout(function(){ updateFounderCounter(); }, 300);
+      }
+      return;
+    }
   }
 
-  var saved;
-  try { saved = JSON.parse(d); } catch(e) {
-    showAuthError('Something went wrong. Please sign up again.');
-    return;
-  }
-
-  // Must have a saved email to log in
-  if(!saved.user || !saved.user.email){
-    showAuthError('No account found. Please sign up first!');
-    switchAuth('signup');
-    return;
-  }
-
-  if(saved.user.email.toLowerCase() !== email.toLowerCase()){
-    showAuthError('No account found with that email. Please sign up first.');
-    return;
-  }
-
-  // Valid login
-  Object.assign(S, saved);
-  updateFounderCounter();
-  if(S.onboarded){
-    setupHome(); buildEl(); goTo('home');
-    document.getElementById('bnav').classList.remove('hidden');
-  } else {
-    goTo('founding');
-    setTimeout(function(){ updateFounderCounter(); }, 300);
-  }
+  // No local data (cleared browser) — try Supabase lookup
+  showAuthError('Looking up your account...');
+  supa.from('users').select('*').ilike('email', email).limit(1)
+    .then(function(res){
+      if(res.error || !res.data || res.data.length === 0){
+        showAuthError('No account found with that email. Please sign up first.');
+        return;
+      }
+      // Found in Supabase — restore FULL state from data column
+      var u = res.data[0];
+      var restored = false;
+      if(u.data && typeof u.data === 'object' && u.data.user){
+        // Full restore — overwrite S with saved cloud data
+        Object.assign(S, u.data);
+        S.user.email = email; // ensure email matches what they typed
+        // Clear runtime-only fields
+        S.currentWorkout = [];
+        S.currentMood = '';
+        S.rtInterval = null;
+        restored = true;
+      } else {
+        // Partial restore — just name/email
+        S.user.name  = u.name || '';
+        S.user.email = email;
+        S.onboarded  = false;
+      }
+      // Save to localStorage so future sessions work offline
+      try{ localStorage.setItem('mm_v3', JSON.stringify(S)); }catch(e){}
+      localStorage.setItem('mm_uid', u.id);
+      updateFounderCounter();
+      showAuthError('');
+      if(restored && S.onboarded){
+        setupHome(); buildEl(); goTo('home');
+        document.getElementById('bnav').classList.remove('hidden');
+        showT('Welcome back, ' + (S.user.name||'there') + '! Your data is restored. 💪');
+      } else {
+        showT('Welcome back, ' + (u.name||'there') + '! Let’s get you set up again.');
+        goTo('founding');
+        setTimeout(function(){ updateFounderCounter(); }, 300);
+      }
+    })
+    .catch(function(){
+      showAuthError('Could not connect. Please sign up again.');
+    });
 }
 function handleSignup(){
   var n = document.getElementById('signup-name').value.trim();
@@ -2105,7 +2161,33 @@ function handleSignup(){
   goTo('founding');
   setTimeout(function(){ updateFounderCounter(); },300);
 }
-function save(){try{localStorage.setItem('mm_v3',JSON.stringify(S));}catch(e){}}
+function save(){
+  // Always save locally first — instant
+  try{ localStorage.setItem('mm_v3', JSON.stringify(S)); }catch(e){}
+  // Background sync to Supabase — so data survives browser clears
+  mmCloudSave();
+}
+
+var _cloudSaveTimer = null;
+function mmCloudSave(){
+  // Debounce — max one cloud save per 5 seconds
+  if(_cloudSaveTimer) clearTimeout(_cloudSaveTimer);
+  _cloudSaveTimer = setTimeout(function(){
+    _cloudSaveTimer = null;
+    var uid = localStorage.getItem('mm_uid');
+    if(!uid || !S.user || !S.user.email) return;
+    // Save everything in S to the data column
+    var payload = {
+      id: uid,
+      name: S.user.name || '',
+      email: S.user.email || '',
+      data: S
+    };
+    supa.from('users').upsert(payload).then(function(res){
+      if(res.error) console.log('[MM] Cloud save failed:', res.error.message);
+    }).catch(function(){});
+  }, 5000);
+}
 function shareApp(){
   const msg='🌊 Just joined Mood Moves — a fitness app that adapts workouts to your MOOD. Check it out!';
   if(navigator.share)navigator.share({title:'Mood Moves',text:msg});
@@ -3328,6 +3410,41 @@ window.addEventListener('DOMContentLoaded',function(){
       }
     }
   }catch(e){}
+
+  // Background cloud sync — restores data if browser was cleared on another device
+  // Runs silently 3 seconds after load so it doesn't block UI
+  setTimeout(function(){
+    var uid = localStorage.getItem('mm_uid');
+    if(!uid) return;
+    supa.from('users').select('data').eq('id', uid).single()
+      .then(function(res){
+        if(res.error || !res.data || !res.data.data) return;
+        var cloud = res.data.data;
+        if(!cloud || typeof cloud !== 'object') return;
+        // Restore if cloud has more workouts OR local has no data
+        var localTotal = S.total || 0;
+        var cloudTotal = cloud.total || 0;
+        if(cloudTotal > localTotal || !S.onboarded){
+          Object.assign(S, cloud);
+          S.currentWorkout = [];
+          S.currentMood = '';
+          S.rtInterval = null;
+          try{ localStorage.setItem('mm_v3', JSON.stringify(S)); }catch(e){}
+          if(S.onboarded){
+            setupHome(); buildEl();
+            if(document.getElementById('home').classList.contains('active')){
+              // Already on home — just refresh
+            } else {
+              goTo('home');
+              document.getElementById('bnav').classList.remove('hidden');
+            }
+          }
+          console.log('[MM] Cloud data synced. Workouts:', cloudTotal);
+        }
+      }).catch(function(){
+        console.log('[MM] Cloud sync skipped (offline or error)');
+      });
+  }, 3000);
 });
 </script>
 
@@ -3521,6 +3638,14 @@ function updateAvIcon(){
   icon.style.fontSize='0'; // hide any leftover emoji
 }
 window.addEventListener('DOMContentLoaded',function(){
+  // Pre-fill remembered email
+  var remembered = localStorage.getItem('mm_remembered_email');
+  if(remembered){
+    var el = document.getElementById('login-email');
+    if(el) el.value = remembered;
+    var rem = document.getElementById('rem');
+    if(rem) rem.checked = true;
+  }
   var js = document.getElementById('journal-screen');
   if(js) js.style.overflowY = 'auto';
   var ps = document.getElementById('progress-screen');
