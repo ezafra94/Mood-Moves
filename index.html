@@ -685,6 +685,13 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
   border-color:#4BBFB5!important;
   font-size:12px!important;
 }
+
+/* ── STICKY NOTE POPUP ───────────────────────────────── */
+@keyframes stickyPop{
+  from{opacity:0;transform:rotate(-1.5deg) scale(0.7) translateY(30px)}
+  to{opacity:1;transform:rotate(-1.5deg) scale(1) translateY(0)}
+}
+#sticky-popup.show{display:flex!important;}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -1093,13 +1100,13 @@ else{setAllLogos();setAllAvatars();}
     <button class="r-btn anim-card" onclick="goToRD()" style="animation-delay:0.25s"><span class="em-shield">🛡️</span> Rest Day — Still Moving</button>
 
     <div class="card anim-card" style="animation-delay:0.3s">
-      <div class="ct"><span class="em-fire">🔥</span> Your Progress</div>
+      <div class="ct">Your Progress</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div>
           <div class="sk-n" id="sk-n">0</div>
           <div class="sk-msg" id="sk-msg">Start your streak today!</div>
         </div>
-        <div style="font-size:32px;" class="em-prog-fire">🔥</div>
+        <div id="lottie-skate" style="width:70px;height:70px;"></div>
       </div>
       <div class="sk-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;">
         <div class="sk-stat"><div class="sk-sn" id="st-tot">0</div><div class="sk-sl">Total</div></div>
@@ -2321,13 +2328,31 @@ function setupHome(){window.scrollTo(0,0);
       el.style.animationDelay=(0.05+i*0.06)+'s';
     });
   },60);
+  // Show daily sticky note
+  setTimeout(function(){ showStickyNote(); }, 900);
+  // Auto-enable notifications if permission exists but not set
+  if(typeof Notification !== 'undefined' && Notification.permission === 'granted' &&
+     localStorage.getItem('mm_notif_enabled') !== '1'){
+    localStorage.setItem('mm_notif_enabled', '1');
+    if(!localStorage.getItem('mm_notif_hour')) localStorage.setItem('mm_notif_hour', '9');
+    if(!localStorage.getItem('mm_notif_min'))  localStorage.setItem('mm_notif_min', '0');
+    setTimeout(checkDailyNotifications, 1000);
+  }
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
 function setTip(){
-  var t=TIPS[Math.floor(Math.random()*TIPS.length)];
-  // Robot handles the visual — just update the tip text
-  document.getElementById('tip-tx').textContent=t.t;
+  // Use day-of-year + session count for variety — never repeats on same day
+  var now = new Date();
+  var dayOfYear = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+  var sessionCount = parseInt(localStorage.getItem('mm_tip_session')||'0');
+  // Advance session counter each time setTip is called
+  sessionCount = (sessionCount + 1) % 7;
+  localStorage.setItem('mm_tip_session', sessionCount);
+  // Combine day + session so each page load within same day shows different tip
+  var idx = (dayOfYear * 7 + sessionCount * 37) % TIPS.length;
+  var t = TIPS[idx];
+  document.getElementById('tip-tx').textContent = t.t;
 }
 function buildCal(){
   const g=document.getElementById('cal');
@@ -3684,17 +3709,41 @@ window.addEventListener('DOMContentLoaded',function(){
     player.setAttribute('mode','normal');
     player.style.cssText = 'width:100%;height:100%;';
     el.appendChild(player);
-    // lottie-player needs a short delay before load() works
-    setTimeout(function(){ player.load(data); }, 200);
+    // Wait for the custom element to be fully defined before calling load()
+    // This is the key fix for fresh devices / slow connections (like bf's iPhone)
+    if(window.customElements && window.customElements.whenDefined) {
+      window.customElements.whenDefined('lottie-player').then(function(){
+        player.load(data);
+      }).catch(function(){ setTimeout(function(){ player.load(data); }, 300); });
+    } else {
+      setTimeout(function(){ player.load(data); }, 500);
+    }
   }
-  setTimeout(function(){
+
+  function initAllLotties() {
     initLottie('tip-robot', LOTTIE_ROBOT);
+    // Load skating animation from separate file (keeps index.html lean)
+    fetch('/skate.json').then(function(r){ return r.json(); })
+      .then(function(data){ initLottie('lottie-skate', data); })
+      .catch(function(){
+        // fallback: show emoji if file not found
+        var el = document.getElementById('lottie-skate');
+        if(el){ el.style.fontSize='32px'; el.style.lineHeight='70px'; el.textContent='🔥'; }
+      });
     initLottie('lottie-journal', LOTTIE_BLOG);
     initLottie('lottie-journal-hdr', LOTTIE_BLOG);
     initLottie('lottie-badges', LOTTIE_REWARDS);
     initLottie('lottie-transform', LOTTIE_TRANSFORM);
     initLottie('lottie-transform-hdr', LOTTIE_TRANSFORM);
-  }, 500);
+  }
+
+  // Wait for lottie-player script to define the custom element
+  if(window.customElements && window.customElements.whenDefined) {
+    window.customElements.whenDefined('lottie-player').then(initAllLotties)
+      .catch(function(){ setTimeout(initAllLotties, 1000); });
+  } else {
+    setTimeout(initAllLotties, 800);
+  }
 });
 </script>
 
@@ -4173,35 +4222,38 @@ function getCardioPhrase(arr){
 }
 
 var CHALLENGES={
+  // Beginner — just started working out
   new:[
-    {icon:"💪",name:"Push-Up Challenge",phrase:"You vs You. Lets go.",target:20,unit:"reps",action:"Log Push-Ups"},
+    {icon:"💪",name:"Push-Up Challenge",phrase:"Every rep builds confidence.",target:20,unit:"reps",action:"Log Push-Ups"},
     {icon:"🦵",name:"Squat Challenge",phrase:"Strong legs, strong life.",target:50,unit:"reps",action:"Log Squats"},
     {icon:"🌉",name:"Glute Bridge Challenge",phrase:"Build that foundation.",target:50,unit:"reps",action:"Log Bridges"},
-    {icon:"🔥",name:"Burpee Challenge",phrase:"Just 10. You got this.",target:10,unit:"reps",action:"Log Burpees"},
     {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:60,unit:"seconds",action:"Log Seconds"},
     {icon:"🦵",name:"Lunge Challenge",phrase:"One leg at a time.",target:30,unit:"reps",action:"Log Lunges"},
-    {icon:"⬆️",name:"Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:10,unit:"reps",action:"Log Pike Push-Ups"},
     {icon:"🏃",name:"Step Challenge",phrase:"Move more. Feel better.",target:30000,unit:"steps",action:"Log Steps"},
+    {icon:"🔥",name:"Burpee Challenge",phrase:"Just 10. You got this.",target:10,unit:"reps",action:"Log Burpees"},
+    {icon:"🦵",name:"Wall Sit Challenge",phrase:"The burn is the point.",target:60,unit:"seconds",action:"Log Seconds"},
   ],
+  // Intermediate — training a few months
   some:[
     {icon:"💪",name:"Push-Up Challenge",phrase:"You vs You. Lets go.",target:50,unit:"reps",action:"Log Push-Ups"},
     {icon:"🦵",name:"Squat Challenge",phrase:"Strong legs, strong life.",target:100,unit:"reps",action:"Log Squats"},
     {icon:"🌉",name:"Glute Bridge Challenge",phrase:"Build that foundation.",target:150,unit:"reps",action:"Log Bridges"},
-    {icon:"🔥",name:"Burpee Challenge",phrase:"Burn it. Own it.",target:25,unit:"reps",action:"Log Burpees"},
-    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:135,unit:"seconds",action:"Log Seconds"},
+    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:120,unit:"seconds",action:"Log Seconds"},
     {icon:"🦵",name:"Lunge Challenge",phrase:"One leg at a time.",target:75,unit:"reps",action:"Log Lunges"},
-    {icon:"⬆️",name:"Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:25,unit:"reps",action:"Log Pike Push-Ups"},
     {icon:"🏃",name:"Step Challenge",phrase:"Move more. Feel better.",target:50000,unit:"steps",action:"Log Steps"},
+    {icon:"🔥",name:"Burpee Challenge",phrase:"Burn it. Own it.",target:25,unit:"reps",action:"Log Burpees"},
+    {icon:"🦵",name:"Wall Sit Challenge",phrase:"The burn is the point.",target:120,unit:"seconds",action:"Log Seconds"},
   ],
+  // Advanced — consistent trainer
   regular:[
     {icon:"💪",name:"Push-Up Challenge",phrase:"You vs You. Lets go.",target:100,unit:"reps",action:"Log Push-Ups"},
     {icon:"🦵",name:"Squat Challenge",phrase:"Strong legs, strong life.",target:200,unit:"reps",action:"Log Squats"},
     {icon:"🌉",name:"Glute Bridge Challenge",phrase:"Build that foundation.",target:250,unit:"reps",action:"Log Bridges"},
-    {icon:"🔥",name:"Burpee Challenge",phrase:"Burn it. Own it.",target:50,unit:"reps",action:"Log Burpees"},
-    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:270,unit:"seconds",action:"Log Seconds"},
+    {icon:"🧘",name:"Plank Challenge",phrase:"Hold it. Breathe. Grow.",target:240,unit:"seconds",action:"Log Seconds"},
     {icon:"🦵",name:"Lunge Challenge",phrase:"One leg at a time.",target:150,unit:"reps",action:"Log Lunges"},
-    {icon:"⬆️",name:"Pike Push-Up Challenge",phrase:"Shoulders of steel.",target:50,unit:"reps",action:"Log Pike Push-Ups"},
     {icon:"🏃",name:"Step Challenge",phrase:"Move more. Feel better.",target:70000,unit:"steps",action:"Log Steps"},
+    {icon:"🔥",name:"Burpee Challenge",phrase:"Burn it. Own it.",target:50,unit:"reps",action:"Log Burpees"},
+    {icon:"🦵",name:"Wall Sit Challenge",phrase:"The burn is the point.",target:180,unit:"seconds",action:"Log Seconds"},
   ],
 };
 
@@ -4719,20 +4771,20 @@ var MW_SLUGS = {
   'Barbell Pendlay Row':'pendlay-row',
   'Barbell Reverse Lunge':'barbell-reverse-lunge',
   'Barbell Romanian Deadlift':'barbell-romanian-deadlift',
-  'Barbell Static Lunge':'barbell-static-lunge',
+  'Barbell Static Lunge':'barbell-split-squat',
   'Barbell Walking Lunge':'barbell-walking-lunge',
   'Belt Squat':'belt-squat',
   'Bicycle Crunch':'bicycle-crunch',
   'Bird Dog':'bird-dog',
   'Bodyweight Squat':'bodyweight-squat',
-  'Box Squat':'box-squat',
+  'Box Squat':'bodyweight-box-squat',
   'Bulgarian Split Squat':'bulgarian-split-squat',
   'Bulgarian Split Squat (Barbell)':'barbell-bulgarian-split-squat',
   'Cable Chest Fly':'cable-chest-fly',
   'Cable Crunch':'cable-crunch',
   'Cable Face Pull':'cable-face-pull',
   'Cable Lateral Raise':'cable-lateral-raise',
-  'Cable Lunge':'cable-lunge',
+  'Cable Lunge':'cable-split-squat',
   'Cable Pull-Through':'cable-pull-through',
   'Cable Rotation':'cable-rotation',
   'Chest Supported Row':'chest-supported-row',
@@ -4741,7 +4793,7 @@ var MW_SLUGS = {
   'Close Grip Bench Press':'close-grip-bench-press',
   'Conventional Deadlift':'conventional-deadlift',
   'Crunch':'crunch',
-  'Curtsy Lunge':'curtsy-lunge',
+  'Curtsy Lunge':'dumbbell-curtsy-lunge',
   'Dead Bug':'dead-bug',
   'Decline Push-Up':'decline-push-up',
   'Deficit Reverse Lunge':'reverse-lunge',
@@ -4750,40 +4802,40 @@ var MW_SLUGS = {
   'Dragon Flag':'dragon-flag',
   'Dumbbell Bench Press':'dumbbell-bench-press',
   'Dumbbell Chest Fly':'dumbbell-chest-fly',
-  'Dumbbell Curtsy Lunge':'dumbbell-curtsy-lunge',
-  'Dumbbell Forward Lunge':'dumbbell-forward-lunge',
+  'Dumbbell Curtsy Lunge':'dumbbell-goblet-curtsy-lunge',
+  'Dumbbell Forward Lunge':'dumbbell-goblet-forward-lunge',
   'Dumbbell Incline Press':'dumbbell-incline-press',
   'Dumbbell Lateral Lunge':'dumbbell-lateral-lunge',
   'Dumbbell Lateral Raise':'dumbbell-lateral-raise',
   'Dumbbell Reverse Lunge':'dumbbell-reverse-lunge',
   'Dumbbell Shoulder Press':'dumbbell-shoulder-press',
   'Dumbbell Split Squat':'dumbbell-split-squat',
-  'Dumbbell Static Lunge':'dumbbell-static-lunge',
+  'Dumbbell Static Lunge':'dumbbell-split-squat',
   'Dumbbell Z Press':'dumbbell-z-press',
   'Elevated Pike Push-Up':'elevated-pike-press',
   'Farmer Carry':'farmers-carry',
-  'Forward Lunge':'forward-lunge',
+  'Forward Lunge':'bodyweight-forward-lunge',
   'Glute Bridge':'glute-bridge',
   'Glute Bridge (Barbell)':'barbell-glute-bridge',
   'Glute Bridge (Bodyweight)':'glute-bridge',
   'Glute Ham Raise':'glute-ham-raise',
-  'Goblet Squat':'goblet-squat',
+  'Goblet Squat':'dumbbell-goblet-squat',
   'Good Morning':'good-morning',
   'Good Mornings':'good-morning',
   'Hack Squat':'hack-squat',
-  'Half Kneeling Cable Rotation':'cable-rotation',
-  'Half Kneeling Pallof Press':'pallof-press',
+  'Half Kneeling Cable Rotation':'half-kneeling-cable-rotation',
+  'Half Kneeling Pallof Press':'half-kneeling-pallof-press',
   'Handstand Push-Up':'handstand-push-up',
   'Hanging Leg Raise':'hanging-leg-raise',
-  'Hip Hinge (Band)':'romanian-deadlift',
-  'Hip Hinge (Bodyweight)':'romanian-deadlift',
+  'Hip Hinge (Band)':'band-romanian-deadlift',
+  'Hip Hinge (Bodyweight)':'bodyweight-romanian-deadlift',
   'Hip Thrust (Barbell)':'barbell-hip-thrust',
   'Hip Thrust (Dumbbell)':'dumbbell-hip-thrust',
   'Hip Thrust (Machine)':'machine-hip-thrust',
   'Hollow Body Hold':'hollow-body-hold',
   'Incline Push-Up':'incline-push-up',
   'Inverted Row (Table)':'inverted-row',
-  'Jump Lunge':'jump-lunge',
+  'Jump Lunge':'bodyweight-jump-lunge',
   'Jump Squat':'jump-squat',
   'Kettlebell Swing':'kettlebell-swing',
   'L-Sit Pull-Up':'pull-up',
@@ -4826,7 +4878,7 @@ var MW_SLUGS = {
   'Single Arm Cable Row':'single-arm-cable-row',
   'Single Arm Dumbbell Row':'single-arm-dumbbell-row',
   'Single Arm Landmine Press':'landmine-single-arm-overhead-press',
-  'Single Arm Lat Pulldown':'single-arm-lat-pulldown',
+  'Single Arm Lat Pulldown':'cable-single-arm-lat-pulldown',
   'Single Leg Glute Bridge':'single-leg-glute-bridge',
   'Single Leg Hip Thrust':'single-leg-hip-thrust',
   'Single Leg Hip Thrust (Dumbbell)':'dumbbell-single-leg-hip-thrust',
@@ -4835,14 +4887,14 @@ var MW_SLUGS = {
   'Single Leg RDL (Bodyweight)':'single-leg-romanian-deadlift',
   'Single Leg RDL (Cable)':'single-leg-romanian-deadlift',
   'Single Leg RDL (Dumbbell)':'single-leg-romanian-deadlift',
-  'Skater Squat':'skater-squat',
+  'Skater Squat':'bodyweight-skater-squat',
   'Smith Machine Lunge':'smith-machine-lunge',
   'Smith Machine Squat':'smith-machine-squat',
   'Split Squat':'split-squat',
-  'Static Lunge':'static-lunge',
-  'Step-Up':'step-up',
+  'Static Lunge':'split-squat',
+  'Step-Up':'dumbbell-step-up',
   'Stiff Leg Deadlift':'stiff-leg-deadlift',
-  'Straight Arm Band Pulldown':'straight-arm-pulldown',
+  'Straight Arm Band Pulldown':'band-straight-arm-pulldown',
   'Straight Arm Pulldown':'straight-arm-pulldown',
   'Suitcase Carry':'suitcase-carry',
   'Sumo Deadlift':'sumo-deadlift',
@@ -4862,6 +4914,7 @@ var MW_SLUGS = {
   'Woodchop (Low to High)':'cable-half-kneeling-low-to-high-wood-chopper',
   'Z-Press':'z-press'
 };
+
 
 function muscleWikiUrl(exerciseName) {
   var slug = MW_SLUGS[exerciseName];
@@ -5376,6 +5429,57 @@ const IAM_AFFIRMATIONS = [
   "I am the change I want to see in my life ✨",
 ];
 
+
+// ── DAILY STICKY NOTE ────────────────────────────────────
+var _stickyShown = false;
+
+function showStickyNote() {
+  if (_stickyShown) return;
+  // Only show once per day
+  var today = new Date().toDateString();
+  if (localStorage.getItem('mm_sticky_date') === today) return;
+
+  var booster = getDailyBooster();
+  var typeLabels = {
+    quote:  'Your Mood Moves Boost',
+    tip:    'Mood Moves Science',
+    cheer:  'Good Morning, Mover',
+    famous: 'Mood Moves Wisdom',
+    iam:    'A Mood Moves Moment'
+  };
+  var icons = {
+    quote:'🌟', tip:'🤖', cheer:'🌈', famous:'📜', iam:'💫'
+  };
+
+  var popup = document.getElementById('sticky-popup');
+  var iconEl = document.getElementById('sticky-icon');
+  var typeEl = document.getElementById('sticky-type');
+  var msgEl  = document.getElementById('sticky-msg');
+  var dateEl = document.getElementById('sticky-date');
+
+  if(!popup || !msgEl) return;
+
+  iconEl.textContent = icons[booster.type] || '💫';
+  typeEl.textContent = typeLabels[booster.type] || 'Daily Message';
+  msgEl.textContent  = booster.msg;
+
+  var now = new Date();
+  dateEl.textContent = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+
+  popup.style.display = 'flex';
+  popup.classList.add('show');
+  _stickyShown = true;
+  localStorage.setItem('mm_sticky_date', today);
+}
+
+function closeStickyNote() {
+  var popup = document.getElementById('sticky-popup');
+  if(popup) {
+    popup.style.opacity = '0';
+    popup.style.transition = 'opacity 0.25s ease';
+    setTimeout(function(){ popup.style.display = 'none'; popup.style.opacity = ''; }, 250);
+  }
+}
 function getDailyBooster(){
   const day = Math.floor(Date.now() / (1000*60*60*24));
   const types = ['quote','tip','cheer','famous','iam','quote','tip','cheer','famous','iam','cheer','tip'];
@@ -5804,5 +5908,30 @@ window.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+
+<!-- ── DAILY STICKY NOTE POPUP ─────────────────────────────── -->
+<div id="sticky-popup" style="display:none;position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;">
+  <!-- Backdrop -->
+  <div onclick="closeStickyNote()" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(3px);"></div>
+  <!-- Sticky note card -->
+  <div id="sticky-card" style="position:relative;width:100%;max-width:340px;background:#FFF9E6;border-radius:4px 18px 18px 4px;padding:28px 24px 24px;box-shadow:4px 6px 24px rgba(0,0,0,0.18),0 2px 4px rgba(0,0,0,0.1);transform:rotate(-1.5deg);animation:stickyPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;">
+    <!-- Tape strip at top -->
+    <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:60px;height:20px;background:rgba(255,235,150,0.7);border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,0.1);"></div>
+    <!-- Close button -->
+    <button onclick="closeStickyNote()" type="button" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:#B8A060;line-height:1;">✕</button>
+    <!-- Icon -->
+    <div id="sticky-icon" style="font-size:32px;margin-bottom:10px;text-align:center;"></div>
+    <!-- Type label -->
+    <div id="sticky-type" style="font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#B8A060;text-align:center;margin-bottom:8px;"></div>
+    <!-- Message -->
+    <div id="sticky-msg" style="font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.6;color:#2C2C3A;text-align:center;font-style:italic;"></div>
+    <!-- Footer -->
+    <div style="margin-top:16px;text-align:center;">
+      <button onclick="closeStickyNote()" type="button" style="padding:8px 24px;background:#4BBFB5;border:none;border-radius:20px;color:white;font-weight:800;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;letter-spacing:0.3px;">Carry this with me 💛</button>
+    </div>
+    <!-- Date -->
+    <div id="sticky-date" style="font-size:10px;color:#C8A860;text-align:right;margin-top:10px;"></div>
+  </div>
+</div>
 </body>
 </html>
