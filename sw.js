@@ -1,7 +1,16 @@
 // Mood Moves Service Worker
 // Handles: offline caching, background sync, push notifications
+//
+// ── VERSION LOG ──────────────────────────────────────────
+// v20260531 — PWA launch, notifications, sticky note, lotties
+// ─────────────────────────────────────────────────────────
+// HOW TO FORCE UPDATE FOR ALL USERS:
+// Change CACHE_NAME below to today's date e.g. 'mood-moves-v20260601'
+// Every user's phone will auto-download the fresh version within 24hrs
+// ─────────────────────────────────────────────────────────
 
-const CACHE_NAME = 'mood-moves-v1';
+const APP_VERSION = 'v20260531';
+const CACHE_NAME = 'mood-moves-' + APP_VERSION;
 const OFFLINE_ASSETS = [
   '/',
   '/index.html',
