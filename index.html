@@ -3717,38 +3717,55 @@ window.addEventListener('DOMContentLoaded',function(){
   setTimeout(initAv,300);
 
   // ── Lottie players ──────────────────────────────────
-  // Load nav icon — emoji shows immediately, lottie replaces it when ready
+  // Load nav icon — emoji shows immediately, lottie replaces silently when ready
   function loadNavIcon(id, url) {
     fetch(url).then(function(r){
       if(!r.ok) throw new Error('not found');
       return r.json();
     }).then(function(data){
-      var tryInit = function() {
-        var el = document.getElementById(id);
-        if(!el) return;
-        // Only replace if lottie-player registered successfully
-        var player = document.createElement('lottie-player');
-        player.setAttribute('autoplay','');
-        player.setAttribute('loop','');
-        player.setAttribute('mode','normal');
-        player.style.cssText = 'width:32px;height:32px;';
-        // Test if custom element works before replacing emoji
+      var el = document.getElementById(id);
+      if(!el) return;
+
+      // Create lottie player and append BEFORE clearing emoji
+      // so user never sees blank
+      var player = document.createElement('lottie-player');
+      player.setAttribute('autoplay','');
+      player.setAttribute('loop','');
+      player.setAttribute('mode','normal');
+      player.style.cssText = 'width:32px;height:32px;position:absolute;opacity:0;';
+      el.style.position = 'relative';
+      el.appendChild(player);
+
+      // Load data — after player connects to DOM, load() becomes available
+      function doLoad() {
         if(typeof player.load === 'function') {
-          el.innerHTML = '';
-          el.style.fontSize = '0';
-          el.appendChild(player);
           player.load(data);
+          // Fade in lottie, fade out emoji text
+          setTimeout(function(){
+            player.style.opacity = '1';
+            player.style.position = 'static';
+            // Remove emoji text node only (keep player)
+            Array.from(el.childNodes).forEach(function(n){
+              if(n !== player && n.nodeType === 3) el.removeChild(n);
+            });
+            el.style.fontSize = '0';
+          }, 100);
+        } else {
+          // load() not ready yet — try again
+          setTimeout(doLoad, 100);
         }
-      };
+      }
+
+      // Wait for custom element to be defined, then load
       if(window.customElements && window.customElements.whenDefined) {
-        window.customElements.whenDefined('lottie-player').then(tryInit).catch(function(){
-          // lottie-player failed to register — keep emoji, don't replace
-        });
+        window.customElements.whenDefined('lottie-player')
+          .then(function(){ setTimeout(doLoad, 50); })
+          .catch(function(){}); // keep emoji if lottie fails
       } else {
-        setTimeout(tryInit, 800);
+        setTimeout(doLoad, 600);
       }
     }).catch(function(){
-      // File not found or network error — emoji stays, no triangle, no error
+      // Network error or file missing — emoji stays as-is
     });
   }
 
