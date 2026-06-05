@@ -2161,6 +2161,7 @@ function handleLogin(){
         setupHome(); buildEl(); goTo('home');
         document.getElementById('bnav').classList.remove('hidden');
         showT('Welcome back, ' + (S.user.name||'there') + '! Your data is restored. 💪');
+        setTimeout(function(){ showStickyNote(); }, 1500);
       } else {
         showT('Welcome back, ' + (u.name||'there') + '! Let’s get you set up again.');
         goTo('founding');
@@ -2268,6 +2269,21 @@ function finishOb(){
   setTimeout(function(){ confetti(0.8); }, 900);
   var nm = S.user.name || 'Champion';
   setTimeout(function(){ showT('Welcome to Mood Moves, '+nm+'! Your journey starts now. 💪'); }, 600);
+  // Ask for notification permission right away — new user
+  setTimeout(function(){
+    if(typeof Notification !== 'undefined' && Notification.permission === 'default'){
+      Notification.requestPermission().then(function(p){
+        if(p === 'granted'){
+          localStorage.setItem('mm_notif_enabled','1');
+          if(!localStorage.getItem('mm_notif_hour')) localStorage.setItem('mm_notif_hour','9');
+          if(!localStorage.getItem('mm_notif_min'))  localStorage.setItem('mm_notif_min','0');
+          sendPushNotif('Welcome to Mood Moves! 🎉',
+            'You'll get your daily motivation, tips and workout reminders right here.',
+            'mm-welcome');
+        }
+      });
+    }
+  }, 3000);
 }
 
 // HOME
@@ -5433,6 +5449,13 @@ const IAM_AFFIRMATIONS = [
 
 // ── DAILY STICKY NOTE ────────────────────────────────────
 var _stickyShown = false;
+// Reset sticky flag if it's a new day
+(function(){
+  var today = new Date().toDateString();
+  if(localStorage.getItem('mm_sticky_date') !== today){
+    _stickyShown = false; // new day, allow sticky to show
+  }
+})();
 
 function showStickyNote() {
   if (_stickyShown) return;
@@ -5651,6 +5674,24 @@ async function saveNotifSettings(){
 }
 
 // Check and send daily notifications
+// Send notification via Service Worker (works on iOS + Android)
+function sendPushNotif(title, body, tag) {
+  if(Notification.permission !== 'granted') return;
+  // Try Service Worker first (required for iOS)
+  if('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'SHOW_NOTIFICATION',
+      title: title,
+      body: body,
+      tag: tag || 'mm-notif'
+    });
+  } else {
+    // Fallback for browsers that support it directly
+    try { new Notification(title, { body: body, icon: '/icon-192.png', tag: tag }); }
+    catch(e) {}
+  }
+}
+
 function checkDailyNotifications(){
   if(localStorage.getItem('mm_notif_enabled') !== '1') return;
   if(Notification.permission !== 'granted') return;
@@ -5669,16 +5710,13 @@ function checkDailyNotifications(){
     const booster = getDailyBooster();
     const icons = {quote:'💬', tip:'💡', cheer:'🌅'};
     
-    // Daily booster
-    new Notification('Good morning from Mood Moves ' + (icons[booster.type]||'💫'), {
-      body: booster.msg,
-      icon: '/icon-192.png'
-    });
+    // Daily booster — send via Service Worker so it works on iOS too
+    sendPushNotif('Good morning from Mood Moves ' + (icons[booster.type]||'💫'), booster.msg, 'mm-daily');
     
     // Workout reminder (30 min later)
-    setTimeout(()=>{
+    setTimeout(function(){
       const msg = WORKOUT_REMINDERS[Math.floor(Math.random()*WORKOUT_REMINDERS.length)];
-      new Notification('Mood Moves 🏋️', { body: msg, icon: '/icon-192.png' });
+      sendPushNotif('Mood Moves 🏋️', msg, 'mm-workout');
     }, 30*60*1000);
   }
   
@@ -5688,7 +5726,7 @@ function checkDailyNotifications(){
     if(lastChallengNotif !== today){
       localStorage.setItem('mm_last_challenge_notif', today);
       const msg = CHALLENGE_REMINDERS[Math.floor(Math.random()*CHALLENGE_REMINDERS.length)];
-      new Notification('Mood Moves 🏆', { body: msg, icon: '/icon-192.png' });
+      sendPushNotif('Mood Moves 🏆', msg, 'mm-challenge');
     }
   }
 }
