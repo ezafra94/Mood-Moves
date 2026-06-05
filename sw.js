@@ -2,6 +2,7 @@
 // Handles: offline caching, background sync, push notifications
 //
 // ── VERSION LOG ──────────────────────────────────────────
+// v20260601 — SW notification fix, sticky note on login, auto permission
 // v20260531 — PWA launch, notifications, sticky note, lotties
 // ─────────────────────────────────────────────────────────
 // HOW TO FORCE UPDATE FOR ALL USERS:
@@ -9,7 +10,7 @@
 // Every user's phone will auto-download the fresh version within 24hrs
 // ─────────────────────────────────────────────────────────
 
-const APP_VERSION = 'v20260531';
+const APP_VERSION = 'v20260601';
 const CACHE_NAME = 'mood-moves-' + APP_VERSION;
 const OFFLINE_ASSETS = [
   '/',
@@ -124,6 +125,20 @@ self.addEventListener('notificationclick', function(e) {
 // ── TIMER NOTIFICATION (from main thread via postMessage) ─
 self.addEventListener('message', function(e) {
   if (!e.data) return;
+
+  if (e.data.type === 'SHOW_NOTIFICATION') {
+    // Show a notification immediately (daily booster, welcome, etc)
+    self.registration.showNotification(e.data.title || 'Mood Moves', {
+      body: e.data.body || '',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: e.data.tag || 'mm-notif',
+      renotify: true,
+      vibrate: [200, 100, 200],
+      data: { url: '/' }
+    });
+    return;
+  }
 
   if (e.data.type === 'SCHEDULE_TIMER_NOTIF') {
     var delay = (e.data.seconds || 60) * 1000;
