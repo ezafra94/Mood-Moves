@@ -1334,10 +1334,10 @@ else{setAllLogos();setAllAvatars();}
 
 <!-- BOTTOM NAV -->
 <nav class="bnav hidden" id="bnav">
-  <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic" id="nav-ic-home" style="width:28px;height:28px;"></div><div class="ni2-lb">Home</div></div>
-  <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic" id="nav-ic-workout" style="width:28px;height:28px;"></div><div class="ni2-lb">Workout</div></div>
-  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:28px;height:28px;"></div><div class="ni2-lb">Exercise Library</div></div>
-  <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic" id="nav-ic-profile" style="width:28px;height:28px;"></div><div class="ni2-lb">Profile</div></div>
+  <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic" id="nav-ic-home" style="width:32px;height:32px;font-size:20px;">🏠</div><div class="ni2-lb">Home</div></div>
+  <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic" id="nav-ic-workout" style="width:32px;height:32px;font-size:20px;">💪</div><div class="ni2-lb">Workout</div></div>
+  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:32px;height:32px;font-size:20px;">📖</div><div class="ni2-lb">Exercise Library</div></div>
+  <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic" id="nav-ic-profile" style="width:32px;height:32px;font-size:20px;">👤</div><div class="ni2-lb">Profile</div></div>
 </nav>
 
 <!-- EXERCISE VISUAL MODAL -->
@@ -3717,37 +3717,39 @@ window.addEventListener('DOMContentLoaded',function(){
   setTimeout(initAv,300);
 
   // ── Lottie players ──────────────────────────────────
-  // Load nav icon from external JSON file
+  // Load nav icon — emoji shows immediately, lottie replaces it when ready
   function loadNavIcon(id, url) {
-    fetch(url).then(function(r){ return r.json(); })
-      .then(function(data){
-        // Wait for lottie-player to be defined
-        var tryInit = function() {
-          var el = document.getElementById(id);
-          if(!el) return;
-          var player = document.createElement('lottie-player');
-          player.setAttribute('autoplay','');
-          player.setAttribute('loop','');
-          player.setAttribute('mode','normal');
-          player.style.cssText = 'width:28px;height:28px;';
+    fetch(url).then(function(r){
+      if(!r.ok) throw new Error('not found');
+      return r.json();
+    }).then(function(data){
+      var tryInit = function() {
+        var el = document.getElementById(id);
+        if(!el) return;
+        // Only replace if lottie-player registered successfully
+        var player = document.createElement('lottie-player');
+        player.setAttribute('autoplay','');
+        player.setAttribute('loop','');
+        player.setAttribute('mode','normal');
+        player.style.cssText = 'width:32px;height:32px;';
+        // Test if custom element works before replacing emoji
+        if(typeof player.load === 'function') {
           el.innerHTML = '';
+          el.style.fontSize = '0';
           el.appendChild(player);
           player.load(data);
-        };
-        if(window.customElements && window.customElements.whenDefined) {
-          window.customElements.whenDefined('lottie-player').then(tryInit).catch(tryInit);
-        } else {
-          setTimeout(tryInit, 500);
         }
-      }).catch(function(){
-        // Fallback emoji if file not found
-        var fallbacks = {
-          'nav-ic-home':'🏠','nav-ic-workout':'💪',
-          'nav-ic-exercises':'📖','nav-ic-profile':'👤'
-        };
-        var el = document.getElementById(id);
-        if(el){ el.style.fontSize='18px'; el.textContent = fallbacks[id]||'●'; }
-      });
+      };
+      if(window.customElements && window.customElements.whenDefined) {
+        window.customElements.whenDefined('lottie-player').then(tryInit).catch(function(){
+          // lottie-player failed to register — keep emoji, don't replace
+        });
+      } else {
+        setTimeout(tryInit, 800);
+      }
+    }).catch(function(){
+      // File not found or network error — emoji stays, no triangle, no error
+    });
   }
 
   function initLottie(id, data) {
