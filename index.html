@@ -1121,14 +1121,22 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
     <!-- WEEKLY CHALLENGE -->
-    <div class="ch-anim" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">⚡ This Weeks Challenge</div>
+    <div class="ch-anim" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;overflow:hidden;position:relative;">
+      <!-- Header row: label left, days right -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">This Weeks Challenge</div>
         <div style="font-size:10px;opacity:0.6;" id="ch-days">⏰ 4 days left</div>
       </div>
-      <div style="width:60px;height:50px;margin-bottom:4px;" id="ch-icon"></div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
-      <div style="font-size:12px;opacity:0.7;margin-bottom:12px;font-style:italic;" id="ch-phrase">You vs You.</div>
+      <!-- Main content: text left, animation right -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="flex:1;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
+          <div style="font-size:12px;opacity:0.7;font-style:italic;" id="ch-phrase">You vs You.</div>
+        </div>
+        <!-- Lottie animation — bigger, right side -->
+        <div style="width:90px;height:80px;flex-shrink:0;margin-left:8px;" id="ch-icon"></div>
+      </div>
+      <!-- Progress -->
       <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
         <div id="ch-bar" style="height:100%;background:linear-gradient(90deg,#4BBFB5,#F5A042);border-radius:20px;width:0%;transition:width 0.5s ease;"></div>
       </div>
@@ -1601,46 +1609,68 @@ const GI={muscle:'💪',feelgood:'✨',losefat:'🔥'};
 const LL={new:'New to fitness 🌱',some:'Some experience ⚡',regular:'I train regularly 🏆'};
 const ME={low:'😞',neutral:'😐',happy:'😊',angry:'😤',stressed:'😵‍💫'};
 const TITLES=[{m:0,t:'Rookie Mover',i:'⭐'},{m:3,t:'Getting Warmed Up',i:'🔥'},{m:7,t:'Streak Starter',i:'💫'},{m:14,t:'Mood Warrior',i:'⚔️'},{m:21,t:'Consistency Champ',i:'👑'},{m:30,t:'Mood Moves Legend',i:'🏆'}];
-const BADGES=[
-  // ── Getting started ───────────────────────────────────
-  {id:'first',   ic:'🌟', lb:'First Step',        hw:'Complete your first workout'},
-  {id:'founder', ic:'👑', lb:'Founding Member',   hw:'One of the first 100 — OG status'},
-  {id:'profile', ic:'🪞', lb:'Know Yourself',     hw:'Complete your profile setup'},
+// ── BADGE SYSTEM ─────────────────────────────────────────
+// Badges are organized into tiers. Users see 10 at a time.
+// Earn 5+ in current tier to unlock the next tier.
+const ALL_BADGES=[
+  // TIER 1 — starter (always visible first)
+  {id:'first',    ic:'🌟', lb:'First Step',        hw:'Complete your first workout',      tier:1},
+  {id:'founder',  ic:'👑', lb:'Founding Member',   hw:'One of the first 100 — OG status', tier:1},
+  {id:'three',    ic:'🔥', lb:'3 Day Streak',      hw:'3 workouts in a row',              tier:1},
+  {id:'seven',    ic:'💫', lb:'Week Warrior',      hw:'7 day streak',                     tier:1},
+  {id:'ten',      ic:'💪', lb:'10 Done',           hw:'Complete 10 workouts',             tier:1},
+  {id:'angry',    ic:'😤', lb:'Rage Mode',         hw:'Complete an angry mood workout',   tier:1},
+  {id:'low',      ic:'🌙', lb:'Low Day Hero',      hw:'Show up on a low energy day 3x',  tier:1},
+  {id:'happy',    ic:'☀️', lb:'Good Vibes',        hw:'Workout in a happy mood 5 times',  tier:1},
+  {id:'challenge1',ic:'🏅',lb:'Challenge Accepted',hw:'Complete your first challenge',    tier:1},
+  {id:'consistent',ic:'📅',lb:'Consistency Champ', hw:'Work out 21 days in a month',     tier:1},
 
-  // ── Streaks ───────────────────────────────────────────
-  {id:'three',   ic:'🔥', lb:'3 Day Streak',      hw:'3 days in a row'},
-  {id:'seven',   ic:'💫', lb:'Week Warrior',      hw:'7 day streak — a full week'},
-  {id:'fourteen',ic:'⚡', lb:'Two Week Strong',   hw:'14 day streak'},
-  {id:'thirty',  ic:'🏆', lb:'Month Mover',       hw:'30 day streak — legend status'},
+  // TIER 2 — unlocked after earning 5 from tier 1
+  {id:'fourteen', ic:'⚡', lb:'Two Week Strong',   hw:'14 day streak',                    tier:2},
+  {id:'thirty',   ic:'🏆', lb:'Month Mover',       hw:'30 day streak — legend',           tier:2},
+  {id:'twenty5',  ic:'🎯', lb:'25 Club',           hw:'Complete 25 workouts',             tier:2},
+  {id:'fifty',    ic:'🚀', lb:'50 Strong',         hw:'Complete 50 workouts',             tier:2},
+  {id:'stressed', ic:'🧘', lb:'Stress Slayer',     hw:'Complete 5 stressed workouts',     tier:2},
+  {id:'allmoods', ic:'🌈', lb:'All the Feels',     hw:'Work out in all 5 moods',          tier:2},
+  {id:'legs',     ic:'🦵', lb:'Leg Day Lover',     hw:'Complete 5 leg day workouts',      tier:2},
+  {id:'challenge5',ic:'🎖️',lb:'Challenge Champ',  hw:'Complete 5 weekly challenges',     tier:2},
+  {id:'earlybird',ic:'🌅', lb:'Early Bird',        hw:'Log a workout before 8am',         tier:2},
+  {id:'night',    ic:'🦉', lb:'Night Owl Lifts',   hw:'Log a workout after 9pm',          tier:2},
 
-  // ── Workouts completed ────────────────────────────────
-  {id:'ten',     ic:'💪', lb:'10 Done',           hw:'Complete 10 workouts'},
-  {id:'twenty5', ic:'🎯', lb:'25 Club',           hw:'Complete 25 workouts'},
-  {id:'fifty',   ic:'🚀', lb:'50 Strong',         hw:'Complete 50 workouts'},
-  {id:'hundred', ic:'💎', lb:'Century',           hw:'Complete 100 workouts'},
-
-  // ── Mood badges ───────────────────────────────────────
-  {id:'angry',   ic:'😤', lb:'Rage Mode',         hw:'Complete an angry mood workout'},
-  {id:'low',     ic:'🌙', lb:'Low Day Hero',      hw:'Show up on a low energy day 3 times'},
-  {id:'happy',   ic:'☀️', lb:'Good Vibes',        hw:'Workout happy 5 times'},
-  {id:'stressed',ic:'🧘', lb:'Stress Slayer',     hw:'Complete 5 stressed mood workouts'},
-  {id:'allmoods',ic:'🌈', lb:'All the Feels',     hw:'Work out in all 5 moods'},
-
-  // ── Workout types ─────────────────────────────────────
-  {id:'legs',    ic:'🦵', lb:'Leg Day Lover',     hw:'Complete 5 leg day workouts'},
-  {id:'push',    ic:'🫸', lb:'Push It',           hw:'Complete 5 push day workouts'},
-  {id:'pull',    ic:'🫷', lb:'Pull Power',        hw:'Complete 5 pull day workouts'},
-  {id:'fullbody',ic:'🔄', lb:'Full Package',      hw:'Complete 10 full body workouts'},
-
-  // ── Challenges ───────────────────────────────────────
-  {id:'challenge1',ic:'🏅',lb:'Challenge Accepted',hw:'Complete your first weekly challenge'},
-  {id:'challenge5',ic:'🎖️',lb:'Challenge Champion',hw:'Complete 5 weekly challenges'},
-
-  // ── Special ──────────────────────────────────────────
-  {id:'earlybird',ic:'🌅',lb:'Early Bird',        hw:'Log a workout before 8am'},
-  {id:'night',   ic:'🦉', lb:'Night Owl Lifts',  hw:'Log a workout after 9pm'},
-  {id:'consistent',ic:'📅',lb:'Consistency Champ',hw:'Work out 21 days in a month'},
+  // TIER 3 — unlocked after earning 5 from tier 2
+  {id:'hundred',  ic:'💎', lb:'Century',           hw:'Complete 100 workouts',            tier:3},
+  {id:'push',     ic:'🫸', lb:'Push It',           hw:'Complete 5 push day workouts',     tier:3},
+  {id:'pull',     ic:'🫷', lb:'Pull Power',        hw:'Complete 5 pull day workouts',     tier:3},
+  {id:'fullbody', ic:'🔄', lb:'Full Package',      hw:'Complete 10 full body workouts',   tier:3},
+  {id:'profile',  ic:'🪞', lb:'Know Yourself',     hw:'Complete your full profile',       tier:3},
 ];
+
+// Get which badges to SHOW (current tier's 10 + any earned from higher tiers)
+function getBadgeTier(){
+  var t1earned = ALL_BADGES.filter(function(b){ return b.tier===1 && S.earnedBadges.includes(b.id); }).length;
+  var t2earned = ALL_BADGES.filter(function(b){ return b.tier===2 && S.earnedBadges.includes(b.id); }).length;
+  if(t1earned >= 5 && t2earned >= 5) return 3;
+  if(t1earned >= 5) return 2;
+  return 1;
+}
+
+function getVisibleBadges(){
+  var tier = getBadgeTier();
+  // Always show current tier badges
+  var visible = ALL_BADGES.filter(function(b){ return b.tier === tier; });
+  // Also show any already-earned badges from other tiers (never lose them)
+  ALL_BADGES.forEach(function(b){
+    if(b.tier !== tier && S.earnedBadges.includes(b.id)){
+      if(!visible.find(function(v){ return v.id === b.id; })){
+        visible.push(b);
+      }
+    }
+  });
+  return visible;
+}
+
+// Keep BADGES as alias so existing code doesn't break
+var BADGES = ALL_BADGES;
 const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration cuts performance by up to 25%.'},
   {e:'😴',t:'Your muscles grow while you sleep. 7-9 hours is literally part of your training plan.'},
   {e:'🧠',t:'Exercise increases BDNF — your brain growth hormone. Working out makes you sharper.'},
@@ -2178,6 +2208,10 @@ function handleLogin(){
         S.currentWorkout = [];
         S.currentMood = '';
         S.rtInterval = null;
+        // Always ensure founder badge is there if they went through onboarding
+        if(S.onboarded && !S.earnedBadges.includes('founder')){
+          S.earnedBadges.push('founder');
+        }
         restored = true;
       } else {
         // Partial restore — just name/email
@@ -2321,6 +2355,10 @@ function finishOb(){
 
 // HOME
 function setupHome(){window.scrollTo(0,0);
+  // Always ensure founder badge if onboarded
+  if(S.onboarded && !S.earnedBadges.includes('founder')){
+    S.earnedBadges.push('founder');
+  }
   // Refresh founding counter in background
   if(typeof updateFounderCounter === 'function') setTimeout(updateFounderCounter, 800);
   // Refresh logos in case they weren't loaded yet
@@ -3168,15 +3206,105 @@ function checkBadges(){
   BADGES.forEach(function(b){
     if(!S.earnedBadges.includes(b.id) && checks[b.id]){
       S.earnedBadges.push(b.id);
-      setTimeout(function(){ showT('🏅 Badge unlocked: '+b.ic+' "'+b.lb+'"! Keep going.'); }, 1500);
+      // Show unlock toast then open the letter
+      setTimeout(function(){
+        showT('🏅 Badge unlocked: '+b.ic+' "'+b.lb+'"!');
+        setTimeout(function(){ showBadgeDetail(b.id); }, 1000);
+      }, 1200);
     }
   });
 }
 function renderBadges(){
-  document.getElementById('bg-grid').innerHTML=BADGES.map(b=>{
-    const earned=S.earnedBadges.includes(b.id);
-    return'<div class="bg-item"><div class="bg-ic '+(earned?'earned':'locked')+'" title="'+b.hw+'">'+b.ic+'</div><div class="bg-tip">'+(earned?'✅ Earned!':b.hw)+'</div><div class="bg-lbl">'+b.lb+'</div></div>';
+  var visible = getVisibleBadges();
+  var tier = getBadgeTier();
+  var tierEarned = visible.filter(function(b){ return b.tier===tier && S.earnedBadges.includes(b.id); }).length;
+  var tierTotal  = visible.filter(function(b){ return b.tier===tier; }).length;
+  var nextAt = 5;
+  var hasNext = tier < 3;
+
+  var html = visible.map(function(b){
+    var earned = S.earnedBadges.includes(b.id);
+    return '<div class="bg-item" onclick="showBadgeDetail(this.dataset.id)" data-id="'+b.id+'" style="cursor:pointer;">' +
+      '<div class="bg-ic '+(earned?'earned':'locked')+'" title="'+b.hw+'">'+b.ic+'</div>' +
+      '<div class="bg-lbl">'+b.lb+'</div>' +
+      '</div>';
   }).join('');
+
+  // Progress to next tier
+  if(hasNext){
+    var prog = Math.min(tierEarned, nextAt);
+    html += '<div style="grid-column:1/-1;margin-top:8px;padding:10px 12px;background:rgba(75,191,181,0.08);border-radius:12px;text-align:center;">' +
+      '<div style="font-size:10px;font-weight:800;color:#4BBFB5;margin-bottom:4px;">'+prog+' / '+nextAt+' to unlock next set</div>' +
+      '<div style="background:#EDE8E3;border-radius:20px;height:5px;overflow:hidden;">' +
+        '<div style="background:linear-gradient(90deg,#4BBFB5,#F5A042);height:100%;width:'+(prog/nextAt*100)+'%;border-radius:20px;transition:width 0.5s;"></div>' +
+      '</div></div>';
+  } else {
+    html += '<div style="grid-column:1/-1;margin-top:8px;text-align:center;font-size:11px;font-weight:800;color:#4BBFB5;">🏆 All badges unlocked!</div>';
+  }
+
+  document.getElementById('bg-grid').innerHTML = html;
+}
+
+
+// ── BADGE LETTERS ─────────────────────────────────────────
+var BADGE_LETTERS = {
+  first:     {title:"You actually did it.", msg:"Your first workout is done. Most people talk about starting. You just did. That is the hardest one — and you crushed it. Welcome to Mood Moves. We are so glad you are here. 🌟"},
+  founder:   {title:"You are OG.", msg:"You were here before anyone else. Before the streaks, the challenges, the badges. You believed in Mood Moves when it was just a dream. That makes you family. For real. 👑"},
+  three:     {title:"Three days straight.", msg:"You showed up three days in a row. That is not luck — that is a decision you made three times. The habit is forming. Do not stop now. 🔥"},
+  seven:     {title:"A full week. Wow.", msg:"Seven days. You have officially made movement part of your week. That is not a streak. That is a lifestyle starting. We see you and we are proud. 💫"},
+  fourteen:  {title:"Two weeks strong.", msg:"You have been at this for two weeks straight. Your body is adapting, your mind is stronger, and your future self is already thanking you. Keep going. ⚡"},
+  thirty:    {title:"Thirty days. You are a legend.", msg:"One month of showing up every single day. Do you feel the difference? You should. This is not a badge — this is proof of who you are. 🏆"},
+  ten:       {title:"Ten workouts done.", msg:"Ten workouts completed. That is ten times you chose yourself. Ten times you showed up. Your consistency is building something real. Keep that momentum. 💪"},
+  twenty5:   {title:"25 workouts. Look at you go.", msg:"A quarter century of workouts. You have officially moved past beginner and into something bigger. You are building a version of yourself worth being proud of. 🎯"},
+  fifty:     {title:"50 workouts. Half a century.", msg:"FIFTY. That number hits different. You have been doing this long enough that it is part of you now. This is not a phase. This is you. 🚀"},
+  hundred:   {title:"ONE HUNDRED WORKOUTS.", msg:"100 workouts. We are not even going to try to describe what this means. You know. You earned every single one. This badge is just proof. 💎"},
+  angry:     {title:"You turned anger into power.", msg:"Instead of letting that energy eat you up, you channeled it into something physical. That is emotional intelligence. That is strength. Rage Mode unlocked — and you used it perfectly. 😤"},
+  low:       {title:"You showed up on a hard day.", msg:"Low energy. Maybe a rough day. Maybe you did not feel like it at all. But you came anyway. That is the badge that matters most. Showing up when it is hard is everything. 🌙"},
+  happy:     {title:"Joy and movement together.", msg:"Working out while happy is a whole different energy. You brought that light into your workout and made it even better. Good vibes look good on you. ☀️"},
+  stressed:  {title:"You moved through the stress.", msg:"Five times you chose movement over spiraling. Five times you let your body help your mind. That takes wisdom. You have figured out something most people never do. 🧘"},
+  allmoods:  {title:"You showed up in every mood.", msg:"Happy, low, angry, stressed, neutral — you worked out through all of it. You did not wait for the perfect feeling. You brought yourself no matter what. That is the whole point. 🌈"},
+  challenge1:{title:"First challenge complete.", msg:"You took on something extra. You did not have to — but you did. That competitive spark, that extra push? That is what separates people who get results. Keep challenging yourself. 🏅"},
+  challenge5:{title:"Five challenges crushed.", msg:"Five weekly challenges done. You are someone who does not just show up — you go further. That energy is infectious. We hope you feel as unstoppable as you are. 🎖️"},
+  earlybird: {title:"Before the world woke up.", msg:"You were already moving before most people opened their eyes. There is something powerful about that quiet, early energy. You set the tone for your whole day. Keep owning your mornings. 🌅"},
+  night:     {title:"Late night, full heart.", msg:"When the world was winding down, you were just getting started. Evening workouts hit different — they are all yours. No rush, just you and the movement. 🦉"},
+  consistent:{title:"21 days in a month.", msg:"Twenty one days in a single month. That is not a habit anymore — that is a lifestyle. Your body, your mind, your whole energy is different because of what you have built. We are in awe of you. 📅"},
+  legs:      {title:"Leg day? Every time.", msg:"Five leg days done. You never skipped, never made excuses, never swapped for something easier. Your foundation is getting stronger every single session. 🦵"},
+  push:      {title:"You pushed through.", msg:"Five push days completed. Chest, shoulders, triceps — all growing stronger. Push days are hard and you did them anyway. That tells us everything we need to know about you. 🫸"},
+  pull:      {title:"Strong enough to pull yourself up.", msg:"Five pull days done. The muscles that pull you through life — back, biceps, rows — they are stronger now. And so are you. 🫷"},
+  fullbody:  {title:"The full package. Really.", msg:"Ten full body workouts. You have worked everything, challenged everything, grown everywhere. That is complete fitness. That is the full package — and that is you. 🔄"},
+  profile:   {title:"You know who you are.", msg:"You took the time to set up your full profile. Your goals, your level, your days — all of it. That level of self-awareness is rare. You know what you want. Now go get it. 🪞"},
+};
+function closeBadgeModal(){ var m=document.getElementById('badge-detail-modal'); if(m) m.remove(); }
+function showBadgeDetail(id){
+  var b = ALL_BADGES.find(function(x){ return x.id===id; });
+  if(!b) return;
+  var earned = S.earnedBadges.includes(id);
+  var old = document.getElementById('badge-detail-modal');
+  if(old) old.remove();
+  var modal = document.createElement('div');
+  modal.id = 'badge-detail-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
+  modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+  var letter = BADGE_LETTERS[id] || {title:'Keep going!', msg:'Every badge you earn is proof of your dedication. This one is yours.'};
+  var letterHtml = earned
+    ? '<div style="background:#FFF9E6;border-radius:4px 14px 14px 14px;padding:18px 16px;margin:12px 0 16px;text-align:left;position:relative;box-shadow:2px 3px 12px rgba(0,0,0,0.08);">' +
+        '<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:40px;height:14px;background:rgba(255,230,120,0.7);border-radius:3px;"></div>' +
+        '<div style="font-family:Cormorant Garamond,serif;font-size:15px;font-weight:700;color:#2C2C3A;margin-bottom:6px;">' + letter.title + '</div>' +
+        '<div style="font-size:12px;color:#6B6B7A;line-height:1.7;font-style:italic;">' + letter.msg + '</div>' +
+      '</div>'
+    : '<div style="padding:12px;background:#F5F0EB;border-radius:12px;margin:12px 0 16px;font-size:12px;color:#B0B0C0;">Complete this badge to unlock your personal letter 💌</div>';
+
+  modal.innerHTML = '<div style="background:white;border-radius:24px 24px 0 0;padding:24px 20px 36px;width:100%;max-width:430px;text-align:center;max-height:85vh;overflow-y:auto;">' +
+    '<div style="width:36px;height:4px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>' +
+    '<div style="font-size:52px;margin-bottom:10px;'+(earned?'':'filter:grayscale(1);opacity:0.4;')+'">' + b.ic + '</div>' +
+    '<div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">' + b.lb + '</div>' +
+    '<div style="font-size:12px;color:#7A7A8C;margin-bottom:10px;">' + b.hw + '</div>' +
+    '<div style="display:inline-block;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800;background:'+(earned?'#E8F7F5':'#F5F0EB')+';color:'+(earned?'#4BBFB5':'#B0B0C0')+';margin-bottom:4px;">' +
+    (earned ? '✅ Earned!' : '🔒 Not yet earned') + '</div>' +
+    letterHtml +
+    '<button onclick="closeBadgeModal()" style="padding:10px 28px;background:#4BBFB5;border:none;border-radius:20px;color:white;font-weight:800;font-size:13px;cursor:pointer;font-family:Nunito,sans-serif;">Close</button>' +
+    '</div>';
+  document.body.appendChild(modal);
 }
 function updateRecap(){
   var msgs={
@@ -3808,7 +3936,8 @@ window.addEventListener('DOMContentLoaded',function(){
 
   // ── Lottie players ──────────────────────────────────
   // Load nav icon — emoji shows immediately, lottie replaces silently when ready
-  function loadNavIcon(id, url) {
+  function loadNavIcon(id, url, w, h) {
+    w = w || 32; h = h || 32;
     fetch(url).then(function(r){
       if(!r.ok) throw new Error('not found');
       return r.json();
@@ -3822,7 +3951,7 @@ window.addEventListener('DOMContentLoaded',function(){
       player.setAttribute('autoplay','');
       player.setAttribute('loop','');
       player.setAttribute('mode','normal');
-      player.style.cssText = 'width:32px;height:32px;position:absolute;opacity:0;';
+      player.style.cssText = 'width:'+w+'px;height:'+h+'px;position:absolute;opacity:0;';
       el.style.position = 'relative';
       el.appendChild(player);
 
@@ -3888,7 +4017,7 @@ window.addEventListener('DOMContentLoaded',function(){
     loadNavIcon('nav-ic-profile',   '/nav-profile.json');
     // Load skating animation from separate file (keeps index.html lean)
     loadNavIcon('rest-day-icon',  '/rest-day.json');
-    loadNavIcon('ch-icon',        '/challenge-icon.json');
+    loadNavIcon('ch-icon',        '/challenge-icon.json', 90, 80);
     fetch('/skate.json').then(function(r){ return r.json(); })
       .then(function(data){ initLottie('lottie-skate', data); })
       .catch(function(){
