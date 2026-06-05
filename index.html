@@ -383,7 +383,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 /* BOTTOM NAV */
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid var(--border);display:flex;padding:7px 0 max(17px, calc(10px + env(safe-area-inset-bottom, 0px)));z-index:100;box-shadow:0 -4px 20px rgba(44,44,58,0.06);}
 .ni2{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 0;}
-.ni2-ic{font-size:18px;}
+.ni2-ic{font-size:18px;display:flex;align-items:center;justify-content:center;}
 .ni2-lb{font-size:9px;font-weight:800;color:var(--txt3);letter-spacing:0.3px;}
 .ni2.on .ni2-lb{color:var(--teal);}
 .ni2.on .ni2-ic{transform:scale(1.1);}
@@ -1333,10 +1333,10 @@ else{setAllLogos();setAllAvatars();}
 
 <!-- BOTTOM NAV -->
 <nav class="bnav hidden" id="bnav">
-  <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic">🏠</div><div class="ni2-lb">Home</div></div>
-  <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic">💪</div><div class="ni2-lb">Workout</div></div>
-  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic">📖</div><div class="ni2-lb">Exercises</div></div>
-  <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic">👤</div><div class="ni2-lb">Profile</div></div>
+  <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic" id="nav-ic-home" style="width:28px;height:28px;"></div><div class="ni2-lb">Home</div></div>
+  <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic" id="nav-ic-workout" style="width:28px;height:28px;"></div><div class="ni2-lb">Workout</div></div>
+  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:28px;height:28px;"></div><div class="ni2-lb">Exercise Library</div></div>
+  <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic" id="nav-ic-profile" style="width:28px;height:28px;"></div><div class="ni2-lb">Profile</div></div>
 </nav>
 
 <!-- EXERCISE VISUAL MODAL -->
@@ -3716,6 +3716,39 @@ window.addEventListener('DOMContentLoaded',function(){
   setTimeout(initAv,300);
 
   // ── Lottie players ──────────────────────────────────
+  // Load nav icon from external JSON file
+  function loadNavIcon(id, url) {
+    fetch(url).then(function(r){ return r.json(); })
+      .then(function(data){
+        // Wait for lottie-player to be defined
+        var tryInit = function() {
+          var el = document.getElementById(id);
+          if(!el) return;
+          var player = document.createElement('lottie-player');
+          player.setAttribute('autoplay','');
+          player.setAttribute('loop','');
+          player.setAttribute('mode','normal');
+          player.style.cssText = 'width:28px;height:28px;';
+          el.innerHTML = '';
+          el.appendChild(player);
+          player.load(data);
+        };
+        if(window.customElements && window.customElements.whenDefined) {
+          window.customElements.whenDefined('lottie-player').then(tryInit).catch(tryInit);
+        } else {
+          setTimeout(tryInit, 500);
+        }
+      }).catch(function(){
+        // Fallback emoji if file not found
+        var fallbacks = {
+          'nav-ic-home':'🏠','nav-ic-workout':'💪',
+          'nav-ic-exercises':'📖','nav-ic-profile':'👤'
+        };
+        var el = document.getElementById(id);
+        if(el){ el.style.fontSize='18px'; el.textContent = fallbacks[id]||'●'; }
+      });
+  }
+
   function initLottie(id, data) {
     var el = document.getElementById(id);
     if(!el) return;
@@ -3738,6 +3771,11 @@ window.addEventListener('DOMContentLoaded',function(){
 
   function initAllLotties() {
     initLottie('tip-robot', LOTTIE_ROBOT);
+    // Nav icons loaded from separate files
+    loadNavIcon('nav-ic-home',      '/nav-home.json');
+    loadNavIcon('nav-ic-workout',   '/nav-workout.json');
+    loadNavIcon('nav-ic-exercises', '/nav-exercises.json');
+    loadNavIcon('nav-ic-profile',   '/nav-profile.json');
     // Load skating animation from separate file (keeps index.html lean)
     fetch('/skate.json').then(function(r){ return r.json(); })
       .then(function(data){ initLottie('lottie-skate', data); })
