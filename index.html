@@ -1126,7 +1126,7 @@ else{setAllLogos();setAllAvatars();}
         <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">⚡ This Weeks Challenge</div>
         <div style="font-size:10px;opacity:0.6;" id="ch-days">⏰ 4 days left</div>
       </div>
-      <div style="font-size:24px;margin-bottom:4px;" id="ch-icon">💪</div>
+      <div style="width:60px;height:50px;margin-bottom:4px;" id="ch-icon"></div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
       <div style="font-size:12px;opacity:0.7;margin-bottom:12px;font-style:italic;" id="ch-phrase">You vs You.</div>
       <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
@@ -1139,7 +1139,7 @@ else{setAllLogos();setAllAvatars();}
     </div>
         <div class="card anim-card" style="animation-delay:0.5s"><div class="ct"><span class="em-cal">📅</span> This Month</div><div class="cal" id="cal"></div></div>
     
-    <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges &amp; Rewards</div><div class="bg-grid" id="bg-grid"></div></div>
+    <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges</div><div class="bg-grid" id="bg-grid"></div></div>
     <div class="card" style="cursor:pointer;" onclick="openJournal()">
       <div id="lottie-journal" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div>
       <div class="ct" style="text-align:center;margin-bottom:6px;">My Journal</div>
@@ -1602,14 +1602,44 @@ const LL={new:'New to fitness 🌱',some:'Some experience ⚡',regular:'I train 
 const ME={low:'😞',neutral:'😐',happy:'😊',angry:'😤',stressed:'😵‍💫'};
 const TITLES=[{m:0,t:'Rookie Mover',i:'⭐'},{m:3,t:'Getting Warmed Up',i:'🔥'},{m:7,t:'Streak Starter',i:'💫'},{m:14,t:'Mood Warrior',i:'⚔️'},{m:21,t:'Consistency Champ',i:'👑'},{m:30,t:'Mood Moves Legend',i:'🏆'}];
 const BADGES=[
-  {id:'first',ic:'🌟',lb:'First Workout',hw:'Complete your first workout'},
-  {id:'three',ic:'🔥',lb:'3 Day Streak',hw:'Keep a 3-day streak'},
-  {id:'seven',ic:'💫',lb:'7 Day Streak',hw:'Keep a 7-day streak'},
-  {id:'ten',ic:'💪',lb:'10 Workouts',hw:'Complete 10 workouts total'},
-  {id:'angry',ic:'😤',lb:'Rage Mode',hw:'Complete an angry mood workout'},
-  {id:'low',ic:'🌙',lb:'Low Day Hero',hw:'Show up on a low day 3 times'},
-  {id:'happy',ic:'☀️',lb:'Good Vibes',hw:'Workout happy 3 times'},
-  {id:'founder',ic:'👑',lb:'Founding Member',hw:'One of the first 100 — OG status'},
+  // ── Getting started ───────────────────────────────────
+  {id:'first',   ic:'🌟', lb:'First Step',        hw:'Complete your first workout'},
+  {id:'founder', ic:'👑', lb:'Founding Member',   hw:'One of the first 100 — OG status'},
+  {id:'profile', ic:'🪞', lb:'Know Yourself',     hw:'Complete your profile setup'},
+
+  // ── Streaks ───────────────────────────────────────────
+  {id:'three',   ic:'🔥', lb:'3 Day Streak',      hw:'3 days in a row'},
+  {id:'seven',   ic:'💫', lb:'Week Warrior',      hw:'7 day streak — a full week'},
+  {id:'fourteen',ic:'⚡', lb:'Two Week Strong',   hw:'14 day streak'},
+  {id:'thirty',  ic:'🏆', lb:'Month Mover',       hw:'30 day streak — legend status'},
+
+  // ── Workouts completed ────────────────────────────────
+  {id:'ten',     ic:'💪', lb:'10 Done',           hw:'Complete 10 workouts'},
+  {id:'twenty5', ic:'🎯', lb:'25 Club',           hw:'Complete 25 workouts'},
+  {id:'fifty',   ic:'🚀', lb:'50 Strong',         hw:'Complete 50 workouts'},
+  {id:'hundred', ic:'💎', lb:'Century',           hw:'Complete 100 workouts'},
+
+  // ── Mood badges ───────────────────────────────────────
+  {id:'angry',   ic:'😤', lb:'Rage Mode',         hw:'Complete an angry mood workout'},
+  {id:'low',     ic:'🌙', lb:'Low Day Hero',      hw:'Show up on a low energy day 3 times'},
+  {id:'happy',   ic:'☀️', lb:'Good Vibes',        hw:'Workout happy 5 times'},
+  {id:'stressed',ic:'🧘', lb:'Stress Slayer',     hw:'Complete 5 stressed mood workouts'},
+  {id:'allmoods',ic:'🌈', lb:'All the Feels',     hw:'Work out in all 5 moods'},
+
+  // ── Workout types ─────────────────────────────────────
+  {id:'legs',    ic:'🦵', lb:'Leg Day Lover',     hw:'Complete 5 leg day workouts'},
+  {id:'push',    ic:'🫸', lb:'Push It',           hw:'Complete 5 push day workouts'},
+  {id:'pull',    ic:'🫷', lb:'Pull Power',        hw:'Complete 5 pull day workouts'},
+  {id:'fullbody',ic:'🔄', lb:'Full Package',      hw:'Complete 10 full body workouts'},
+
+  // ── Challenges ───────────────────────────────────────
+  {id:'challenge1',ic:'🏅',lb:'Challenge Accepted',hw:'Complete your first weekly challenge'},
+  {id:'challenge5',ic:'🎖️',lb:'Challenge Champion',hw:'Complete 5 weekly challenges'},
+
+  // ── Special ──────────────────────────────────────────
+  {id:'earlybird',ic:'🌅',lb:'Early Bird',        hw:'Log a workout before 8am'},
+  {id:'night',   ic:'🦉', lb:'Night Owl Lifts',  hw:'Log a workout after 9pm'},
+  {id:'consistent',ic:'📅',lb:'Consistency Champ',hw:'Work out 21 days in a month'},
 ];
 const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration cuts performance by up to 25%.'},
   {e:'😴',t:'Your muscles grow while you sleep. 7-9 hours is literally part of your training plan.'},
@@ -3082,8 +3112,65 @@ function completeRD(){
 
 // BADGES
 function checkBadges(){
-  const checks={first:S.total>=1,three:S.streak>=3,seven:S.streak>=7,ten:S.total>=10,angry:(S.moodCounts.angry||0)>=1,low:(S.moodCounts.low||0)>=3,happy:(S.moodCounts.happy||0)>=3};
-  BADGES.forEach(b=>{if(!S.earnedBadges.includes(b.id)&&checks[b.id]){S.earnedBadges.push(b.id);setTimeout(()=>showT('🏅 Badge unlocked: '+b.ic+' "'+b.lb+'"! Keep going.'),1500);}});
+  var now = new Date();
+  var hour = now.getHours();
+  var moodCounts = S.moodCounts || {};
+  var calDays = Object.keys(S.calData||{}).filter(function(k){ return S.calData[k]; }).length;
+
+  // Count workout types from history
+  var wkTypes = S.wkHistory || [];
+  var legCount  = wkTypes.filter(function(w){ return w && w.split === 'Leg Day'; }).length;
+  var pushCount = wkTypes.filter(function(w){ return w && w.split === 'Push Day'; }).length;
+  var pullCount = wkTypes.filter(function(w){ return w && w.split === 'Pull Day'; }).length;
+  var fbCount   = wkTypes.filter(function(w){ return w && w.split === 'Full Body'; }).length;
+
+  var checks = {
+    // Getting started
+    first:     S.total >= 1,
+    founder:   S.earnedBadges.includes('founder'), // set at signup
+    profile:   !!(S.user && S.user.name && S.user.goal && S.user.level),
+
+    // Streaks
+    three:     S.streak >= 3,
+    seven:     S.streak >= 7,
+    fourteen:  S.streak >= 14,
+    thirty:    S.streak >= 30,
+
+    // Totals
+    ten:       S.total >= 10,
+    twenty5:   S.total >= 25,
+    fifty:     S.total >= 50,
+    hundred:   S.total >= 100,
+
+    // Moods
+    angry:     (moodCounts.angry||0) >= 1,
+    low:       (moodCounts.low||0) >= 3,
+    happy:     (moodCounts.happy||0) >= 5,
+    stressed:  (moodCounts.stressed||0) >= 5,
+    allmoods:  Object.keys(moodCounts).length >= 5,
+
+    // Workout types
+    legs:      legCount >= 5,
+    push:      pushCount >= 5,
+    pull:      pullCount >= 5,
+    fullbody:  fbCount >= 10,
+
+    // Challenges
+    challenge1: (S.challengeRound||0) >= 1,
+    challenge5: (S.challengeRound||0) >= 5,
+
+    // Special
+    earlybird: hour < 8 && S.total >= 1,
+    night:     hour >= 21 && S.total >= 1,
+    consistent: calDays >= 21,
+  };
+
+  BADGES.forEach(function(b){
+    if(!S.earnedBadges.includes(b.id) && checks[b.id]){
+      S.earnedBadges.push(b.id);
+      setTimeout(function(){ showT('🏅 Badge unlocked: '+b.ic+' "'+b.lb+'"! Keep going.'); }, 1500);
+    }
+  });
 }
 function renderBadges(){
   document.getElementById('bg-grid').innerHTML=BADGES.map(b=>{
@@ -3800,7 +3887,8 @@ window.addEventListener('DOMContentLoaded',function(){
     loadNavIcon('nav-ic-exercises', '/nav-exercises.json');
     loadNavIcon('nav-ic-profile',   '/nav-profile.json');
     // Load skating animation from separate file (keeps index.html lean)
-    loadNavIcon('rest-day-icon', '/rest-day.json');
+    loadNavIcon('rest-day-icon',  '/rest-day.json');
+    loadNavIcon('ch-icon',        '/challenge-icon.json');
     fetch('/skate.json').then(function(r){ return r.json(); })
       .then(function(data){ initLottie('lottie-skate', data); })
       .catch(function(){
@@ -4387,13 +4475,8 @@ function setupChallenge(){
   var unitLabel = unit==='seconds' ? 'sec' : unit==='steps' ? 'steps' : 'reps';
 
   if(icon){
-    icon.textContent=ch.icon;
-    // Give each challenge icon its own animation
-    var chAnims={'💪':'em-muscle','🦵':'em-happy','🌉':'em-low','🔥':'em-fire','🧘':'em-low','⬆️':'em-muscle','🏃':'em-happy'};
-    icon.className='';
-    icon.style.cssText='font-size:28px;margin-bottom:4px;display:inline-block;';
-    var ca=chAnims[ch.icon]||'em-star';
-    icon.classList.add(ca);
+    // Lottie player handles the icon — just keep the slot sized correctly
+    icon.style.cssText='width:60px;height:50px;margin-bottom:4px;';
   }
   if(name)name.textContent=(round>0?ch.name+' — Round '+(round+1):ch.name);
   if(phrase){
