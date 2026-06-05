@@ -1097,7 +1097,10 @@ else{setAllLogos();setAllAvatars();}
         </div>
       </div>
     <button class="s-btn anim-card" onclick="goToMP()" style="animation-delay:0.2s">▶ Start Today's Workout</button>
-    <button class="r-btn anim-card" onclick="goToRD()" style="animation-delay:0.25s"><span class="em-shield">🛡️</span> Rest Day — Still Moving</button>
+    <button class="r-btn anim-card" onclick="goToRD()" style="animation-delay:0.25s;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <div id="rest-day-icon" style="width:28px;height:28px;flex-shrink:0;font-size:20px;">🛡️</div>
+      Rest Day — Still Moving
+    </button>
 
     <div class="card anim-card" style="animation-delay:0.3s">
       <div class="ct">Your Progress</div>
@@ -3797,6 +3800,7 @@ window.addEventListener('DOMContentLoaded',function(){
     loadNavIcon('nav-ic-exercises', '/nav-exercises.json');
     loadNavIcon('nav-ic-profile',   '/nav-profile.json');
     // Load skating animation from separate file (keeps index.html lean)
+    loadNavIcon('rest-day-icon', '/rest-day.json');
     fetch('/skate.json').then(function(r){ return r.json(); })
       .then(function(data){ initLottie('lottie-skate', data); })
       .catch(function(){
