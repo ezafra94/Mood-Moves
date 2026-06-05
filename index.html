@@ -782,7 +782,6 @@ else{setAllLogos();setAllAvatars();}
     <div style="width:100%;max-width:280px;" onclick="goTo('auth')">
       <div style="background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;padding:18px 32px;border-radius:16px;text-align:center;box-shadow:0 8px 24px rgba(75,191,181,0.35);animation:pulse-btn 2s ease-in-out infinite;letter-spacing:0.3px;cursor:pointer;">Let Your Mood Move You →</div>
     </div>
-    <div style="font-size:10px;color:#C8C8D8;margin-top:14px;">Tap anywhere to begin</div>
     <div style="font-size:9px;color:#D8D8E8;margin-top:8px;">© 2026 Mood Moves</div>
   </div>
 </div>
@@ -2163,7 +2162,7 @@ function handleLogin(){
         showT('Welcome back, ' + (S.user.name||'there') + '! Your data is restored. 💪');
         setTimeout(function(){ showStickyNote(); }, 1500);
       } else {
-        showT('Welcome back, ' + (u.name||'there') + '! Let’s get you set up again.');
+        showT('Welcome back, ' + (u.name||'there') + '! Lets get you set up again.');
         goTo('founding');
         setTimeout(function(){ updateFounderCounter(); }, 300);
       }
@@ -2278,7 +2277,7 @@ function finishOb(){
           if(!localStorage.getItem('mm_notif_hour')) localStorage.setItem('mm_notif_hour','9');
           if(!localStorage.getItem('mm_notif_min'))  localStorage.setItem('mm_notif_min','0');
           sendPushNotif('Welcome to Mood Moves! 🎉',
-            'You'll get your daily motivation, tips and workout reminders right here.',
+            'You will get daily motivation, tips and workout reminders right here.',
             'mm-welcome');
         }
       });
