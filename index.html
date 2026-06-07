@@ -1134,7 +1134,7 @@ else{setAllLogos();setAllAvatars();}
           <div style="font-size:12px;opacity:0.7;font-style:italic;" id="ch-phrase">You vs You.</div>
         </div>
         <!-- Lottie animation — bigger, right side -->
-        <div style="width:90px;height:80px;flex-shrink:0;margin-left:8px;" id="ch-icon"></div>
+        <div style="width:90px;height:80px;flex-shrink:0;margin-left:0;margin-right:20px;" id="ch-icon"></div>
       </div>
       <!-- Progress -->
       <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
@@ -1608,7 +1608,7 @@ const GL={muscle:'Build Muscle 💪',feelgood:'Feel Good ✨',losefat:'Lose Fat 
 const GI={muscle:'💪',feelgood:'✨',losefat:'🔥'};
 const LL={new:'New to fitness 🌱',some:'Some experience ⚡',regular:'I train regularly 🏆'};
 const ME={low:'😞',neutral:'😐',happy:'😊',angry:'😤',stressed:'😵‍💫'};
-const TITLES=[{m:0,t:'Rookie Mover',i:'⭐'},{m:3,t:'Getting Warmed Up',i:'🔥'},{m:7,t:'Streak Starter',i:'💫'},{m:14,t:'Mood Warrior',i:'⚔️'},{m:21,t:'Consistency Champ',i:'👑'},{m:30,t:'Mood Moves Legend',i:'🏆'}];
+const TITLES=[{m:0,t:'Just Getting Started',i:'⭐'},{m:3,t:'Getting Warmed Up',i:'🔥'},{m:7,t:'Streak Starter',i:'💫'},{m:14,t:'Mood Warrior',i:'⚔️'},{m:21,t:'Consistency Champ',i:'👑'},{m:30,t:'Mood Moves Legend',i:'🏆'}];
 // ── BADGE SYSTEM ─────────────────────────────────────────
 // Badges are organized into tiers. Users see 10 at a time.
 // Earn 5+ in current tier to unlock the next tier.
@@ -1623,9 +1623,9 @@ const ALL_BADGES=[
   {id:'low',      ic:'🌙', lb:'Low Day Hero',      hw:'Show up on a low energy day 3x',  tier:1},
   {id:'happy',    ic:'☀️', lb:'Good Vibes',        hw:'Workout in a happy mood 5 times',  tier:1},
   {id:'challenge1',ic:'🏅',lb:'Challenge Accepted',hw:'Complete your first challenge',    tier:1},
-  {id:'consistent',ic:'📅',lb:'Consistency Champ', hw:'Work out 21 days in a month',     tier:1},
 
   // TIER 2 — unlocked after earning 5 from tier 1
+  {id:'consistent',ic:'📅',lb:'Consistency Champ', hw:'Work out 21 days in a month',     tier:2},
   {id:'fourteen', ic:'⚡', lb:'Two Week Strong',   hw:'14 day streak',                    tier:2},
   {id:'thirty',   ic:'🏆', lb:'Month Mover',       hw:'30 day streak — legend',           tier:2},
   {id:'twenty5',  ic:'🎯', lb:'25 Club',           hw:'Complete 25 workouts',             tier:2},
@@ -1657,7 +1657,7 @@ function getBadgeTier(){
 function getVisibleBadges(){
   var tier = getBadgeTier();
   // Always show current tier badges
-  var visible = ALL_BADGES.filter(function(b){ return b.tier === tier; });
+  var visible = ALL_BADGES.filter(function(b){ return b.tier === tier; }).slice(0, 8);
   // Also show any already-earned badges from other tiers (never lose them)
   ALL_BADGES.forEach(function(b){
     if(b.tier !== tier && S.earnedBadges.includes(b.id)){
@@ -2359,6 +2359,11 @@ function setupHome(){window.scrollTo(0,0);
   if(S.onboarded && !S.earnedBadges.includes('founder')){
     S.earnedBadges.push('founder');
   }
+  // Show founder letter once if they haven't seen it
+  if(S.earnedBadges.includes('founder') && !localStorage.getItem('mm_founder_letter_seen')){
+    localStorage.setItem('mm_founder_letter_seen','1');
+    setTimeout(function(){ showBadgeDetail('founder'); }, 2000);
+  }
   // Refresh founding counter in background
   if(typeof updateFounderCounter === 'function') setTimeout(updateFounderCounter, 800);
   // Refresh logos in case they weren't loaded yet
@@ -2417,7 +2422,11 @@ function setupHome(){window.scrollTo(0,0);
     });
   },60);
   // Show daily sticky note
-  setTimeout(function(){ showStickyNote(); }, 900);
+  // Show sticky note on first open each day — works for everyone
+  setTimeout(function(){
+    _stickyShown = false; // reset flag so it can show
+    showStickyNote();
+  }, 900);
   // Auto-enable notifications if permission exists but not set
   if(typeof Notification !== 'undefined' && Notification.permission === 'granted' &&
      localStorage.getItem('mm_notif_enabled') !== '1'){
@@ -3219,7 +3228,7 @@ function renderBadges(){
   var tier = getBadgeTier();
   var tierEarned = visible.filter(function(b){ return b.tier===tier && S.earnedBadges.includes(b.id); }).length;
   var tierTotal  = visible.filter(function(b){ return b.tier===tier; }).length;
-  var nextAt = 5;
+  var nextAt = 4;
   var hasNext = tier < 3;
 
   var html = visible.map(function(b){
@@ -3661,6 +3670,12 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
+  // One-time reset — clear sticky date so everyone sees note on next open after this deploy
+  var deployVersion = 'v20260602-sticky';
+  if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
+    localStorage.setItem('mm_deploy_reset', deployVersion);
+    localStorage.removeItem('mm_sticky_date');
+  }
   // Audio debug — shows in browser console
   console.log('[MM Audio] muted:', MM_MUTED, '| localStorage mm_muted:', localStorage.getItem('mm_muted'));
   // Auto-clear stuck mute state that may have been set by a bug
@@ -4611,10 +4626,10 @@ function setupChallenge(){
   if(phrase){
     // Show target clearly in the subtitle
     var targetStr = unit==='seconds'
-      ? ch.icon+' Goal: '+target+' seconds total this week'
+      ? 'Goal: '+target+' seconds total this week'
       : unit==='steps'
-      ? ch.icon+' Goal: '+fmtNum(target)+' steps this week'
-      : ch.icon+' Goal: '+target+' '+unit+' total this week';
+      ? 'Goal: '+fmtNum(target)+' steps this week'
+      : 'Goal: '+target+' '+unit+' total this week';
     phrase.innerHTML = ch.phrase+'<br><span style="font-size:10px;opacity:0.6;font-style:normal;font-weight:800;letter-spacing:0.3px;">'+targetStr+'</span>';
   }
   if(bar){bar.style.width="0%";setTimeout(function(){bar.style.transition="width 1s ease";bar.style.width=pct+"%";},200);}
@@ -5722,18 +5737,17 @@ const IAM_AFFIRMATIONS = [
 
 // ── DAILY STICKY NOTE ────────────────────────────────────
 var _stickyShown = false;
-// Reset sticky flag if it's a new day
+// Always allow sticky to show — it will self-limit to once per day inside showStickyNote
+// Reset on each page load
 (function(){
-  var today = new Date().toDateString();
-  if(localStorage.getItem('mm_sticky_date') !== today){
-    _stickyShown = false; // new day, allow sticky to show
-  }
+  _stickyShown = false;
 })();
 
 function showStickyNote() {
-  if (_stickyShown) return;
-  // Only show once per day
+  // Shows for EVERYONE — no notification permission needed
+  // Once per day, first time they open the app
   var today = new Date().toDateString();
+  if (_stickyShown) return;
   if (localStorage.getItem('mm_sticky_date') === today) return;
 
   var booster = getDailyBooster();
@@ -5744,24 +5758,19 @@ function showStickyNote() {
     famous: 'Mood Moves Wisdom',
     iam:    'A Mood Moves Moment'
   };
-  var icons = {
-    quote:'🌟', tip:'🤖', cheer:'🌈', famous:'📜', iam:'💫'
-  };
+  var icons = { quote:'🌟', tip:'🤖', cheer:'🌈', famous:'📜', iam:'💫' };
 
   var popup = document.getElementById('sticky-popup');
   var iconEl = document.getElementById('sticky-icon');
   var typeEl = document.getElementById('sticky-type');
   var msgEl  = document.getElementById('sticky-msg');
   var dateEl = document.getElementById('sticky-date');
-
   if(!popup || !msgEl) return;
 
   iconEl.textContent = icons[booster.type] || '💫';
   typeEl.textContent = typeLabels[booster.type] || 'Daily Message';
   msgEl.textContent  = booster.msg;
-
-  var now = new Date();
-  dateEl.textContent = now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
   popup.style.display = 'flex';
   popup.classList.add('show');
@@ -5972,25 +5981,18 @@ function checkDailyNotifications(){
   const now = new Date();
   const hour = now.getHours();
   const min = now.getMinutes();
-  const savedHour = parseInt(localStorage.getItem('mm_notif_hour')||'9');
-  const savedMin = parseInt(localStorage.getItem('mm_notif_min')||'0');
+
   const lastSent = localStorage.getItem('mm_last_notif');
   const today = now.toDateString();
   
-  // Send workout reminder at chosen time
-  if(hour === savedHour && min === savedMin && lastSent !== today){
+  // Send morning notification — fires automatically at 7-9am, no setup needed
+  if(hour >= 7 && hour <= 9 && lastSent !== today){
     localStorage.setItem('mm_last_notif', today);
     const booster = getDailyBooster();
-    const icons = {quote:'💬', tip:'💡', cheer:'🌅'};
-    
-    // Daily booster — send via Service Worker so it works on iOS too
+    const icons = {quote:'💬', tip:'💡', cheer:'🌅', famous:'✨', iam:'💫'};
     sendPushNotif('Good morning from Mood Moves ' + (icons[booster.type]||'💫'), booster.msg, 'mm-daily');
-    
-    // Workout reminder (30 min later)
-    setTimeout(function(){
-      const msg = WORKOUT_REMINDERS[Math.floor(Math.random()*WORKOUT_REMINDERS.length)];
-      sendPushNotif('Mood Moves 🏋️', msg, 'mm-workout');
-    }, 30*60*1000);
+    const msg = WORKOUT_REMINDERS[Math.floor(Math.random()*WORKOUT_REMINDERS.length)];
+    setTimeout(function(){ sendPushNotif('Mood Moves 🏋️', msg, 'mm-workout'); }, 5000);
   }
   
   // Weekly challenge reminder (Sundays at 6pm)
