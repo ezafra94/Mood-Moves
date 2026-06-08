@@ -2342,8 +2342,7 @@ function finishOb(){
       Notification.requestPermission().then(function(p){
         if(p === 'granted'){
           localStorage.setItem('mm_notif_enabled','1');
-          if(!localStorage.getItem('mm_notif_hour')) localStorage.setItem('mm_notif_hour','9');
-          if(!localStorage.getItem('mm_notif_min'))  localStorage.setItem('mm_notif_min','0');
+          setupPushSubscription();
           sendPushNotif('Welcome to Mood Moves! 🎉',
             'You will get daily motivation, tips and workout reminders right here.',
             'mm-welcome');
@@ -2428,11 +2427,12 @@ function setupHome(){window.scrollTo(0,0);
     showStickyNote();
   }, 900);
   // Auto-enable notifications if permission exists but not set
-  if(typeof Notification !== 'undefined' && Notification.permission === 'granted' &&
-     localStorage.getItem('mm_notif_enabled') !== '1'){
-    localStorage.setItem('mm_notif_enabled', '1');
-    if(!localStorage.getItem('mm_notif_hour')) localStorage.setItem('mm_notif_hour', '9');
-    if(!localStorage.getItem('mm_notif_min'))  localStorage.setItem('mm_notif_min', '0');
+  if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+    if(localStorage.getItem('mm_notif_enabled') !== '1'){
+      localStorage.setItem('mm_notif_enabled', '1');
+    }
+    // Save/refresh push subscription on every login
+    setTimeout(savePushSubscription, 2000);
     setTimeout(checkDailyNotifications, 1000);
   }
 }
@@ -5956,6 +5956,98 @@ async function saveNotifSettings(){
 }
 
 // Check and send daily notifications
+
+// ── SAVE PUSH SUBSCRIPTION TO SUPABASE ───────────────────
+// Called after user allows notifications
+// Supabase Edge Function will use this to send 7am daily push
+var VAPID_PUBLIC_KEY = 'BFg6cy9EZO-OVRYc8gPaxVu-Vo4l_gRZn3KQTI97LCx67NBx92eDvc2dl89nmc_6N-kJrdCVZSFUQ382Nr8PVBE';
+
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var rawData = atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+async function savePushSubscription() {
+  try {
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if(Notification.permission !== 'granted') return;
+
+    var reg = await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    var subJson = sub.toJSON();
+    var email = S.user && S.user.email;
+
+    // Save to Supabase push_subscriptions table
+    await supa.from('push_subscriptions').upsert({
+      email: email || '',
+      user_id: localStorage.getItem('mm_uid') || '',
+      endpoint: subJson.endpoint,
+      p256dh: subJson.keys.p256dh,
+      auth: subJson.keys.auth,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'endpoint' });
+
+    console.log('[MM] Push subscription saved');
+  } catch(e) {
+    console.log('[MM] Push subscription failed:', e.message);
+  }
+}
+
+// ── WEB PUSH SUBSCRIPTION ────────────────────────────────
+var VAPID_PUBLIC_KEY = 'BPJEkPmgwGQXVe-zAH50Dns6AxhlL7QNVRKqV-R27oF76ym2oNBHFYOBcGlZUxc-cU2TI5H3CSXgpCVp-MVLpF4';
+
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var rawData = window.atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+function savePushSubscription(sub) {
+  var uid = localStorage.getItem('mm_uid') || 'anon';
+  var email = (S.user && S.user.email) || '';
+  var j = sub.toJSON();
+  supa.from('push_subscriptions').upsert({
+    user_id:  uid,
+    email:    email,
+    endpoint: j.endpoint,
+    p256dh:   j.keys.p256dh,
+    auth:     j.keys.auth
+  }, { onConflict: 'endpoint' }).then(function(){
+    console.log('[MM] Push subscription saved');
+  }).catch(function(e){ console.log('[MM] Push sub save failed:', e); });
+}
+
+function setupPushSubscription() {
+  if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  if(Notification.permission !== 'granted') return;
+  navigator.serviceWorker.ready.then(function(reg) {
+    reg.pushManager.getSubscription().then(function(existing) {
+      if(existing) { savePushSubscription(existing); return; }
+      reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      }).then(function(sub) {
+        savePushSubscription(sub);
+      }).catch(function(e){ console.log('[MM] Push subscribe failed:', e); });
+    });
+  });
+}
+
 // Send notification via Service Worker (works on iOS + Android)
 function sendPushNotif(title, body, tag) {
   if(Notification.permission !== 'granted') return;
