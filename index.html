@@ -169,11 +169,12 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .st-v{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);}
 .st-l{font-size:9px;color:var(--txt2);font-weight:700;margin-top:1px;}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.cal-lbl{font-size:8px;color:var(--txt3);text-align:center;font-weight:800;padding-bottom:3px;}
-.cal-d{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--txt3);background:var(--cream);}
-.cal-d.done{background:var(--teal-l);font-size:10px;}
-.cal-d.today{background:var(--teal);color:white;}
-.cal-d.rest{background:var(--blush-l);font-size:10px;}
+.cal-lbl{font-size:9px;color:var(--txt3);text-align:center;font-weight:800;padding-bottom:4px;}
+.cal-d{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--txt3);background:var(--cream);transition:transform 0.15s;}
+.cal-d.done{background:var(--teal-l);font-size:13px;border:1.5px solid var(--teal);}
+.cal-d.today{background:var(--teal);color:white;font-size:10px;font-weight:900;box-shadow:0 2px 8px rgba(75,191,181,0.4);}
+.cal-d.rest{background:#FFF0F5;font-size:13px;border:1.5px solid #F4C5D0;}
+.cal-d:not(:empty):hover{transform:scale(1.15);}
 .rc{background:linear-gradient(135deg,var(--charcoal),#3A3A50);border-radius:var(--r);padding:15px;color:white;}
 .rc-t{font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:5px;}
 .rc-m{font-size:12px;line-height:1.7;opacity:0.9;}
@@ -1134,7 +1135,7 @@ else{setAllLogos();setAllAvatars();}
           <div style="font-size:12px;opacity:0.7;font-style:italic;" id="ch-phrase">You vs You.</div>
         </div>
         <!-- Lottie animation — bigger, right side -->
-        <div style="width:90px;height:80px;flex-shrink:0;margin-left:0;margin-right:20px;" id="ch-icon"></div>
+        <div style="width:90px;height:80px;flex-shrink:0;margin-left:0;margin-right:30px;margin-top:-4px;" id="ch-icon"></div>
       </div>
       <!-- Progress -->
       <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
@@ -1879,9 +1880,7 @@ const EX={
     {n:'Wall Shoulder Press',e:'Wall',l:'Beginner',m:'Shoulders, Triceps',c:['Stand facing a wall','Place hands on wall at shoulder height','Walk feet back until body is angled','Push through hands like a press','Great beginner shoulder exercise']},
     {n:'Elevated Pike Push-Up',e:'No Equipment',l:'Intermediate',m:'Shoulders, Triceps',c:['Place feet on a chair or couch','Walk hands out so hips are high','Lower head toward floor','Push back up strongly','More shoulder work than regular pike']},
     {n:'Pike Push-Up',e:'No Equipment',l:'Beginner',m:'Shoulders, Triceps',c:['Start in downward dog position','Hands shoulder-width apart','Bend elbows to lower head toward floor','Push back up to starting position','More shoulder than chest push-up']},
-    {n:'Shoulder Tap Plank',e:'No Equipment',l:'Beginner/Intermediate',m:'Core, Shoulders',c:['Start in high plank position','Keep hips square and stable','Lift one hand to tap opposite shoulder','Alternate sides with control','Avoid rotating the hips']},
-    {n:'Dumbbell Lateral Raise',e:'Dumbbell',l:'Beginner',m:'Lateral Deltoid',c:['Slight bend in elbows','Raise to shoulder height only','Lead with elbows, not hands','Lower slowly with control']},
-    {n:'Dumbbell Shoulder Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
+            {n:'Dumbbell Shoulder Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
     {n:'Arnold Press',e:'Dumbbell',l:'Intermediate',m:'All 3 Deltoid Heads',c:['Start palms facing you at chin','Rotate palms out as you press','Full rotation at top','Reverse on the way down']},
     {n:'Barbell Overhead Press',e:'Barbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Bar at collarbone','Core braced, glutes squeezed','Press bar up and slightly back','Lock out overhead, bar over ears']},
   ,
@@ -1889,9 +1888,9 @@ const EX={
     {n:'Handstand Push-Up',e:'Wall',l:'Advanced',m:'Shoulders, Triceps, Core',c:['Hands 6 inches from wall','Kick up to handstand','Lower head toward floor','Press back to full lockout']},
     {n:'Z-Press',e:'Barbell',l:'Advanced',m:'Shoulders, Core, Stability',c:['Sit on floor legs straight','No leg drive allowed','Core must stabilize everything','Press strict overhead']}
   ,
-    {n:'Cable Lateral Raise',e:'Cable',l:'Beginner/Intermediate',m:'Lateral Deltoid',c:['Stand beside cable set low, grab handle cross-body','Raise arm out to side to shoulder height','Keep slight bend in elbow throughout','Lower slowly resisting the cable tension']},
-    {n:'Landmine Shoulder Press',e:'Barbell/Landmine',l:'Beginner/Intermediate',m:'Shoulders, Triceps',c:['Hold end of landmine at shoulder level','Press upward at natural arc of the movement','Rotate and extend through the shoulder','Lower with control back to starting position']},
+        {n:'Landmine Shoulder Press',e:'Barbell/Landmine',l:'Beginner/Intermediate',m:'Shoulders, Triceps',c:['Hold end of landmine at shoulder level','Press upward at natural arc of the movement','Rotate and extend through the shoulder','Lower with control back to starting position']},
     {n:'Dumbbell Z Press',e:'Dumbbell',l:'Intermediate/Advanced',m:'Shoulders, Core',c:['Sit on floor with legs straight out in front','Hold dumbbells at shoulder height','Press directly overhead, core must stabilize','No leg drive allowed, pure shoulder strength']},
+    {n:'Dip',e:'Dip Bar/Chairs',l:'Intermediate',m:'Chest, Triceps, Shoulders',c:['Grip parallel bars','Lower until upper arms parallel to floor','Slight forward lean for chest focus','Press up to full extension']},
     {n:'Single Arm Landmine Press',e:'Barbell/Landmine',l:'Intermediate/Advanced',m:'Shoulder, Core',c:['Hold landmine with one hand at shoulder height','Staggered stance for stability, brace core','Press at natural arc rotating slightly','Lower with control, no body lean']}],
   hpull:[
     {n:'Inverted Row (Table)',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Lie under a sturdy table','Grip the edge shoulder-width','Keep body straight like a plank','Pull chest up to the table edge','Lower slowly with control']},
@@ -1912,13 +1911,11 @@ const EX={
     {n:'Cable Face Pull',e:'Cable',l:'Beginner/Intermediate',m:'Rear Delt, Rotator Cuff',c:['Set cable at face height, grab rope with both hands','Pull rope toward face splitting ends apart','Lead with elbows, rotate wrists out at end','Return slowly maintaining tension on cable']},
     {n:'Single Arm Cable Row',e:'Cable',l:'Intermediate',m:'Lats, Rhomboids',c:['Stand or kneel beside cable, grab handle','Pull elbow back driving it past your side','Squeeze lat and rhomboid at end of pull','Return arm to full extension with control']},
     {n:'Barbell Pendlay Row',e:'Barbell',l:'Intermediate/Advanced',m:'Lats, Rhomboids',c:['Bar on floor, hinge to horizontal position','Grip just outside shoulder-width, brace hard','Explosively pull bar to lower chest','Lower bar completely to floor each rep']},
+    {n:'Dumbbell Lateral Raise',e:'Dumbbell',l:'Beginner',m:'Lateral Deltoid',c:['Slight bend in elbows','Raise to shoulder height','Lead with elbows','Lower slowly with control']},
+    {n:'Cable Lateral Raise',e:'Cable',l:'Beginner/Intermediate',m:'Lateral Deltoid',c:['Stand beside low cable','Raise arm out to shoulder height','Keep slight bend in elbow','Lower slowly']},
     {n:'Seal Row',e:'Barbell/Bench',l:'Intermediate/Advanced',m:'Rhomboids, Lats',c:['Lie face down on elevated bench, arms hanging','Pull dumbbells or bar up to lower chest','Squeeze shoulder blades hard at top','Lower with full control, arms fully extend']}],
   vpull:[
-    {n:'Inverted Row (Table)',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Lie under a sturdy table','Grip the edge with both hands','Keep body straight like a plank','Pull chest up to the table edge','Lower slowly with control']},
-    {n:'Superman Hold',e:'No Equipment',l:'Beginner',m:'Upper Back, Glutes',c:['Lie face down arms extended','Simultaneously lift arms and legs','Squeeze upper back at the top','Hold 2-3 seconds','Lower slowly and repeat']},
-    {n:'Prone Y-T-W',e:'No Equipment',l:'Beginner',m:'Upper Back, Rear Delt',c:['Lie face down on floor','Form Y shape — arms overhead','Then T — arms out to sides','Then W — elbows bent 90 degrees','Squeeze shoulder blades each position']},
-    {n:'Doorframe Row',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Stand in a doorframe','Grip both sides at hip height','Lean back keeping body straight','Pull chest toward the frame','Like a horizontal row with bodyweight']},
-    
+                    
     {n:'Band Pulldown',e:'Band',l:'Beginner',m:'Lats, Back',c:['Anchor band overhead to door or beam','Kneel or stand facing anchor point','Pull band down to chest level','Squeeze lats at bottom','Control the return slowly']},
     {n:'Straight Arm Band Pulldown',e:'Band',l:'Beginner',m:'Lats, Core',c:['Anchor band at head height','Stand facing anchor with arms extended','Keep arms straight pull band to hips','Squeeze lats hard at bottom','Control the return to start']},
     {n:'Lat Pulldown',e:'Machine',l:'Beginner/Intermediate',m:'Lats',c:['Grip wider than shoulders','Slight lean back','Pull to upper chest','Let bar rise with control']},
@@ -2467,11 +2464,20 @@ function buildCal(){
   const first=new Date(y,m,1).getDay();const dim=new Date(y,m+1,0).getDate();
   for(let i=0;i<first;i++)g.innerHTML+='<div class="cal-d"></div>';
   for(let d=1;d<=dim;d++){
-    const k=y+'-'+m+'-'+d;const data=S.calData[k];const today=d===now.getDate();
+    const k=y+'-'+m+'-'+d;const data=S.calData[k];const today=d===now.getDate()&&!data;
     let cls='cal-d';let cnt=d;
-    if(data){cls+=data.type==='rest'?' rest':' done';cnt=data.emoji||'✅';}
-    else if(today)cls+=' today';
-    g.innerHTML+='<div class="'+cls+'">'+cnt+'</div>';
+    if(data){
+      if(data.type==='rest'){
+        cls+=' rest';
+        cnt='🛡️';
+      } else {
+        cls+=' done';
+        // Pick emoji based on mood logged
+        var moodEmojis={happy:'🌟',low:'💙',angry:'⚡',stressed:'🧘',neutral:'✅'};
+        cnt=moodEmojis[data.mood]||data.emoji||'✅';
+      }
+    } else if(today){ cls+=' today'; }
+    g.innerHTML+='<div class="'+cls+'" title="'+(data?data.type==='rest'?'Rest day':'Workout done':'')+'">'+cnt+'</div>';
   }
 }
 
@@ -2805,21 +2811,31 @@ function genWk(mood){window.scrollTo(0,0);
   const cfg=MC[mood];const lv=S.user.level;
   const loc=(S.user&&S.user.location)||'both';
   const HOME_EQ=['No Equipment','Dumbbell','Band','Wall','Bench','Pull-Up Bar','Ab Wheel','Med Ball','TRX','Bodyweight/Weight'];
+
+  // ── Seeded random — same workout all day, changes when you COMPLETE it ──
+  // Day advances only after workout is marked done
+  var completedTotal = S.total || 0;
+  var today = new Date();
+  var dayNum = Math.floor(today.getTime() / 86400000);
+  // Seed combines day + completed total — so same day + same total = same workout
+  // But once you complete and total increases, next open gives fresh workout
+  var seed = (dayNum * 1000 + completedTotal) * 9301 + 49297;
+  function seededRand(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+
   const pick=arr=>{
     const f=arr.filter(e=>{
       const levelOk=lv==='new'?e.l.includes('Beginner'):lv==='some'?!e.l.includes('Advanced'):true;
       const locOk=loc!=='home'||HOME_EQ.some(eq=>e.e&&e.e.includes(eq));
       return levelOk&&locOk;
     });
-    return f[Math.floor(Math.random()*f.length)]||arr[0];
+    return f[Math.floor(seededRand()*f.length)]||arr[0];
   };
   const cnt={low:4,neutral:5,happy:5,angry:6,stressed:5}[mood]||5;
 
-  // ── Smart splits based on training days & day of week ──────────────────
+  // ── Smart splits — based on TOTAL workouts completed, not just this week ──
   const days = S.user.days || 3;
-  const dow = new Date().getDay(); // 0=Sun, 1=Mon ... 6=Sat
-  // How many workouts done this week (approximate using weekW)
-  const wkDone = S.weekW || 0;
+  // Use total completed workouts for rotation so it always advances correctly
+  const totalDone = S.total || 0;
 
   var splitLabel, pats;
 
@@ -2829,8 +2845,8 @@ function genWk(mood){window.scrollTo(0,0);
     pats = ['squat','hinge','hpush','hpull','lunge','core'];
 
   } else if(days === 4){
-    // 4 days: Upper / Lower alternating
-    const isLower = (wkDone % 2 === 0);
+    // 4 days: Upper / Lower alternating based on total completed
+    const isLower = (totalDone % 2 === 0);
     if(isLower){
       splitLabel = 'Lower Body';
       pats = ['squat','hinge','lunge','squat','hinge','core'];
@@ -2840,20 +2856,21 @@ function genWk(mood){window.scrollTo(0,0);
     }
 
   } else {
-    // 5 days: Push / Pull / Legs / Upper / Full Body rotation
-    const rotation = wkDone % 5;
+    // 5 days: Push / Legs / Pull / Legs+Core / Push+Pull
+    // Upper body separated by a leg day so muscles recover properly
+    const rotation = totalDone % 5;
     if(rotation === 0){
-      splitLabel = 'Push Day 💪';
-      pats = ['hpush','vpush','hpush','vpush','core','hpush'];
+      splitLabel = 'Push Day';
+      pats = ['hpush','vpush','hpush','vpush','hpull','core'];
     } else if(rotation === 1){
-      splitLabel = 'Pull Day 🏋️';
-      pats = ['hpull','vpull','hpull','vpull','core','hpull'];
-    } else if(rotation === 2){
-      splitLabel = 'Leg Day 🦵';
+      splitLabel = 'Leg Day';
       pats = ['squat','hinge','lunge','squat','hinge','core'];
+    } else if(rotation === 2){
+      splitLabel = 'Pull Day';
+      pats = ['hpull','vpull','hpull','vpull','vpush','core'];
     } else if(rotation === 3){
-      splitLabel = 'Upper Body';
-      pats = ['hpush','hpull','vpush','vpull','hpush','core'];
+      splitLabel = 'Legs + Core';
+      pats = ['squat','hinge','lunge','core','core','core'];
     } else {
       splitLabel = 'Full Body';
       pats = ['squat','hinge','hpush','hpull','lunge','core'];
