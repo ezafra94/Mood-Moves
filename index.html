@@ -1297,7 +1297,7 @@ else{setAllLogos();setAllAvatars();}
     <div class="pr-row" onclick="editProfileField('goal')" style="cursor:pointer;"><div class="pr-l"><div class="pr-ic">🎯</div><div><div class="pr-tt">Goal</div><div class="pr-ds" id="pr-goal">—</div></div></div><div class="pr-ar" style="color:#4BBFB5;">›</div></div>
     <div class="pr-row" onclick="editProfileField('level')" style="cursor:pointer;"><div class="pr-l"><div class="pr-ic">📊</div><div><div class="pr-tt">Fitness Level</div><div class="pr-ds" id="pr-lvl">—</div></div></div><div class="pr-ar" style="color:#4BBFB5;">›</div></div>
     <div class="pr-row" onclick="editProfileField('days')" style="cursor:pointer;"><div class="pr-l"><div class="pr-ic">🗓️</div><div><div class="pr-tt">Training Days</div><div class="pr-ds" id="pr-days">—</div></div></div><div class="pr-ar" style="color:#4BBFB5;">›</div></div>
-    <div class="pm-card"><div class="pm-b">✨ Coming Soon</div><div class="pm-t">Mood Moves Premium</div><div class="pm-s">Advanced features launching soon. Founding members get exclusive early access.</div><button class="pm-btn">Join the Waitlist 🚀</button></div>
+
     <div class="pr-row" onclick="signOut()" style="border-color:#F4C5C0;"><div class="pr-l"><div class="pr-ic">🚪</div><div><div class="pr-tt" style="color:#C08080;">Sign Out</div><div class="pr-ds">Come back anytime</div></div></div><div class="pr-ar">›</div></div>
     <div class="pr-row" onclick="resetApp()"><div class="pr-l"><div class="pr-ic">🔄</div><div><div class="pr-tt">Reset App</div><div class="pr-ds">Clear all data & start fresh</div></div></div><div class="pr-ar">›</div></div>
     <div class="pr-row" onclick="openHistory()" style="cursor:pointer;">
@@ -2426,14 +2426,22 @@ function setupHome(){window.scrollTo(0,0);
     _stickyShown = false; // reset flag so it can show
     showStickyNote();
   }, 900);
-  // Auto-enable notifications if permission exists but not set
-  if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
-    if(localStorage.getItem('mm_notif_enabled') !== '1'){
-      localStorage.setItem('mm_notif_enabled', '1');
+  // Handle notifications on home load
+  if(typeof Notification !== 'undefined'){
+    if(Notification.permission === 'granted'){
+      if(localStorage.getItem('mm_notif_enabled') !== '1'){
+        localStorage.setItem('mm_notif_enabled', '1');
+      }
+      setTimeout(setupPushSubscription, 2000);
+      setTimeout(checkDailyNotifications, 1000);
+    } else if(Notification.permission === 'default'){
+      // Ask once per day with friendly prompt
+      var today = new Date().toDateString();
+      if(localStorage.getItem('mm_notif_ask_date') !== today){
+        localStorage.setItem('mm_notif_ask_date', today);
+        setTimeout(showNotifPrompt, 3000);
+      }
     }
-    // Save/refresh push subscription on every login
-    setTimeout(savePushSubscription, 2000);
-    setTimeout(checkDailyNotifications, 1000);
   }
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
@@ -5957,51 +5965,6 @@ async function saveNotifSettings(){
 
 // Check and send daily notifications
 
-// ── SAVE PUSH SUBSCRIPTION TO SUPABASE ───────────────────
-// Called after user allows notifications
-// Supabase Edge Function will use this to send 7am daily push
-var VAPID_PUBLIC_KEY = 'BFg6cy9EZO-OVRYc8gPaxVu-Vo4l_gRZn3KQTI97LCx67NBx92eDvc2dl89nmc_6N-kJrdCVZSFUQ382Nr8PVBE';
-
-function urlBase64ToUint8Array(base64String) {
-  var padding = '='.repeat((4 - base64String.length % 4) % 4);
-  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  var rawData = atob(base64);
-  var outputArray = new Uint8Array(rawData.length);
-  for (var i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
-
-async function savePushSubscription() {
-  try {
-    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-    if(Notification.permission !== 'granted') return;
-
-    var reg = await navigator.serviceWorker.ready;
-    var sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-    });
-
-    var subJson = sub.toJSON();
-    var email = S.user && S.user.email;
-
-    // Save to Supabase push_subscriptions table
-    await supa.from('push_subscriptions').upsert({
-      email: email || '',
-      user_id: localStorage.getItem('mm_uid') || '',
-      endpoint: subJson.endpoint,
-      p256dh: subJson.keys.p256dh,
-      auth: subJson.keys.auth,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'endpoint' });
-
-    console.log('[MM] Push subscription saved');
-  } catch(e) {
-    console.log('[MM] Push subscription failed:', e.message);
-  }
-}
 
 // ── WEB PUSH SUBSCRIPTION ────────────────────────────────
 var VAPID_PUBLIC_KEY = 'BPJEkPmgwGQXVe-zAH50Dns6AxhlL7QNVRKqV-R27oF76ym2oNBHFYOBcGlZUxc-cU2TI5H3CSXgpCVp-MVLpF4';
@@ -6066,6 +6029,46 @@ function sendPushNotif(title, body, tag) {
   }
 }
 
+// Show a friendly notification prompt (not the browser default ugly one)
+function showNotifPrompt(){
+  var old = document.getElementById('notif-prompt');
+  if(old) return; // already showing
+
+  var el = document.createElement('div');
+  el.id = 'notif-prompt';
+  el.style.cssText = 'position:fixed;bottom:100px;left:16px;right:16px;background:white;border-radius:16px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9000;display:flex;align-items:center;gap:12px;border:1.5px solid #EDE8E3;animation:fadeUpIn 0.4s ease;';
+  el.innerHTML =
+    '<div style="font-size:28px;">🔔</div>' +
+    '<div style="flex:1;">' +
+      '<div style="font-weight:800;font-size:13px;color:#2C2C3A;margin-bottom:2px;">Get your daily boost</div>' +
+      '<div style="font-size:11px;color:#7A7A8C;">A morning message from Mood Moves every day at 7am</div>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:6px;">' +
+      '<button onclick="allowNotifPrompt()" style="padding:7px 14px;background:#4BBFB5;border:none;border-radius:20px;color:white;font-weight:800;font-size:11px;cursor:pointer;white-space:nowrap;">Yes please!</button>' +
+      '<button onclick="dismissNotifPrompt()" style="padding:7px 14px;background:#F5F0EB;border:none;border-radius:20px;color:#7A7A8C;font-weight:800;font-size:11px;cursor:pointer;">Maybe later</button>' +
+    '</div>';
+  document.body.appendChild(el);
+
+  // Auto-dismiss after 8 seconds
+  setTimeout(function(){
+    var p = document.getElementById('notif-prompt');
+    if(p) p.remove();
+  }, 8000);
+}
+
+function dismissNotifPrompt(){ var p=document.getElementById('notif-prompt'); if(p) p.remove(); }
+function allowNotifPrompt(){
+  var p = document.getElementById('notif-prompt');
+  if(p) p.remove();
+  Notification.requestPermission().then(function(perm){
+    if(perm === 'granted'){
+      localStorage.setItem('mm_notif_enabled','1');
+      setupPushSubscription();
+      showT('You will get your daily boost at 7am! 🌅');
+    }
+  });
+}
+
 function checkDailyNotifications(){
   if(localStorage.getItem('mm_notif_enabled') !== '1') return;
   if(Notification.permission !== 'granted') return;
@@ -6080,11 +6083,17 @@ function checkDailyNotifications(){
   // Send morning notification — fires automatically at 7-9am, no setup needed
   if(hour >= 7 && hour <= 9 && lastSent !== today){
     localStorage.setItem('mm_last_notif', today);
-    const booster = getDailyBooster();
-    const icons = {quote:'💬', tip:'💡', cheer:'🌅', famous:'✨', iam:'💫'};
-    sendPushNotif('Good morning from Mood Moves ' + (icons[booster.type]||'💫'), booster.msg, 'mm-daily');
-    const msg = WORKOUT_REMINDERS[Math.floor(Math.random()*WORKOUT_REMINDERS.length)];
-    setTimeout(function(){ sendPushNotif('Mood Moves 🏋️', msg, 'mm-workout'); }, 5000);
+    // Short teaser notification — full message waits inside as sticky note
+    const teasers = [
+      'Your morning message is waiting for you 💌',
+      'Open Mood Moves — you have a note for today 🗒️',
+      'Something good is waiting inside for you ✨',
+      'Good morning! Your daily boost is ready 🌅',
+      'A message just for you is waiting in the app 💛',
+    ];
+    var dayOfYear = Math.floor((Date.now() - new Date(now.getFullYear(),0,0)) / 86400000);
+    var teaser = teasers[dayOfYear % teasers.length];
+    sendPushNotif('Mood Moves 💫', teaser, 'mm-daily');
   }
   
   // Weekly challenge reminder (Sundays at 6pm)
