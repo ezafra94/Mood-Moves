@@ -168,13 +168,13 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .st{background:var(--cream);border-radius:10px;padding:10px 7px;text-align:center;}
 .st-v{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);}
 .st-l{font-size:9px;color:var(--txt2);font-weight:700;margin-top:1px;}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.cal-lbl{font-size:9px;color:var(--txt3);text-align:center;font-weight:800;padding-bottom:4px;}
-.cal-d{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--txt3);background:var(--cream);transition:transform 0.15s;}
-.cal-d.done{background:var(--teal-l);font-size:13px;border:1.5px solid var(--teal);}
-.cal-d.today{background:var(--teal);color:white;font-size:10px;font-weight:900;box-shadow:0 2px 8px rgba(75,191,181,0.4);}
-.cal-d.rest{background:#FFF0F5;font-size:13px;border:1.5px solid #F4C5D0;}
-.cal-d:not(:empty):hover{transform:scale(1.15);}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:4px;}
+.cal-lbl{font-size:9px;color:var(--txt3);text-align:center;font-weight:900;padding-bottom:5px;letter-spacing:0.3px;}
+.cal-d{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--txt3);background:#F0EDE8;transition:transform 0.15s ease;}
+.cal-d.done{background:#D6F5F0;font-size:14px;border:2px solid #4BBFB5;box-shadow:0 1px 4px rgba(75,191,181,0.2);}
+.cal-d.today{background:#4BBFB5;color:white;font-size:10px;font-weight:900;box-shadow:0 3px 10px rgba(75,191,181,0.5);transform:scale(1.1);}
+.cal-d.rest{background:#FFF0F5;font-size:14px;border:2px solid #F4C5D0;}
+.cal-d:not(:empty){cursor:default;}
 .rc{background:linear-gradient(135deg,var(--charcoal),#3A3A50);border-radius:var(--r);padding:15px;color:white;}
 .rc-t{font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:5px;}
 .rc-m{font-size:12px;line-height:1.7;opacity:0.9;}
@@ -1130,12 +1130,11 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <!-- Main content: text left, animation right -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div style="flex:1;">
+        <div style="flex:1;min-width:0;">
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
           <div style="font-size:12px;opacity:0.7;font-style:italic;" id="ch-phrase">You vs You.</div>
         </div>
-        <!-- Lottie animation — bigger, right side -->
-        <div style="width:90px;height:80px;flex-shrink:0;margin-left:0;margin-right:30px;margin-top:-4px;" id="ch-icon"></div>
+        <div style="width:88px;height:78px;flex-shrink:0;margin-right:8px;" id="ch-icon"></div>
       </div>
       <!-- Progress -->
       <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
