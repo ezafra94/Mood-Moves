@@ -1122,14 +1122,14 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
     <!-- WEEKLY CHALLENGE -->
-    <div class="ch-anim" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;overflow:hidden;position:relative;">
+    <div class="ch-anim" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;position:relative;">
       <!-- Header row: label left, days right -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">This Weeks Challenge</div>
         <div style="font-size:10px;opacity:0.6;" id="ch-days">⏰ 4 days left</div>
       </div>
       <!-- Main content: text left, animation right -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
         <div style="flex:1;min-width:0;">
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
           <div style="font-size:12px;opacity:0.7;font-style:italic;" id="ch-phrase">You vs You.</div>
@@ -1145,7 +1145,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <button onclick="logChallenge()" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">+ Log Reps</button>
     </div>
-        <div class="card anim-card" style="animation-delay:0.5s"><div class="ct"><span class="em-cal">📅</span> This Month</div><div class="cal" id="cal"></div></div>
+        <div class="card anim-card" style="animation-delay:0.5s;padding-bottom:14px;"><div class="ct"><span class="em-cal">📅</span> This Month</div><div class="cal" id="cal"></div></div>
     
     <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges</div><div class="bg-grid" id="bg-grid"></div></div>
     <div class="card" style="cursor:pointer;" onclick="openJournal()">
