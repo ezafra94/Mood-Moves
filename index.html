@@ -2521,6 +2521,11 @@ function setupHome(){window.scrollTo(0,0);
       }
     }
   }
+  // ── Show sticky note — first open each day, everyone ──────────────────────
+  setTimeout(function(){
+    _stickyShown = false;
+    showStickyNote();
+  }, 1200);
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -3018,14 +3023,18 @@ function makeSetRowHTML(exIdx, idx, s, total) {
   var removeBtn = total > 1
     ? '<button onclick="removeSetRow(' + exIdx + ',' + idx + ')" type="button" style="padding:3px 7px;background:#FFF0F0;border:1px solid #F4C5C0;border-radius:6px;font-size:10px;color:#C08080;cursor:pointer;">✕</button>'
     : '';
-  return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">'
-    + '<span style="font-size:10px;font-weight:800;color:#B0B0C0;min-width:38px;">Set ' + (idx + 1) + '</span>'
-    + '<input type="number" placeholder="lbs/kg" value="' + (s.weight || '') + '" min="0"'
-    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',&quot;weight&quot;,this.value)"'
-    + ' style="width:70px;padding:5px 7px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:12px;font-weight:700;background:white;text-align:center;">'
-    + '<input type="text" placeholder="notes..." value="' + (s.note || '') + '"'
-    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',&quot;note&quot;,this.value)"'
-    + ' style="flex:1;padding:5px 7px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:11px;background:white;">'
+  var plannedReps = (S.currentWorkout[exIdx] && S.currentWorkout[exIdx].reps) || '';
+  return '<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">'
+    + '<span style="font-size:10px;font-weight:800;color:#B0B0C0;min-width:34px;">Set ' + (idx + 1) + '</span>'
+    + '<input type="number" placeholder="lbs" value="' + (s.weight || '') + '" min="0"'
+    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',\'weight\',this.value)"'
+    + ' style="width:62px;padding:5px 6px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:12px;font-weight:700;background:white;text-align:center;">'
+    + '<input type="text" placeholder="reps" value="' + (s.reps || plannedReps || '') + '"'
+    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',\'reps\',this.value)"'
+    + ' style="width:52px;padding:5px 6px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:12px;font-weight:700;background:white;text-align:center;">'
+    + '<input type="text" placeholder="note" value="' + (s.note || '') + '"'
+    + ' oninput="saveSetData(' + exIdx + ',' + idx + ',\'note\',this.value)"'
+    + ' style="flex:1;padding:5px 6px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:11px;background:white;">'
     + removeBtn
     + '</div>';
 }
@@ -3242,7 +3251,7 @@ function openSwap(i){
 
 function doSwap(si){const s=swOpts[si];Object.assign(S.currentWorkout[swIdx],{n:s.n,m:s.m,e:s.e});closeSwap();renderWk();}
 function closeSwap(){document.getElementById('sw-modal').classList.remove('on');}
-function tdKey(){const n=new Date();return n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate();}
+function tdKey(){return new Date().toISOString().slice(0,10);}
 function completeWk(){
   MM_AUDIO.play('complete');
   setTimeout(completeWk_orig, 300);
@@ -3847,7 +3856,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260611';
+  var deployVersion = 'v20260611b';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -6318,6 +6327,8 @@ setTimeout(checkDailyNotifications, 3000);
 function saveSetData(exIdx, idx, field, val) {
   if (!S.currentWorkout[exIdx] || !S.currentWorkout[exIdx].sets_log) return;
   S.currentWorkout[exIdx].sets_log[idx][field] = val;
+  // Save to localStorage immediately so data isn't lost
+  try{ localStorage.setItem('mm_v3', JSON.stringify(S)); }catch(e){}
 }
 function addSetRow(i){
   MM_AUDIO.play('set');
