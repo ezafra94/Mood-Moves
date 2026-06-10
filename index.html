@@ -2823,10 +2823,37 @@ function genWk(mood){window.scrollTo(0,0);
 
   const pick=arr=>{
     const f=arr.filter(e=>{
-      const levelOk=lv==='new'?e.l.includes('Beginner'):lv==='some'?!e.l.includes('Advanced'):true;
-      const locOk=loc!=='home'||HOME_EQ.some(eq=>e.e&&e.e.includes(eq));
-      return levelOk&&locOk;
+      // Mood-based exercise intensity filter
+      var moodOk = true;
+      if(mood==='low'){
+        // Low day: only Beginner exercises — be kind to yourself
+        moodOk = e.l.includes('Beginner');
+      } else if(mood==='stressed'){
+        // Stressed: Beginner or Intermediate — nothing too complex
+        moodOk = !e.l.includes('Advanced') || e.l.includes('Beginner');
+      } else if(mood==='angry'){
+        // Angry: full range — use that energy
+        moodOk = true;
+      } else if(mood==='happy'){
+        // Happy: skip pure beginner (too easy) unless that's their level
+        moodOk = lv==='new' ? true : !e.l.startsWith('Beginner') || e.l.includes('Intermediate');
+      }
+      // User level filter
+      const levelOk = lv==='new' ? e.l.includes('Beginner')
+        : lv==='some' ? !e.l.startsWith('Advanced')
+        : true;
+      const locOk = loc!=='home' || HOME_EQ.some(eq=>e.e&&e.e.includes(eq));
+      return moodOk && levelOk && locOk;
     });
+    // Fallback to level-only filtered if mood filter gives nothing
+    if(f.length===0){
+      const fb=arr.filter(e=>{
+        const levelOk=lv==='new'?e.l.includes('Beginner'):lv==='some'?!e.l.startsWith('Advanced'):true;
+        const locOk=loc!=='home'||HOME_EQ.some(eq=>e.e&&e.e.includes(eq));
+        return levelOk&&locOk;
+      });
+      return fb[Math.floor(seededRand()*fb.length)]||arr[0];
+    }
     return f[Math.floor(seededRand()*f.length)]||arr[0];
   };
   const cnt={low:4,neutral:5,happy:5,angry:6,stressed:5}[mood]||5;
@@ -2860,7 +2887,7 @@ function genWk(mood){window.scrollTo(0,0);
     const rotation = totalDone % 5;
     if(rotation === 0){
       splitLabel = 'Push Day';
-      pats = ['hpush','vpush','hpush','vpush','hpull','core'];
+      pats = ['hpush','vpush','hpush','vpush','vpush','core']; // all push movements, no pull
     } else if(rotation === 1){
       splitLabel = 'Leg Day';
       pats = ['squat','hinge','lunge','squat','hinge','core'];
@@ -2876,7 +2903,11 @@ function genWk(mood){window.scrollTo(0,0);
     }
   }
 
-  S.currentWorkout = pats.slice(0,cnt).map((p,i) => {
+  // Always include core — slice to cnt-1 from non-core pats, then add core
+  var corePat = pats[pats.length-1]; // last is always core
+  var mainPats = pats.slice(0, pats.length-1).slice(0, cnt-1);
+  var finalPats = mainPats.concat([corePat]);
+  S.currentWorkout = finalPats.map((p,i) => {
     const ex = pick(EX[p]);
     return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:cfg.sets, reps:cfg.reps, done:false, w:''};
   });
@@ -3125,6 +3156,7 @@ function completeWk_orig(){
     dateKey: td,
     mood: S.currentMood,
     moodEmoji: ME[S.currentMood]||'💪',
+    splitLabel: document.getElementById('wk-sub')?document.getElementById('wk-sub').textContent.split('·')[0].trim():'Workout',
     exercises: S.currentWorkout.map(function(ex){
       return {
         name: ex.n,
@@ -3153,7 +3185,22 @@ function pickPM(btn,em){
   setTimeout(()=>showT(em+' '+NP[Math.floor(Math.random()*NP.length)]),400);
 }
 function finishWk(){setupHome();goTo('home');setNav('home');setTimeout(function(){},100);}
-function shareWk(){const txt=document.getElementById('sh-txt').textContent.replace(/"/g,'');if(navigator.share)navigator.share({title:'Mood Moves',text:txt});else{try{navigator.clipboard.writeText(txt);}catch(e){}showT('✅ Copied! Share away 🚀');}}
+function shareWk(){
+  var txt = document.getElementById('sh-txt').textContent.replace(/"/g,'');
+  var shareData = {
+    title: 'Mood Moves',
+    text: txt + '\n\nmoodmoves.app',
+    url: 'https://moodmoves.app'
+  };
+  if(navigator.share && navigator.canShare && navigator.canShare(shareData)){
+    navigator.share(shareData).catch(function(){});
+  } else if(navigator.share){
+    navigator.share({title:'Mood Moves', text:txt+'\n\nmoodmoves.app'}).catch(function(){});
+  } else {
+    try{ navigator.clipboard.writeText(txt+'\n\nmoodmoves.app'); }catch(e){}
+    showT('✅ Copied! Paste on your story 🚀');
+  }
+}
 
 // REST DAY
 let rMood='';
@@ -3695,7 +3742,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260609-fix';
+  var deployVersion = 'v20260610-sticky';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -4433,29 +4480,36 @@ function startDoCardio(){
 function startCardioTimer(){
   var startBtn = document.getElementById('cardio-start-btn');
   if(cardioRunning){
-    // PAUSE
+    // PAUSE — save elapsed seconds
     clearInterval(cardioInterval);
     cardioRunning = false;
+    // Save how many seconds accumulated up to now
+    if(window.cardioStartTimestamp){
+      cardioSeconds += Math.floor((Date.now() - window.cardioStartTimestamp) / 1000);
+      window.cardioStartTimestamp = null;
+    }
     if(startBtn){ startBtn.textContent = '▶ Resume'; startBtn.style.background = 'linear-gradient(135deg,#4BBFB5,#8BB8A0)'; }
   } else {
-    // START / RESUME
+    // START / RESUME — record wall-clock start time
     cardioRunning = true;
+    window.cardioStartTimestamp = Date.now();
     if(startBtn){ startBtn.textContent = '⏸ Pause'; startBtn.style.background = 'linear-gradient(135deg,#F5A042,#E8832A)'; }
     cardioInterval = setInterval(function(){
-      cardioSeconds++;
-      updateCardioDisplay();
+      // Always compute from wall clock — works when app is in background
+      var elapsed = cardioSeconds + (window.cardioStartTimestamp ? Math.floor((Date.now()-window.cardioStartTimestamp)/1000) : 0);
+      var mins = Math.floor(elapsed/60);
+      var secs = elapsed % 60;
+      var el = document.getElementById('cardio-elapsed');
+      if(el) el.textContent = mins + ':' + (secs<10?'0':'')+secs;
+      updateCardioCalories(elapsed);
     }, 1000);
   }
 }
 
-function updateCardioDisplay(){
-  var mins = Math.floor(cardioSeconds/60);
-  var secs = cardioSeconds % 60;
-  var el = document.getElementById('cardio-elapsed');
-  if(el) el.textContent = mins + ':' + (secs<10?'0':'')+secs;
+function updateCardioCalories(elapsed){
   // Estimate calories: MET * weight_kg * hours
   var weightKg = 70; // default if unknown
-  var hours = cardioSeconds / 3600;
+  var hours = elapsedSeconds / 3600;
   var cals = Math.round(cardioSelected.met * cardioMETmult * weightKg * hours);
   var calEl = document.getElementById('cardio-cals');
   if(calEl) calEl.textContent = '~' + cals + ' cal burned';
@@ -5798,10 +5852,13 @@ function showStickyNote() {
   msgEl.textContent  = booster.msg;
   dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
+  // Force display — override any conflicting CSS
+  popup.style.cssText = popup.style.cssText.replace('display:none','');
   popup.style.display = 'flex';
   popup.classList.add('show');
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
+  console.log('[MM] Sticky note shown for', today);
 }
 
 function closeStickyNote() {
@@ -6186,84 +6243,55 @@ function refreshSetRows(exIdx) {
 function openHistory(){
   if(!S.workoutHistory) S.workoutHistory=[];
   var list=document.getElementById('history-list');
-  if(!list){ console.log('history-list not found'); return; }
+  if(!list) return;
   if(S.workoutHistory.length===0){
-    list.innerHTML='<div style="text-align:center;padding:40px 20px;color:#7A7A8C;">'
-      +'<div style="font-size:40px;margin-bottom:12px;">📋</div>'
-      +'<div style="font-size:20px;font-weight:600;margin-bottom:6px;">No workouts yet</div>'
-      +'<div style="font-size:12px;">Complete your first workout to start tracking!</div>'
-      +'</div>';
+    list.innerHTML='<div style="text-align:center;padding:40px 20px;color:#7A7A8C;">'      +'<div style="font-size:40px;margin-bottom:12px;">📋</div>'      +'<div style="font-size:20px;font-weight:600;margin-bottom:6px;">No workouts yet</div>'      +'<div style="font-size:12px;">Complete your first workout to start tracking!</div>'      +'</div>';
   } else {
     var cards='';
-    S.workoutHistory.forEach(function(wk){
-      var doneExs=wk.exercises.filter(function(e){return e.done;}).length;
-      var exCards='';
-      wk.exercises.forEach(function(ex){
-        if(!ex.sets_log||ex.sets_log.length===0) return;
-        var hasW=ex.sets_log.some(function(s){return s.weight;});
-        if(!hasW) return;
-        var rows='';
-        ex.sets_log.forEach(function(s,si){
-          if(!s.weight) return;
-          rows+='<div style="display:flex;gap:8px;font-size:11px;padding:4px 0;border-bottom:1px solid #F5F3F0;">'
-            +'<span style="color:#B0B0C0;min-width:40px;">Set '+(si+1)+'</span>'
-            +'<span style="font-weight:800;color:#4BBFB5;">'+s.weight+' lbs</span>'
-            +(s.note?'<span style="color:#7A7A8C;flex:1;">'+s.note+'</span>':'')
-            +'</div>';
-        });
-        if(!rows) return;
-        exCards+='<div style="margin-top:8px;padding:10px;background:#FAF8F5;border-radius:10px;">'
-          +'<div style="font-weight:800;font-size:12px;color:#2C2C3A;margin-bottom:6px;">'+ex.name+'</div>'
-          +rows+'</div>';
-      });
-      cards+='<div style="background:white;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">'
-        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
-          +'<div>'
-            +'<div style="font-size:18px;font-weight:700;color:#2C2C3A;">'+wk.date+'</div>'
-            +'<div style="font-size:11px;color:#7A7A8C;">'+wk.moodEmoji+' '+wk.mood+' mood &middot; '+doneExs+'/'+wk.exercises.length+' done</div>'
-          +'</div>'
-          +'<span style="font-size:24px;">'+wk.moodEmoji+'</span>'
-        +'</div>'
-        +(exCards||'<div style="font-size:11px;color:#C0C0D0;margin-top:8px;font-style:italic;">No weights logged</div>')
-        +'</div>';
+    S.workoutHistory.forEach(function(wk, wi){
+      var moodLabel={happy:'Happy 😊',low:'Low Energy 🌙',angry:'Angry 😤',stressed:'Stressed 😵',neutral:'Neutral 😐'}[wk.mood]||wk.mood;
+      var doneCount=wk.exercises.filter(function(e){return e.done;}).length;
+      var splitName=wk.splitLabel||'Workout';
+      cards+='<div style="background:white;border-radius:16px;margin-bottom:10px;box-shadow:0 1px 6px rgba(0,0,0,0.06);overflow:hidden;">'        // Collapsed header — tap to expand
+        +'<div onclick="toggleHistCard('+wi+')" style="display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;">'        +'<div>'        +'<div style="font-family:Cormorant Garamond,serif;font-size:18px;font-weight:600;color:#2C2C3A;">'+wk.date+'</div>'        +'<div style="font-size:11px;color:#7A7A8C;margin-top:2px;">'+splitName+' · '+moodLabel+' · '+doneCount+'/'+wk.exercises.length+' done</div>'        +'</div>'        +'<div style="display:flex;align-items:center;gap:8px;">'        +'<div style="font-size:24px;">'+wk.moodEmoji+'</div>'        +'<div id="hist-arrow-'+wi+'" style="color:#B0B0C0;font-size:14px;transition:transform 0.2s;">›</div>'        +'</div>'        +'</div>'        // Expanded detail — hidden by default
+        +'<div id="hist-detail-'+wi+'" style="display:none;padding:0 16px 16px;border-top:1px solid #F5F3F0;">'        +buildHistDetail(wk)        +'</div>'        +'</div>';
     });
     list.innerHTML=cards;
   }
-  goTo('history-screen');
+  goTo('wk-history');
 }
-</script>
 
-<!-- PWA INSTALL BANNER -->
-<div id="pwa-banner" style="display:none;position:fixed;bottom:75px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:400px;background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:16px;padding:14px 16px;z-index:9998;box-shadow:0 4px 20px rgba(0,0,0,0.3);align-items:center;gap:12px;">
-  <img src="/icon-192.png" width="40" height="40" style="border-radius:10px;flex-shrink:0;">
-  <div style="flex:1;">
-    <div style="font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;color:white;">Add to Home Screen</div>
-    <div style="font-family:'Nunito',sans-serif;font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px;">Install Mood Moves — works like a real app!</div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
-    <button onclick="installPWA()" style="padding:7px 14px;background:#4BBFB5;border:none;border-radius:10px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;cursor:pointer;">Install</button>
-    <button onclick="dismissInstallBanner()" style="padding:4px 14px;background:rgba(255,255,255,0.1);border:none;border-radius:10px;color:rgba(255,255,255,0.6);font-family:'Nunito',sans-serif;font-size:10px;cursor:pointer;">Later</button>
-  </div>
-</div>
+function toggleHistCard(wi){
+  var det=document.getElementById('hist-detail-'+wi);
+  var arr=document.getElementById('hist-arrow-'+wi);
+  if(!det) return;
+  var open=det.style.display==='block';
+  det.style.display=open?'none':'block';
+  if(arr) arr.style.transform=open?'':'rotate(90deg)';
+}
 
-<script>
-// SERVICE WORKER REGISTRATION
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/sw.js')
-      .then(function(reg){ console.log('SW registered'); })
-      .catch(function(err){ console.log('SW failed:', err); });
+function buildHistDetail(wk){
+  var html='';
+  wk.exercises.forEach(function(ex){
+    var hasSets=ex.sets_log&&ex.sets_log.length>0;
+    var hasAnyWeight=hasSets&&ex.sets_log.some(function(s){return s.weight;});
+    html+='<div style="margin-top:12px;">'      +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">'      +(ex.done?'<span style="color:#4BBFB5;font-size:12px;">✅</span>':'<span style="color:#D0D0D8;font-size:12px;">○</span>')      +'<span style="font-weight:800;font-size:13px;color:#2C2C3A;">'+ex.name+'</span>'      +'</div>';
+    if(hasSets){
+      html+='<div style="display:grid;grid-template-columns:40px 70px 60px 1fr;gap:4px;font-size:10px;font-weight:700;color:#B0B0C0;padding:0 0 2px 20px;">'        +'<span>SET</span><span>WEIGHT</span><span>REPS</span><span>NOTE</span></div>';
+      ex.sets_log.forEach(function(s,si){
+        var w=s.weight?s.weight+' lbs':'—';
+        var r=s.reps||ex.reps||'—';
+        var n=s.note||'';
+        html+='<div style="display:grid;grid-template-columns:40px 70px 60px 1fr;gap:4px;font-size:11px;padding:3px 0 3px 20px;border-bottom:1px solid #F9F7F5;color:#2C2C3A;">'          +'<span style="color:#B0B0C0;">'+(si+1)+'</span>'          +'<span style="font-weight:800;color:#4BBFB5;">'+w+'</span>'          +'<span>'+r+'</span>'          +'<span style="color:#7A7A8C;">'+n+'</span>'          +'</div>';
+      });
+    } else {
+      html+='<div style="font-size:11px;color:#7A7A8C;padding-left:20px;">'+ex.sets+' sets × '+ex.reps+' reps</div>';
+    }
+    html+='</div>';
   });
+  return html;
 }
 
-// PWA INSTALL PROMPT
-var deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', function(e){
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show install banner after 3 seconds on home screen
-  setTimeout(showInstallBanner, 3000);
-});
 
 function showInstallBanner(){
   if(!deferredPrompt) return;
@@ -6343,7 +6371,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
 
 <!-- ── DAILY STICKY NOTE POPUP ─────────────────────────────── -->
-<div id="sticky-popup" style="display:none;position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;">
+<div id="sticky-popup" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <!-- Backdrop -->
   <div onclick="closeStickyNote()" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(3px);"></div>
   <!-- Sticky note card -->
