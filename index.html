@@ -3029,7 +3029,7 @@ function makeSetRowHTML(exIdx, idx, s, total) {
     + '<input type="number" placeholder="lbs" value="' + (s.weight || '') + '" min="0"'
     + ' oninput="saveSetData(' + exIdx + ',' + idx + ',\'weight\',this.value)"'
     + ' style="width:62px;padding:5px 6px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:12px;font-weight:700;background:white;text-align:center;">'
-    + '<input type="text" placeholder="reps" value="' + (s.reps || plannedReps || '') + '"'
+    + '<input type="text" placeholder="reps" value="' + (s.reps || '') + '"'
     + ' oninput="saveSetData(' + exIdx + ',' + idx + ',\'reps\',this.value)"'
     + ' style="width:52px;padding:5px 6px;border:1.5px solid #EDE8E3;border-radius:8px;font-size:12px;font-weight:700;background:white;text-align:center;">'
     + '<input type="text" placeholder="note" value="' + (s.note || '') + '"'
@@ -3856,7 +3856,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260611b';
+  var deployVersion = 'v20260611c';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -3909,11 +3909,16 @@ window.addEventListener('DOMContentLoaded',function(){
         if(res.error || !res.data || !res.data.data) return;
         var cloud = res.data.data;
         if(!cloud || typeof cloud !== 'object') return;
-        // Restore if cloud has more workouts OR local has no data
+        // Only restore from cloud if cloud is strictly newer
         var localTotal = S.total || 0;
         var cloudTotal = cloud.total || 0;
         if(cloudTotal > localTotal || !S.onboarded){
+          // Preserve local workoutHistory if it has MORE entries than cloud
+          var localHistory = S.workoutHistory || [];
           Object.assign(S, cloud);
+          if(localHistory.length > (S.workoutHistory||[]).length){
+            S.workoutHistory = localHistory;
+          }
           S.currentWorkout = [];
           S.currentMood = '';
           S.rtInterval = null;
