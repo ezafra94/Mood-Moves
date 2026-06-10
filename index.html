@@ -226,10 +226,10 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .wk-sub{font-size:11px;color:var(--txt2);margin-top:2px;}
 .wk-exs{padding:9px 14px;display:flex;flex-direction:column;gap:8px;}
 .ex-c{background:white;border-radius:var(--r);padding:13px 14px;border:1px solid var(--border);}
-.ex-c.done .ex-nm{text-decoration:line-through;}
-.ex-c.done .ex-row{opacity:0.4;}
+.ex-c.done .ex-nm{text-decoration:line-through;color:#4BBFB5;}
+.ex-c.done .ex-row{opacity:0.55;}
 .ex-c.done .ex-tags{opacity:0.4;}
-.ex-c.done{background:#FAFAFA;}
+.ex-c.done{background:linear-gradient(135deg,#E8F7F5,#F0FBF9);border:1.5px solid #4BBFB5;border-left:4px solid #4BBFB5;}
 .ex-row{display:flex;align-items:flex-start;gap:9px;}
 .ex-nb{width:25px;height:25px;border-radius:7px;background:var(--teal-l);color:var(--teal-d);font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ex-nm{font-weight:800;font-size:13px;color:var(--txt);}
@@ -1103,24 +1103,7 @@ else{setAllLogos();setAllAvatars();}
       Rest Day — Still Moving
     </button>
 
-    <div class="card anim-card" style="animation-delay:0.3s">
-      <div class="ct">Your Progress</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <div>
-          <div class="sk-n" id="sk-n">0</div>
-          <div class="sk-msg" id="sk-msg">Start your streak today!</div>
-        </div>
-        <div id="lottie-skate" style="width:70px;height:70px;"></div>
-      </div>
-      <div class="sk-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;">
-        <div class="sk-stat"><div class="sk-sn" id="st-tot">0</div><div class="sk-sl">Total</div></div>
-        <div class="sk-stat"><div class="sk-sn" id="st-wk">0</div><div class="sk-sl">This Week</div></div>
-        <div class="sk-stat"><div class="sk-sn" id="st-md">😊</div><div class="sk-sl">Top Mood</div></div>
-      </div>
-      <div style="border-top:1px solid var(--border);padding-top:8px;">
-        <div style="font-size:11px;color:var(--txt2);line-height:1.6;" id="rc-m">Complete your first workout to unlock your recap.</div>
-      </div>
-    </div>
+    
     <!-- WEEKLY CHALLENGE -->
     <div class="ch-anim" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:16px;color:white;margin-bottom:10px;position:relative;">
       <!-- Header row: label left, days right -->
@@ -1145,18 +1128,58 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <button onclick="logChallenge()" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">+ Log Reps</button>
     </div>
-        <div class="card anim-card" style="animation-delay:0.5s;padding:16px 16px 20px;">
-      <div class="ct" style="margin-bottom:10px;"><span class="em-cal">📅</span> This Month</div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">S</div>
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">M</div>
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">T</div>
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">W</div>
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">T</div>
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">F</div>
-        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">S</div>
+        <div class="card anim-card" style="animation-delay:0.3s;padding:16px 16px 18px;">
+
+      <!-- Streak + skate animation row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div class="sk-n" id="sk-n">0</div>
+          <div class="sk-msg" id="sk-msg">Start your streak today!</div>
+        </div>
+        <div id="lottie-skate" style="width:64px;height:64px;"></div>
+      </div>
+
+      <!-- Stats row — clear labels -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px;">
+        <div class="sk-stat">
+          <div class="sk-sn" id="st-tot">0</div>
+          <div class="sk-sl">All Time</div>
+        </div>
+        <div class="sk-stat">
+          <div class="sk-sn" id="st-wk">0</div>
+          <div class="sk-sl">This Week</div>
+        </div>
+        <div class="sk-stat">
+          <div class="sk-sn" id="st-md">😊</div>
+          <div class="sk-sl">Best Mood</div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div style="border-top:1px solid var(--border);margin-bottom:12px;"></div>
+
+      <!-- Calendar section -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:800;color:var(--txt2);">📅 This Month</div>
+        <div style="font-size:10px;color:#B0B0C0;" id="cal-month-label"></div>
+      </div>
+
+      <!-- Day labels -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;">
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">S</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">M</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">T</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">W</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">T</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">F</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#C0C0CC;">S</div>
       </div>
       <div class="cal" id="cal"></div>
+
+      <!-- Weekly recap -->
+      <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:10px;">
+        <div style="font-size:11px;color:var(--txt2);line-height:1.6;" id="rc-m">Complete your first workout to unlock your recap.</div>
+      </div>
     </div>
     
     <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges</div><div class="bg-grid" id="bg-grid"></div></div>
@@ -2042,6 +2065,21 @@ function setNav(k){
   if(m[k])document.getElementById(m[k]).classList.add('on');
 }
 function goToMP(){
+  // Check if already completed a workout today
+  var todayKey = new Date().toISOString().slice(0,10);
+  if(S.calData && S.calData[todayKey] && S.calData[todayKey].type === 'workout'){
+    if(!confirm("You already crushed a workout today! 💪\n\nWant to do an extra session anyway?")){
+      return;
+    }
+  }
+  // Check if they've hit their weekly goal
+  var maxDays = S.user.days || 3;
+  var weekDone = S.weekW || 0;
+  if(weekDone >= maxDays){
+    if(!confirm("You've already completed your "+maxDays+" workouts this week! 🏆\n\nWant to do a bonus session anyway?")){
+      return;
+    }
+  }
   // Request notification permission proactively so timer alerts work
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
@@ -2468,6 +2506,9 @@ function setTip(){
   document.getElementById('tip-tx').textContent = t.t;
 }
 function buildCal(){
+  // Set month label
+  var ml = document.getElementById('cal-month-label');
+  if(ml){ var now2=new Date(); ml.textContent=now2.toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
   const g=document.getElementById('cal');
   const days=['S','M','T','W','T','F','S'];
   g.innerHTML=''; // day labels are now in HTML above
@@ -2919,8 +2960,17 @@ function genWk(mood){window.scrollTo(0,0);
   var corePat = pats[pats.length-1]; // last is always core
   var mainPats = pats.slice(0, pats.length-1).slice(0, cnt-1);
   var finalPats = mainPats.concat([corePat]);
+  // Track used exercise names to prevent duplicates
+  var usedNames = [];
+  function pickUnique(arr){
+    // Filter out already-used exercises
+    var filtered2 = arr ? arr.filter(function(e){ return !usedNames.includes(e.n); }) : [];
+    var result = filtered2.length > 0 ? pick(filtered2) : pick(arr); // fallback if all used
+    if(result) usedNames.push(result.n);
+    return result;
+  }
   S.currentWorkout = finalPats.map((p,i) => {
-    const ex = pick(EX[p]);
+    const ex = pickUnique(EX[p]);
     return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:cfg.sets, reps:cfg.reps, done:false, w:''};
   });
 
@@ -3109,9 +3159,16 @@ function openSwap(i){
   
   // Exactly 3 options: prioritise 1 no-equipment + 1 gym variation + 1 wildcard
   // Shuffle each pool for variety each time
-  function shuffle(arr){ return arr.slice().sort(function(){ return Math.random()-0.5; }); }
-  var hShuf=shuffle(homeOpts);
-  var gShuf=shuffle(gymOpts);
+  // Use exercise index as seed so options are SAME every time this exercise is swapped
+  function seededShuffle(arr, seed){ 
+    return arr.slice().sort(function(a,b){ 
+      seed = (seed * 9301 + 49297) % 233280;
+      return (seed/233280) - 0.5; 
+    }); 
+  }
+  var swSeed = (swIdx * 137 + ex.n.charCodeAt(0)) * 9301;
+  var hShuf=seededShuffle(homeOpts, swSeed);
+  var gShuf=seededShuffle(gymOpts, swSeed+1);
   var noEqOpts=hShuf.filter(function(e){ return e.e==='No Equipment'||e.e==='Bodyweight'||e.e==='Bodyweight/Weight'; });
   var equipHomeOpts=hShuf.filter(function(e){ return !noEqOpts.includes(e); });
   
@@ -3126,7 +3183,10 @@ function openSwap(i){
   
   // Slot 3: best remaining (different from already chosen)
   var remaining=filtered.filter(function(e){ return !chosen.includes(e); });
-  if(remaining.length>0) chosen.push(remaining[Math.floor(Math.random()*remaining.length)]);
+  if(remaining.length>0){
+    var rSeed=(swSeed+2)%233280;
+    chosen.push(remaining[Math.floor((rSeed/233280)*remaining.length)]);
+  }
   
   // Fallback: just take first 3 from filtered
   if(chosen.length===0) chosen=filtered.slice(0,3);
@@ -3181,6 +3241,7 @@ function completeWk_orig(){
   };
   S.workoutHistory.unshift(wkLog); // newest first
   if(S.workoutHistory.length>50) S.workoutHistory.pop(); // keep last 50
+  save(); // persist history to localStorage + Supabase
 
   const cfg=MC[S.currentMood];const idx=Math.floor(Math.random()*cfg.pt.length);
   document.getElementById('pw-title').textContent=cfg.pt[idx];
@@ -3754,7 +3815,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260610-sticky';
+  var deployVersion = 'v20260610b';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5865,23 +5926,19 @@ function showStickyNote() {
   msgEl.textContent  = booster.msg;
   dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
-  // Force display — override any conflicting CSS
-  popup.style.cssText = popup.style.cssText.replace('display:none','');
+  // Show — remove inline display:none, let CSS take over
+  popup.style.removeProperty('display');
   popup.style.display = 'flex';
-  popup.classList.add('show');
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
-  console.log('[MM] Sticky note shown for', today);
+  console.log('[MM] Sticky note shown:', today);
 }
 
-function closeStickyNote() {
+function closeStickyNote(){
   var popup = document.getElementById('sticky-popup');
-  if(popup) {
-    popup.style.opacity = '0';
-    popup.style.transition = 'opacity 0.25s ease';
-    setTimeout(function(){ popup.style.display = 'none'; popup.style.opacity = ''; }, 250);
-  }
+  if(popup){ popup.style.display = 'none'; }
 }
+
 function getDailyBooster(){
   const day = Math.floor(Date.now() / (1000*60*60*24));
   const types = ['quote','tip','cheer','famous','iam','quote','tip','cheer','famous','iam','cheer','tip'];
@@ -6168,9 +6225,11 @@ function checkDailyNotifications(){
   const lastSent = localStorage.getItem('mm_last_notif');
   const today = now.toDateString();
   
-  // Send morning notification — fires automatically at 7-9am, no setup needed
-  if(hour >= 7 && hour <= 9 && lastSent !== today){
+  // Send morning notification — fires at 7-9am OR on first open if missed
+  console.log('[MM] Notif check: hour='+hour+' lastSent='+lastSent+' today='+today+' enabled='+localStorage.getItem('mm_notif_enabled'));
+  if((hour >= 7 && hour <= 9 && lastSent !== today) || (hour > 9 && lastSent !== today && !localStorage.getItem('mm_notif_sent_'+today))){
     localStorage.setItem('mm_last_notif', today);
+    localStorage.setItem('mm_notif_sent_'+today, '1');
     // Short teaser notification — full message waits inside as sticky note
     const teasers = [
       'Your morning message is waiting for you 💌',
@@ -6384,7 +6443,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
 
 <!-- ── DAILY STICKY NOTE POPUP ─────────────────────────────── -->
-<div id="sticky-popup" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;">
+<div id="sticky-popup" style="position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;">
   <!-- Backdrop -->
   <div onclick="closeStickyNote()" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(3px);"></div>
   <!-- Sticky note card -->
