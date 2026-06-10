@@ -3815,13 +3815,18 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260610b';
+  var deployVersion = 'v20260610c';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
-    localStorage.removeItem('mm_last_notif');  // also reset notification so it fires today
+    localStorage.removeItem('mm_last_notif');
+    localStorage.removeItem('mm_notif_ask_date');
     _stickyShown = false;
+    console.log('[MM] Deploy reset — sticky cleared');
   }
+  // Always clear sticky date so it shows today (temporary debug)
+  localStorage.removeItem('mm_sticky_date');
+  _stickyShown = false;
   // Audio debug — shows in browser console
   console.log('[MM Audio] muted:', MM_MUTED, '| localStorage mm_muted:', localStorage.getItem('mm_muted'));
   // Auto-clear stuck mute state that may have been set by a bug
