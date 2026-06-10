@@ -693,7 +693,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
   from{opacity:0;transform:rotate(-1.5deg) scale(0.7) translateY(30px)}
   to{opacity:1;transform:rotate(-1.5deg) scale(1) translateY(0)}
 }
-#sticky-popup.show{display:flex!important;}
+#sticky-popup{display:none;}#sticky-popup.show{display:flex!important;}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -2067,18 +2067,14 @@ function setNav(k){
 function goToMP(){
   // Check if already completed a workout today
   var todayKey = new Date().toISOString().slice(0,10);
-  if(S.calData && S.calData[todayKey] && S.calData[todayKey].type === 'workout'){
-    if(!confirm("You already crushed a workout today! 💪\n\nWant to do an extra session anyway?")){
-      return;
-    }
-  }
-  // Check if they've hit their weekly goal
+  var doneToday = S.calData && S.calData[todayKey] && S.calData[todayKey].type === 'workout';
   var maxDays = S.user.days || 3;
   var weekDone = S.weekW || 0;
-  if(weekDone >= maxDays){
-    if(!confirm("You've already completed your "+maxDays+" workouts this week! 🏆\n\nWant to do a bonus session anyway?")){
-      return;
-    }
+  var weekGoalHit = weekDone >= maxDays;
+
+  if(doneToday || weekGoalHit){
+    showWorkoutDonePrompt(doneToday, weekGoalHit, maxDays);
+    return;
   }
   // Request notification permission proactively so timer alerts work
   if ('Notification' in window && Notification.permission === 'default') {
@@ -2090,6 +2086,42 @@ function goToMP(){
   });
   goTo('moodpicker');
 }
+function dismissWkPrompt(){ var p=document.getElementById('wk-done-prompt'); if(p) p.remove(); }
+function showWorkoutDonePrompt(doneToday, weekGoalHit, maxDays){
+  var old = document.getElementById('wk-done-prompt');
+  if(old) old.remove();
+  var msg = doneToday
+    ? "You already crushed a workout today! 💪"
+    : "You've hit your " + maxDays + "-day goal this week! 🏆";
+  var sub = doneToday
+    ? "Rest up — your muscles grow during recovery."
+    : "That's your full week done. Rest is part of the program.";
+  var el = document.createElement('div');
+  el.id = 'wk-done-prompt';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
+  el.innerHTML =
+    '<div style="background:white;border-radius:24px 24px 0 0;padding:28px 20px 40px;width:100%;max-width:430px;text-align:center;">' +
+    '<div style="width:36px;height:4px;background:#EDE8E3;border-radius:2px;margin:0 auto 20px;"></div>' +
+    '<div style="font-size:40px;margin-bottom:12px;">🎉</div>' +
+    '<div style="font-family:Cormorant Garamond,serif;font-size:22px;font-weight:600;color:#2C2C3A;margin-bottom:8px;">' + msg + '</div>' +
+    '<div style="font-size:13px;color:#7A7A8C;margin-bottom:24px;">' + sub + '</div>' +
+    '<button onclick="dismissWkPrompt();goTo(\'restday\');" style="width:100%;padding:13px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-weight:800;font-size:14px;cursor:pointer;font-family:Nunito,sans-serif;margin-bottom:10px;">Take a Rest Day 🛡️</button>' +
+    '<button onclick="dismissWkPrompt();proceedToWorkout();" style="width:100%;padding:13px;background:#F5F0EB;border:none;border-radius:14px;color:#7A7A8C;font-weight:800;font-size:13px;cursor:pointer;font-family:Nunito,sans-serif;">Do a bonus session anyway</button>' +
+    '</div>';
+  el.addEventListener('click', function(e){ if(e.target===el) el.remove(); });
+  document.body.appendChild(el);
+}
+
+function proceedToWorkout(){
+  window.scrollTo(0,0);
+  Object.keys(MC).forEach(function(m){
+    var el = document.getElementById('mp-'+m);
+    var dn = Math.floor(new Date().getTime()/(1000*60*60*24));
+    if(el) el.textContent = MC[m].ph[dn % MC[m].ph.length];
+  });
+  goTo('moodpicker');
+}
+
 function goToRD(){window.scrollTo(0,0);document.getElementById('rd-moods').style.display='flex';document.getElementById('rd-moods').style.flexDirection='column';document.getElementById('rd-acts').style.display='none';goTo('restday');}
 
 // AUTH
@@ -3815,7 +3847,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260610c';
+  var deployVersion = 'v20260611';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5931,17 +5963,15 @@ function showStickyNote() {
   msgEl.textContent  = booster.msg;
   dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
-  // Show — remove inline display:none, let CSS take over
-  popup.style.removeProperty('display');
-  popup.style.display = 'flex';
+  // Show via CSS class — no inline style fighting
+  popup.classList.add('show');
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
-  console.log('[MM] Sticky note shown:', today);
 }
 
 function closeStickyNote(){
   var popup = document.getElementById('sticky-popup');
-  if(popup){ popup.style.display = 'none'; }
+  if(popup){ popup.classList.remove('show'); }
 }
 
 function getDailyBooster(){
@@ -6448,7 +6478,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
 
 <!-- ── DAILY STICKY NOTE POPUP ─────────────────────────────── -->
-<div id="sticky-popup" style="position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;">
+<div id="sticky-popup" style="position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;">
   <!-- Backdrop -->
   <div onclick="closeStickyNote()" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(3px);"></div>
   <!-- Sticky note card -->
