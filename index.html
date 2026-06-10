@@ -168,12 +168,12 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .st{background:var(--cream);border-radius:10px;padding:10px 7px;text-align:center;}
 .st-v{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);}
 .st-l{font-size:9px;color:var(--txt2);font-weight:700;margin-top:1px;}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px;padding:4px;}
-.cal-lbl{font-size:9px;color:var(--txt3);text-align:center;font-weight:900;padding-bottom:5px;letter-spacing:0.3px;}
-.cal-d{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--txt3);background:#F0EDE8;transition:transform 0.15s ease;}
-.cal-d.done{background:#4BBFB5;font-size:13px;color:white;font-weight:900;box-shadow:0 2px 6px rgba(75,191,181,0.35);}
-.cal-d.today{background:#2C2C3A;color:white;font-size:10px;font-weight:900;box-shadow:0 3px 10px rgba(44,44,58,0.4);transform:scale(1.12);border-radius:12px;}
-.cal-d.rest{background:#FFF0F5;font-size:14px;border:2px solid #F4C5D0;}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-lbl{font-size:9px;color:#B0B0C0;text-align:center;font-weight:900;padding-bottom:4px;}
+.cal-d{aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#9A9AB0;background:#F4F1EE;}
+.cal-d.done{background:#4BBFB5;font-size:15px;color:white;box-shadow:0 2px 8px rgba(75,191,181,0.4);}
+.cal-d.today{background:#2C2C3A;color:white;font-size:11px;font-weight:900;box-shadow:0 3px 12px rgba(44,44,58,0.35);transform:scale(1.15);border-radius:10px;position:relative;z-index:1;}
+.cal-d.rest{background:#FFF0F5;font-size:15px;border:1.5px solid #F4C5D0;}
 .cal-d:not(:empty){cursor:default;}
 .rc{background:linear-gradient(135deg,var(--charcoal),#3A3A50);border-radius:var(--r);padding:15px;color:white;}
 .rc-t{font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;margin-bottom:5px;}
@@ -1128,13 +1128,13 @@ else{setAllLogos();setAllAvatars();}
         <div style="font-size:9px;font-weight:800;letter-spacing:1px;opacity:0.5;text-transform:uppercase;">This Weeks Challenge</div>
         <div style="font-size:10px;opacity:0.6;" id="ch-days">⏰ 4 days left</div>
       </div>
-      <!-- Main content: text left, animation right -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;display:flex;align-items:center;">
-        <div style="flex:1;min-width:0;padding-right:4px;">
+      <!-- Main content: text left, animation center-right -->
+      <div style="display:flex;align-items:center;margin-bottom:12px;">
+        <div style="flex:1;">
           <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;margin-bottom:3px;" id="ch-name">Loading...</div>
           <div style="font-size:12px;opacity:0.7;font-style:italic;" id="ch-phrase">You vs You.</div>
         </div>
-        <div style="width:90px;height:80px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-right:4px;" id="ch-icon"></div>
+        <div id="ch-icon" style="width:88px;height:80px;flex-shrink:0;overflow:visible;position:relative;"></div>
       </div>
       <!-- Progress -->
       <div style="background:rgba(255,255,255,0.1);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">
@@ -1145,7 +1145,19 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <button onclick="logChallenge()" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">+ Log Reps</button>
     </div>
-        <div class="card anim-card" style="animation-delay:0.5s;padding-bottom:14px;"><div class="ct"><span class="em-cal">📅</span> This Month</div><div class="cal" id="cal"></div></div>
+        <div class="card anim-card" style="animation-delay:0.5s;padding:16px 16px 20px;">
+      <div class="ct" style="margin-bottom:10px;"><span class="em-cal">📅</span> This Month</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">S</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">M</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">T</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">W</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">T</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">F</div>
+        <div style="text-align:center;font-size:9px;font-weight:900;color:#B0B0C0;">S</div>
+      </div>
+      <div class="cal" id="cal"></div>
+    </div>
     
     <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges</div><div class="bg-grid" id="bg-grid"></div></div>
     <div class="card" style="cursor:pointer;" onclick="openJournal()">
@@ -2458,7 +2470,7 @@ function setTip(){
 function buildCal(){
   const g=document.getElementById('cal');
   const days=['S','M','T','W','T','F','S'];
-  g.innerHTML=days.map(d=>'<div class="cal-lbl">'+d+'</div>').join('');
+  g.innerHTML=''; // day labels are now in HTML above
   const now=new Date();const y=now.getFullYear();const m=now.getMonth();
   const first=new Date(y,m,1).getDay();const dim=new Date(y,m+1,0).getDate();
   for(let i=0;i<first;i++)g.innerHTML+='<div class="cal-d"></div>';
@@ -4105,7 +4117,8 @@ window.addEventListener('DOMContentLoaded',function(){
     loadNavIcon('nav-ic-profile',   '/nav-profile.json');
     // Load skating animation from separate file (keeps index.html lean)
     loadNavIcon('rest-day-icon',  '/rest-day.json');
-    loadNavIcon('ch-icon',        '/challenge-icon.json', 90, 80);
+    // ch-icon uses initLottie (fills container cleanly, no position:absolute weirdness)
+    fetch('/challenge-icon.json').then(function(r){return r.json();}).then(function(d){ initLottie('ch-icon',d); }).catch(function(){});
     fetch('/skate.json').then(function(r){ return r.json(); })
       .then(function(data){ initLottie('lottie-skate', data); })
       .catch(function(){
