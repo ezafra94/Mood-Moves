@@ -3280,9 +3280,11 @@ function completeWk_orig(){
       };
     })
   };
-  S.workoutHistory.unshift(wkLog); // newest first
-  if(S.workoutHistory.length>50) S.workoutHistory.pop(); // keep last 50
-  save(); // persist history to localStorage + Supabase
+  S.workoutHistory.unshift(wkLog);
+  if(S.workoutHistory.length>50) S.workoutHistory.pop();
+  console.log('[HISTORY] saving workout. history length='+S.workoutHistory.length+' wkLog date='+wkLog.date);
+  save();
+  console.log('[HISTORY] save() called. localStorage mm_v3 length='+( localStorage.getItem('mm_v3')||'').length);
 
   const cfg=MC[S.currentMood];const idx=Math.floor(Math.random()*cfg.pt.length);
   document.getElementById('pw-title').textContent=cfg.pt[idx];
@@ -3856,14 +3858,14 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260611c';
+  var deployVersion = 'v20260611d';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
     localStorage.removeItem('mm_last_notif');
     localStorage.removeItem('mm_notif_ask_date');
     _stickyShown = false;
-    console.log('[MM] Deploy reset — sticky cleared');
+    console.log('[MM] Deploy reset v20260611c — sticky + notif cleared');
   }
   // Always clear sticky date so it shows today (temporary debug)
   localStorage.removeItem('mm_sticky_date');
@@ -5949,13 +5951,13 @@ var _stickyShown = false;
 })();
 
 function showStickyNote() {
-  // Shows for EVERYONE — no notification permission needed
-  // Once per day, first time they open the app
   var today = new Date().toDateString();
-  if (_stickyShown) return;
-  if (localStorage.getItem('mm_sticky_date') === today) return;
+  console.log('[STICKY] showStickyNote called. _stickyShown='+_stickyShown+' stored='+localStorage.getItem('mm_sticky_date')+' today='+today);
+  if (_stickyShown){ console.log('[STICKY] blocked by _stickyShown'); return; }
+  if (localStorage.getItem('mm_sticky_date') === today){ console.log('[STICKY] blocked by date match'); return; }
 
   var booster = getDailyBooster();
+  console.log('[STICKY] booster type='+booster.type);
   var typeLabels = {
     quote:  'Your Mood Moves Boost',
     tip:    'Mood Moves Science',
@@ -5979,6 +5981,7 @@ function showStickyNote() {
 
   // Show via CSS class — no inline style fighting
   popup.classList.add('show');
+  console.log('[STICKY] classList after add:', popup.classList.toString(), 'display:', window.getComputedStyle(popup).display);
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
 }
