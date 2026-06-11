@@ -761,6 +761,30 @@ function makeLottie(dataVar, size) {
   return el;
 }
 </script>
+  <script>
+    // Register service worker and force updates
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+          console.log('SW registered v20260611');
+          reg.update(); // check for new version every load
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+          reg.addEventListener('updatefound', function() {
+            var newSW = reg.installing;
+            if (newSW) {
+              newSW.addEventListener('statechange', function() {
+                if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                  window.location.reload(); // new version ready, reload
+                }
+              });
+            }
+          });
+        }).catch(function(e) { console.log('SW error:', e); });
+      });
+    }
+  </script>
 </head>
 <body>
 <script>
@@ -2866,10 +2890,11 @@ function mmAlarmStop() {
 // MM_AUDIO — keeps all existing call sites working
 var MM_AUDIO = {
   get muted() { return MM_MUTED; },
+  _ready: function() { return Promise.resolve(); }, // audio context always ready
   play: function(type) {
     if (type === 'timer_stop') { mmAlarmStop(); return; }
     if (type === 'timer')      { mmAlarmStart(); return; }
-    mmPlaySound(type);
+    try { mmPlaySound(type); } catch(e) {}
   },
   toggleMute: function() {
     MM_MUTED = !MM_MUTED;
