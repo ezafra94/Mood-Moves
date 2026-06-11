@@ -142,6 +142,11 @@ self.addEventListener('notificationclick', function(e) {
 self.addEventListener('message', function(e) {
   if (!e.data) return;
 
+  if (e.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
   if (e.data.type === 'SHOW_NOTIFICATION') {
     self.registration.showNotification(e.data.title || 'Mood Moves', {
       body: e.data.body || '',
