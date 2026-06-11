@@ -386,9 +386,9 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .ni2{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 0;transition:all 0.2s ease;}
 .ni2-ic{font-size:22px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;transition:all 0.2s ease;background:rgba(75,191,181,0.08);}
 .ni2-lb{font-size:9px;font-weight:800;color:var(--txt3);letter-spacing:0.3px;transition:color 0.2s;}
-.ni2.on .ni2-lb{color:var(--teal);font-weight:900;}
-.ni2.on .ni2-ic{background:linear-gradient(135deg,#4BBFB5,#3AADA3);transform:scale(1.08);color:white;}
-.ni2.on .ni2-ic lottie-player{filter:brightness(0) invert(1);}
+.ni2.on .ni2-lb{color:#4BBFB5;font-weight:900;}
+.ni2.on .ni2-ic{background:#E8F7F5;transform:scale(1.1);box-shadow:0 2px 8px rgba(75,191,181,0.3);}
+.ni2.on::after{content:'';display:block;width:20px;height:3px;background:#4BBFB5;border-radius:2px;margin-top:1px;}
 .ni2:active{transform:scale(0.93);}
 .hidden{display:none!important;}
 .back{position:absolute;top:46px;left:13px;width:30px;height:30px;background:var(--cream);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt);z-index:10;}
@@ -1291,8 +1291,51 @@ else{setAllLogos();setAllAvatars();}
     <div class="card"><div class="pw-q">How do you feel after moving?</div><div class="em-row"><button class="em-btn" onclick="pickPM(this,'😴')">😴</button><button class="em-btn" onclick="pickPM(this,'😐')">😐</button><button class="em-btn" onclick="pickPM(this,'😊')">😊</button><button class="em-btn" onclick="pickPM(this,'🔥')">🔥</button><button class="em-btn" onclick="pickPM(this,'💪')">💪</button></div></div>
     <div class="ac-card"><div class="ac-t">🌿 Aftercare Tips</div><div class="ac-it"><div class="ac-ic">💧</div><div class="ac-tx" id="ac-hyd">Drink 16–20 oz of water right now.</div></div><div class="ac-it"><div class="ac-ic">😴</div><div class="ac-tx" id="ac-slp">Aim for 7–9 hours tonight.</div></div><div class="ac-it"><div class="ac-ic">🧘</div><div class="ac-tx" id="ac-ref">Take 60 seconds to breathe.</div></div></div>
     <div class="sh-card"><div class="sh-top">Mood Moves · Today's Workout</div><div class="sh-main" id="sh-txt">I showed up. That's enough. 💪</div><button class="sh-btn" onclick="shareWk()">Share this ↗</button></div>
-    <button class="bp" onclick="finishWk()">Back to Home 🏠</button>
+    <button class="bp" onclick="openMoodMove()">Your Mood Move →</button>
     <div style="height:20px;"></div>
+  </div>
+</div>
+
+<!-- MOOD MOVE SCREEN -->
+<div class="screen" id="moodmove" style="background:var(--cream);min-height:100vh;padding-bottom:40px;">
+  <div id="mm-hero" style="padding:32px 20px 20px;text-align:center;">
+    <div id="mm-emoji" style="font-size:52px;margin-bottom:10px;">🌊</div>
+    <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:#B0B0C0;text-transform:uppercase;margin-bottom:6px;">Your Mood Move</div>
+    <div id="mm-subtitle" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#2C2C3A;margin-bottom:4px;">You showed up. Now let's settle.</div>
+  </div>
+  <!-- Intro card -->
+  <div id="mm-intro-card" style="margin:0 16px 16px;background:white;border-radius:16px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,0.06);">
+    <div id="mm-intro-text" style="font-size:13px;color:#5A5A6A;line-height:1.7;"></div>
+    <button id="mm-start-btn" onclick="startMoodMove()" style="margin-top:14px;width:100%;padding:13px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-weight:800;font-size:14px;cursor:pointer;font-family:'Nunito',sans-serif;">Let's do it →</button>
+  </div>
+  <!-- Timer / step display -->
+  <div id="mm-active" style="display:none;margin:0 16px;">
+    <div style="background:white;border-radius:20px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);text-align:center;">
+      <div id="mm-step-icon" style="font-size:44px;margin-bottom:8px;">🫁</div>
+      <div id="mm-step-label" style="font-size:11px;font-weight:800;letter-spacing:1px;color:#B0B0C0;text-transform:uppercase;margin-bottom:4px;">INHALE</div>
+      <div id="mm-step-cue" style="font-family:'Cormorant Garamond',serif;font-size:18px;color:#2C2C3A;margin-bottom:20px;line-height:1.4;"></div>
+      <!-- Circle timer -->
+      <div style="position:relative;width:140px;height:140px;margin:0 auto 20px;">
+        <svg width="140" height="140" style="transform:rotate(-90deg);">
+          <circle cx="70" cy="70" r="60" fill="none" stroke="#EDE8E3" stroke-width="8"/>
+          <circle id="mm-circle" cx="70" cy="70" r="60" fill="none" stroke="#4BBFB5" stroke-width="8"
+            stroke-dasharray="377" stroke-dashoffset="0" stroke-linecap="round"
+            style="transition:stroke-dashoffset 1s linear;"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div id="mm-countdown" style="font-size:36px;font-weight:900;color:#2C2C3A;font-family:'Nunito',sans-serif;">4</div>
+          <div style="font-size:10px;color:#B0B0C0;font-weight:700;">seconds</div>
+        </div>
+      </div>
+      <div id="mm-round-label" style="font-size:11px;color:#B0B0C0;font-weight:700;">Round 1 of 4</div>
+    </div>
+    <button onclick="skipMoodMove()" style="margin-top:12px;width:100%;padding:10px;background:transparent;border:1.5px solid #EDE8E3;border-radius:14px;color:#B0B0C0;font-weight:700;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;">Skip</button>
+  </div>
+  <!-- Outro -->
+  <div id="mm-outro" style="display:none;margin:0 16px;text-align:center;">
+    <div style="font-size:52px;margin-bottom:16px;">✨</div>
+    <div id="mm-outro-text" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2C2C3A;line-height:1.6;margin-bottom:24px;"></div>
+    <button onclick="finishMoodMove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-weight:800;font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Done 💙</button>
   </div>
 </div>
 
@@ -1407,7 +1450,7 @@ else{setAllLogos();setAllAvatars();}
 <nav class="bnav hidden" id="bnav">
   <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic" id="nav-ic-home" style="width:40px;height:40px;font-size:24px;">🏠</div><div class="ni2-lb">Home</div></div>
   <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic" id="nav-ic-workout" style="width:40px;height:40px;font-size:24px;">💪</div><div class="ni2-lb">Workout</div></div>
-  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:40px;height:40px;font-size:24px;">📖</div><div class="ni2-lb">Exercises</div></div>
+  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:40px;height:40px;font-size:24px;">📖</div><div class="ni2-lb">Exercise Library</div></div>
   <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic" id="nav-ic-profile" style="width:40px;height:40px;font-size:24px;">👤</div><div class="ni2-lb">Profile</div></div>
 </nav>
 
@@ -1786,6 +1829,98 @@ const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration 
   {e:'🧠',t:'Visualizing yourself lifting heavier before your set has been shown to increase actual strength output.'},
   {e:'⏳',t:'Muscle protein synthesis stays elevated for 24 to 48 hours after training. Eat protein in that window.'},
   {e:'🌡️',t:'A proper warm-up increases strength output by up to 20%. Never skip the first two sets.'}];
+
+// ── MOOD MOVES — post-workout ritual per mood ─────────────────────────────────
+var MOOD_MOVES = {
+  low: {
+    title: 'Your Mood Move',
+    subtitle: 'You showed up. Now let\'s settle.',
+    color: '#4BBFB5',
+    bg: '#E8F7F5',
+    emoji: '🌊',
+    type: 'breathing',
+    steps: [
+      {label:'Inhale', duration:4, cue:'Breathe in slowly through your nose', icon:'🫁'},
+      {label:'Hold', duration:7, cue:'Hold gently — no tension', icon:'✨'},
+      {label:'Exhale', duration:8, cue:'Long slow breath out through your mouth', icon:'🌬️'},
+    ],
+    rounds: 4,
+    intro: 'The 4-7-8 breath activates your parasympathetic nervous system. It tells your body: you are safe. You are okay. You did enough.',
+    outro: 'That\'s it. You moved your body and then you took care of it. That\'s what Mood Moves is. 💙'
+  },
+  angry: {
+    title: 'Your Mood Move',
+    subtitle: 'Burn the rest of it out.',
+    color: '#F5A042',
+    bg: '#FFF5E8',
+    emoji: '⚡',
+    type: 'hiit',
+    steps: [
+      {label:'Jump Squat', duration:30, cue:'Explode up. Land soft. Use everything.', icon:'💥'},
+      {label:'Rest', duration:10, cue:'Breathe. Shake it out.', icon:'😤'},
+      {label:'Shadowbox', duration:30, cue:'Jab, cross, hook. Let it out.', icon:'🥊'},
+      {label:'Rest', duration:10, cue:'You\'re doing it.', icon:'😤'},
+      {label:'Burpees', duration:30, cue:'All the way down. All the way up.', icon:'🔥'},
+      {label:'Rest', duration:10, cue:'Last one coming.', icon:'😤'},
+      {label:'High Knees', duration:30, cue:'Drive your knees. Fast as you can.', icon:'⚡'},
+    ],
+    rounds: 1,
+    intro: 'Anger is energy. You already used most of it in your workout. This 4-minute HIIT finisher burns the rest — so you walk out lighter than you came in.',
+    outro: 'Feel that? That\'s what anger becomes when you direct it. Power. Every single time. ⚡'
+  },
+  stressed: {
+    title: 'Your Mood Move',
+    subtitle: 'Reset your nervous system.',
+    color: '#8BB8A0',
+    bg: '#EEF5F1',
+    emoji: '🧘',
+    type: 'breathing',
+    steps: [
+      {label:'Inhale', duration:4, cue:'In through the nose, fill your belly first', icon:'🌱'},
+      {label:'Hold', duration:4, cue:'Top of the breath — soft shoulders', icon:'☁️'},
+      {label:'Exhale', duration:4, cue:'Out through the mouth, release everything', icon:'🍃'},
+      {label:'Hold', duration:4, cue:'Empty lungs — pause here', icon:'🌙'},
+    ],
+    rounds: 5,
+    intro: 'Box breathing is used by Navy SEALs to regulate stress response. Equal parts in, hold, out, hold. Your nervous system literally cannot stay in fight-or-flight when you do this.',
+    outro: 'Stress moves through the body. You just gave it somewhere to go. Walk out different than you came in. 🧘'
+  },
+  happy: {
+    title: 'Your Mood Move',
+    subtitle: 'Keep that energy alive.',
+    color: '#F5C842',
+    bg: '#FFFBEA',
+    emoji: '🌟',
+    type: 'flow',
+    steps: [
+      {label:'Dance it out', duration:60, cue:'Put on a song you love. Move however you want. No rules.', icon:'💃'},
+      {label:'Jump Rope or Skips', duration:30, cue:'Light and bouncy. Stay playful.', icon:'🎀'},
+      {label:'Victory stretch', duration:60, cue:'Arms wide open. Deep breath in. Smile — you earned this.', icon:'🌈'},
+    ],
+    rounds: 1,
+    intro: 'Happy workouts are rare and powerful. Your brain is already flooded with endorphins. This 3-minute flow locks in that feeling — so you carry it for hours.',
+    outro: 'You worked out happy today. That\'s a version of you worth remembering. Keep going. 🌟'
+  },
+  neutral: {
+    title: 'Your Mood Move',
+    subtitle: 'Tune in before you check out.',
+    color: '#9B8EC4',
+    bg: '#F3F0FA',
+    emoji: '🔮',
+    type: 'mobility',
+    steps: [
+      {label:'Hip Circles', duration:30, cue:'Slow circles each direction. Feel the joint open.', icon:'🔄'},
+      {label:'Thoracic Rotation', duration:30, cue:'Seated or standing, rotate through your mid-back. Each side.', icon:'↩️'},
+      {label:'Forward Fold', duration:30, cue:'Feet hip-width. Hang heavy. Let gravity do the work.', icon:'🌿'},
+      {label:'Neck Rolls', duration:20, cue:'Slow and gentle. No forcing.', icon:'🌀'},
+      {label:'Deep Breath', duration:10, cue:'One big inhale through the nose. Long exhale. Done.', icon:'✨'},
+    ],
+    rounds: 1,
+    intro: 'Five minutes of mobility after training accelerates recovery, reduces soreness, and brings you back into your body. It\'s the part most people skip. You\'re not most people.',
+    outro: 'Neutral day, consistent work, smart recovery. That\'s how results actually happen. 🔮'
+  }
+};
+
 const MC={
   low:{lb:'😞 Low Energy',co:'#4BBFB5',bg:'#E8F7F5',sets:'2',reps:'10-12',int:'Light',
     ph:["Low battery but still showing up","Gentle movement is still movement","You came. That is already a win.","Some days 10% is everything you have. Give it.","Not every day is a 100% day. This one counts too.","Tired and here. That is strength.","The hardest part was showing up. You did it.","Low energy, high character.","Even slow is forward.","Your body is here. That is enough to start.","Small effort today. Big habit forever.","You do not have to crush it. You just have to do it.","On hard days, showing up IS the workout.","Gentle is not weak. Gentle is wise.","Your future self thanks you for this moment.","Less than perfect still counts.","Progress does not require perfection.","One set at a time. One breath at a time.","The days you least want to move are the days it matters most.","Low energy day. High courage day.","You showed up tired. That is the whole point.","Soft day, strong soul.","Even embers keep the fire alive.","Rest if you must. But do not quit.","Slow and steady still laps everyone on the couch."],
@@ -2147,7 +2282,14 @@ function proceedToWorkout(){
   goTo('moodpicker');
 }
 
-function goToRD(){window.scrollTo(0,0);document.getElementById('rd-moods').style.display='flex';document.getElementById('rd-moods').style.flexDirection='column';document.getElementById('rd-acts').style.display='none';goTo('restday');}
+function goToRD(){
+  window.scrollTo(0,0);
+  var rdMoods = document.getElementById('rd-moods');
+  var rdActs = document.getElementById('rd-acts');
+  if(rdMoods){ rdMoods.style.display='flex'; rdMoods.style.flexDirection='column'; }
+  if(rdActs){ rdActs.style.display='none'; }
+  goTo('restday');
+}
 
 // AUTH
 function showAuthError(msg){
@@ -3326,6 +3468,119 @@ function pickPM(btn,em){
   const td=tdKey();if(S.calData[td])S.calData[td].emoji=em;
   setTimeout(()=>showT(em+' '+NP[Math.floor(Math.random()*NP.length)]),400);
 }
+// ── MOOD MOVE LOGIC ───────────────────────────────────────────────────────────
+var _mmData = null;
+var _mmStepIdx = 0;
+var _mmRound = 0;
+var _mmTimer = null;
+var _mmSecsLeft = 0;
+var _mmCircleMax = 377; // 2*pi*60
+
+function openMoodMove(){
+  var mood = S.currentMood || 'neutral';
+  _mmData = MOOD_MOVES[mood] || MOOD_MOVES['neutral'];
+  _mmStepIdx = 0;
+  _mmRound = 1;
+
+  // Set hero
+  document.getElementById('mm-emoji').textContent = _mmData.emoji;
+  document.getElementById('mm-subtitle').textContent = _mmData.subtitle;
+  document.getElementById('mm-intro-text').textContent = _mmData.intro;
+
+  // Set colors
+  var startBtn = document.getElementById('mm-start-btn');
+  startBtn.style.background = 'linear-gradient(135deg,'+_mmData.color+','+_mmData.color+'CC)';
+
+  // Show intro, hide active/outro
+  document.getElementById('mm-intro-card').style.display = 'block';
+  document.getElementById('mm-active').style.display = 'none';
+  document.getElementById('mm-outro').style.display = 'none';
+
+  // Update circle color
+  document.getElementById('mm-circle').style.stroke = _mmData.color;
+
+  window.scrollTo(0,0);
+  goTo('moodmove');
+}
+
+function startMoodMove(){
+  document.getElementById('mm-intro-card').style.display = 'none';
+  document.getElementById('mm-active').style.display = 'block';
+  _mmStepIdx = 0;
+  _mmRound = 1;
+  runMoodMoveStep();
+}
+
+function runMoodMoveStep(){
+  if(!_mmData) return;
+  var steps = _mmData.steps;
+
+  // Check if we've done all rounds
+  if(_mmRound > _mmData.rounds && _mmStepIdx >= steps.length){
+    showMoodMoveOutro();
+    return;
+  }
+
+  // End of steps for this round
+  if(_mmStepIdx >= steps.length){
+    if(_mmRound < _mmData.rounds){
+      _mmRound++;
+      _mmStepIdx = 0;
+    } else {
+      showMoodMoveOutro();
+      return;
+    }
+  }
+
+  var step = steps[_mmStepIdx];
+  _mmSecsLeft = step.duration;
+
+  // Update UI
+  document.getElementById('mm-step-icon').textContent = step.icon;
+  document.getElementById('mm-step-label').textContent = step.label;
+  document.getElementById('mm-step-cue').textContent = step.cue;
+  document.getElementById('mm-countdown').textContent = _mmSecsLeft;
+  document.getElementById('mm-round-label').textContent =
+    _mmData.rounds > 1 ? 'Round '+_mmRound+' of '+_mmData.rounds : step.label;
+
+  // Circle full
+  document.getElementById('mm-circle').style.strokeDashoffset = '0';
+
+  // Start countdown
+  clearInterval(_mmTimer);
+  _mmTimer = setInterval(function(){
+    _mmSecsLeft--;
+    document.getElementById('mm-countdown').textContent = _mmSecsLeft;
+
+    // Update circle
+    var progress = _mmSecsLeft / step.duration;
+    document.getElementById('mm-circle').style.strokeDashoffset = _mmCircleMax * (1-progress);
+
+    if(_mmSecsLeft <= 0){
+      clearInterval(_mmTimer);
+      _mmStepIdx++;
+      setTimeout(runMoodMoveStep, 500);
+    }
+  }, 1000);
+}
+
+function showMoodMoveOutro(){
+  clearInterval(_mmTimer);
+  document.getElementById('mm-active').style.display = 'none';
+  document.getElementById('mm-outro').style.display = 'block';
+  document.getElementById('mm-outro-text').textContent = _mmData.outro;
+}
+
+function skipMoodMove(){
+  clearInterval(_mmTimer);
+  showMoodMoveOutro();
+}
+
+function finishMoodMove(){
+  clearInterval(_mmTimer);
+  finishWk();
+}
+
 function finishWk(){setupHome();goTo('home');setNav('home');setTimeout(function(){},100);}
 function shareWk(){
   var txt = document.getElementById('sh-txt').textContent.replace(/"/g,'');
@@ -3437,34 +3692,59 @@ function checkBadges(){
   });
 }
 function renderBadges(){
-  var visible = getVisibleBadges();
   var tier = getBadgeTier();
-  var tierEarned = visible.filter(function(b){ return b.tier===tier && S.earnedBadges.includes(b.id); }).length;
-  var tierTotal  = visible.filter(function(b){ return b.tier===tier; }).length;
-  var nextAt = 4;
-  var hasNext = tier < 3;
+  // Show only current tier badges (max 8) — earned ones get a bag icon
+  var tierBadges = ALL_BADGES.filter(function(b){ return b.tier === tier; }).slice(0,8);
+  var earnedAll = S.earnedBadges || [];
+  var earnedCount = earnedAll.length;
 
-  var html = visible.map(function(b){
-    var earned = S.earnedBadges.includes(b.id);
+  // Build the 8 slots
+  var html = tierBadges.map(function(b){
+    var earned = earnedAll.includes(b.id);
     return '<div class="bg-item" onclick="showBadgeDetail(this.dataset.id)" data-id="'+b.id+'" style="cursor:pointer;">' +
       '<div class="bg-ic '+(earned?'earned':'locked')+'" title="'+b.hw+'">'+b.ic+'</div>' +
       '<div class="bg-lbl">'+b.lb+'</div>' +
       '</div>';
   }).join('');
 
-  // Progress to next tier
-  if(hasNext){
-    var prog = Math.min(tierEarned, nextAt);
-    html += '<div style="grid-column:1/-1;margin-top:8px;padding:10px 12px;background:rgba(75,191,181,0.08);border-radius:12px;text-align:center;">' +
-      '<div style="font-size:10px;font-weight:800;color:#4BBFB5;margin-bottom:4px;">'+prog+' / '+nextAt+' to unlock next set</div>' +
-      '<div style="background:#EDE8E3;border-radius:20px;height:5px;overflow:hidden;">' +
-        '<div style="background:linear-gradient(90deg,#4BBFB5,#F5A042);height:100%;width:'+(prog/nextAt*100)+'%;border-radius:20px;transition:width 0.5s;"></div>' +
-      '</div></div>';
-  } else {
-    html += '<div style="grid-column:1/-1;margin-top:8px;text-align:center;font-size:11px;font-weight:800;color:#4BBFB5;">🏆 All badges unlocked!</div>';
+  // Badge bag button — shows all earned badges
+  if(earnedCount > 0){
+    html += '<div style="grid-column:1/-1;margin-top:10px;display:flex;align-items:center;justify-content:space-between;">' +
+      '<button onclick="openBadgeBag()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#F5F0EB;border:none;border-radius:20px;font-size:11px;font-weight:800;color:#7A7A8C;cursor:pointer;font-family:Nunito,sans-serif;">🎒 My Badge Bag ('+earnedCount+')</button>' +
+      '<div style="font-size:10px;color:#B0B0C0;">Earn 4 to unlock more</div>' +
+      '</div>';
   }
 
   document.getElementById('bg-grid').innerHTML = html;
+}
+
+function closeBadgeBag(){ var m=document.getElementById('badge-bag-modal'); if(m) m.remove(); }
+function openBadgeBag(){
+  var earned = (S.earnedBadges||[]);
+  var old = document.getElementById('badge-bag-modal');
+  if(old) old.remove();
+  var modal = document.createElement('div');
+  modal.id = 'badge-bag-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-end;justify-content:center;';
+  modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+
+  var badgeHtml = earned.map(function(id){
+    var b = ALL_BADGES.find(function(x){ return x.id===id; });
+    if(!b) return '';
+    return '<div onclick="showBadgeDetail(this.dataset.bid)" data-bid="'+id+'" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px;">' +
+      '<div style="font-size:32px;">'+b.ic+'</div>' +
+      '<div style="font-size:9px;font-weight:800;color:#2C2C3A;text-align:center;max-width:56px;">'+b.lb+'</div>' +
+      '</div>';
+  }).join('');
+
+  modal.innerHTML = '<div style="background:white;border-radius:24px 24px 0 0;padding:24px 16px 40px;width:100%;max-width:430px;max-height:70vh;overflow-y:auto;">' +
+    '<div style="width:36px;height:4px;background:#EDE8E3;border-radius:2px;margin:0 auto 16px;"></div>' +
+    '<div style="font-family:Cormorant Garamond,serif;font-size:20px;font-weight:600;color:#2C2C3A;margin-bottom:4px;text-align:center;">🎒 My Badge Bag</div>' +
+    '<div style="font-size:11px;color:#7A7A8C;text-align:center;margin-bottom:16px;">'+earned.length+' badge'+(earned.length===1?'':'s')+' earned</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">'+badgeHtml+'</div>' +
+    '<button onclick="closeBadgeBag()" style="margin-top:20px;width:100%;padding:12px;background:#4BBFB5;border:none;border-radius:14px;color:white;font-weight:800;font-size:13px;cursor:pointer;font-family:Nunito,sans-serif;">Close</button>' +
+    '</div>';
+  document.body.appendChild(modal);
 }
 
 
