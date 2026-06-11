@@ -383,11 +383,12 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 
 /* BOTTOM NAV */
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:white;border-top:1px solid var(--border);display:flex;padding:7px 0 max(17px, calc(10px + env(safe-area-inset-bottom, 0px)));z-index:100;box-shadow:0 -4px 20px rgba(44,44,58,0.06);}
-.ni2{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 0;transition:all 0.2s ease;}
-.ni2-ic{font-size:18px;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:10px;transition:all 0.2s ease;background:rgba(75,191,181,0.08);}
+.ni2{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 0;transition:all 0.2s ease;}
+.ni2-ic{font-size:22px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;transition:all 0.2s ease;background:rgba(75,191,181,0.08);}
 .ni2-lb{font-size:9px;font-weight:800;color:var(--txt3);letter-spacing:0.3px;transition:color 0.2s;}
-.ni2.on .ni2-lb{color:var(--teal);}
-.ni2.on .ni2-ic{background:rgba(75,191,181,0.12);transform:scale(1.08);}
+.ni2.on .ni2-lb{color:var(--teal);font-weight:900;}
+.ni2.on .ni2-ic{background:linear-gradient(135deg,#4BBFB5,#3AADA3);transform:scale(1.08);color:white;}
+.ni2.on .ni2-ic lottie-player{filter:brightness(0) invert(1);}
 .ni2:active{transform:scale(0.93);}
 .hidden{display:none!important;}
 .back{position:absolute;top:46px;left:13px;width:30px;height:30px;background:var(--cream);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt);z-index:10;}
@@ -1404,10 +1405,10 @@ else{setAllLogos();setAllAvatars();}
 
 <!-- BOTTOM NAV -->
 <nav class="bnav hidden" id="bnav">
-  <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic" id="nav-ic-home" style="width:32px;height:32px;font-size:20px;">🏠</div><div class="ni2-lb">Home</div></div>
-  <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic" id="nav-ic-workout" style="width:32px;height:32px;font-size:20px;">💪</div><div class="ni2-lb">Workout</div></div>
-  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:32px;height:32px;font-size:20px;">📖</div><div class="ni2-lb">Exercise Library</div></div>
-  <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic" id="nav-ic-profile" style="width:32px;height:32px;font-size:20px;">👤</div><div class="ni2-lb">Profile</div></div>
+  <div class="ni2 on" onclick="goTo('home');setNav('home')" id="nav-home"><div class="ni2-ic" id="nav-ic-home" style="width:40px;height:40px;font-size:24px;">🏠</div><div class="ni2-lb">Home</div></div>
+  <div class="ni2" onclick="goToMP()" id="nav-workout"><div class="ni2-ic" id="nav-ic-workout" style="width:40px;height:40px;font-size:24px;">💪</div><div class="ni2-lb">Workout</div></div>
+  <div class="ni2" onclick="goTo('exercises');setNav('exercises')" id="nav-exercises"><div class="ni2-ic" id="nav-ic-exercises" style="width:40px;height:40px;font-size:24px;">📖</div><div class="ni2-lb">Exercises</div></div>
+  <div class="ni2" onclick="goTo('profile-tab');setNav('profile')" id="nav-profile"><div class="ni2-ic" id="nav-ic-profile" style="width:40px;height:40px;font-size:24px;">👤</div><div class="ni2-lb">Profile</div></div>
 </nav>
 
 <!-- EXERCISE VISUAL MODAL -->
@@ -1936,7 +1937,7 @@ const EX={
     {n:'Barbell Floor Press',e:'Barbell',l:'Intermediate/Advanced',m:'Chest, Triceps',c:['Lie on floor, bar in rack above you','Lower bar until upper arms rest on floor','Pause briefly, then press back to lockout','The floor limits range, protecting shoulders']}],
   vpush:[
     {n:'Wall Shoulder Press',e:'Wall',l:'Beginner',m:'Shoulders, Triceps',c:['Stand facing a wall','Place hands on wall at shoulder height','Walk feet back until body is angled','Push through hands like a press','Great beginner shoulder exercise']},
-    {n:'Elevated Pike Push-Up',e:'No Equipment',l:'Intermediate',m:'Shoulders, Triceps',c:['Place feet on a chair or couch','Walk hands out so hips are high','Lower head toward floor','Push back up strongly','More shoulder work than regular pike']},
+    {n:'Elevated Pike Push-Up',e:'No Equipment',l:'Intermediate/Advanced',m:'Shoulders, Triceps',c:['Place feet on a chair or couch','Walk hands out so hips are high','Lower head toward floor','Push back up strongly','More shoulder work than regular pike']},
     {n:'Pike Push-Up',e:'No Equipment',l:'Beginner',m:'Shoulders, Triceps',c:['Start in downward dog position','Hands shoulder-width apart','Bend elbows to lower head toward floor','Push back up to starting position','More shoulder than chest push-up']},
             {n:'Dumbbell Shoulder Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
     {n:'Arnold Press',e:'Dumbbell',l:'Intermediate',m:'All 3 Deltoid Heads',c:['Start palms facing you at chin','Rotate palms out as you press','Full rotation at top','Reverse on the way down']},
@@ -2079,7 +2080,7 @@ function goTo(id){
   var el=document.getElementById(id);
   el.classList.add('active');
   el.scrollTop=0;
-  var navS=['home','exercises','profile-tab','journal-screen','progress-screen'];
+  var navS=['home','exercises','profile-tab','journal-screen','progress-screen','history-screen'];
   document.getElementById('bnav').classList.toggle('hidden',navS.indexOf(id)===-1);
 }
 
@@ -3567,13 +3568,14 @@ function renderEl(){
   _lastFilteredEx=filtered;
   document.getElementById('el-list').innerHTML=filtered.map((e,i)=>`
     <div class="el-item" onclick="togElDet('eld-${i}')">
-      <div class="el-top"><span class="el-cat">${CL[e.cat]||e.cat}</span><span class="el-nm">${e.n}</span><span class="el-eq">${e.e}</span></div>
+      <div class="el-top"><span class="el-cat">${CL[e.cat]||e.cat}</span><span class="el-nm">${e.n}</span><span class="el-eq" style="font-size:9px;">${e.e}</span><a href="${muscleWikiUrl(e.n)}" target="_blank" onclick="event.stopPropagation()" style="flex-shrink:0;font-size:14px;text-decoration:none;opacity:0.7;" title="Watch on MuscleWiki">📺</a></div>
       <div class="el-det" id="eld-${i}">
         <div class="el-ms">🎯 ${e.m}</div>
         <div class="el-lv">${e.l}</div>
         <div style="display:flex;align-items:flex-start;gap:10px;margin-top:8px;">
           <div class="el-cues" style="flex:1;"><div class="el-ct">Coaching Cues</div>${(e.c||[]).map(c=>'<div class="el-cue"><div class="el-cd"></div><div class="el-cx">'+c+'</div></div>').join('')}</div>
         </div>
+        <a href="${muscleWikiUrl(e.n)}" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:6px 12px;background:#E8F7F5;border-radius:20px;font-size:11px;font-weight:800;color:#4BBFB5;text-decoration:none;">📺 Watch on MuscleWiki</a>
       </div>
     </div>`).join('');
 }
@@ -4174,7 +4176,7 @@ window.addEventListener('DOMContentLoaded',function(){
   // ── Lottie players ──────────────────────────────────
   // Load nav icon — emoji shows immediately, lottie replaces silently when ready
   function loadNavIcon(id, url, w, h) {
-    w = w || 32; h = h || 32;
+    w = w || 40; h = h || 40;
     fetch(url).then(function(r){
       if(!r.ok) throw new Error('not found');
       return r.json();
@@ -5447,7 +5449,23 @@ var MW_SLUGS = {
   'Wide Grip Lat Pulldown':'wide-grip-lat-pulldown',
   'Woodchop (High to Low)':'cable-standing-high-to-low-wood-chopper',
   'Woodchop (Low to High)':'cable-half-kneeling-low-to-high-wood-chopper',
-  'Z-Press':'z-press'
+  'Z-Press':'z-press',
+  // ── Added / fixed ───────────────────────────────────────────
+  'Dip':'dip',
+  'Band Rotation':'band-rotation',
+  'Elevated Pike Push-Up':'pike-push-up',
+  'Wall Sit':'wall-sit',
+  'Burpee':'burpee',
+  'Box Jump':'box-jump',
+  'Jump Squat (Weighted)':'jump-squat',
+  'Lateral Band Walk':'lateral-band-walk',
+  'Cossack Squat':'cossack-squat',
+  'TRX Fallout':'trx-ab-fallout',
+  'Glute Kickback':'cable-glute-kickback',
+  'Hip Abduction (Machine)':'machine-hip-abduction',
+  'Leg Press':'leg-press',
+  'Leg Extension':'leg-extension',
+  'Leg Curl':'leg-curl'
 };
 
 
@@ -6407,7 +6425,7 @@ function openHistory(){
     });
     list.innerHTML=cards;
   }
-  goTo('wk-history');
+  goTo('history-screen');setNav('');
 }
 
 function toggleHistCard(wi){
