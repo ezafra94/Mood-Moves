@@ -2546,10 +2546,10 @@ function setupHome(){window.scrollTo(0,0);
     }
   }
   // ── Show sticky note — first open each day, everyone ──────────────────────
+  // Only show if not already shown this session AND not shown today
   setTimeout(function(){
-    _stickyShown = false;
     showStickyNote();
-  }, 1200);
+  }, 2000);
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -3883,7 +3883,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260611d';
+  var deployVersion = 'v20260611e';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -3892,9 +3892,7 @@ window.addEventListener('DOMContentLoaded',function(){
     _stickyShown = false;
     console.log('[MM] Deploy reset v20260611c — sticky + notif cleared');
   }
-  // Always clear sticky date so it shows today (temporary debug)
-  localStorage.removeItem('mm_sticky_date');
-  _stickyShown = false;
+
   // Audio debug — shows in browser console
   console.log('[MM Audio] muted:', MM_MUTED, '| localStorage mm_muted:', localStorage.getItem('mm_muted'));
   // Auto-clear stuck mute state that may have been set by a bug
