@@ -1329,13 +1329,14 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <div id="mm-round-label" style="font-size:11px;color:#B0B0C0;font-weight:700;">Round 1 of 4</div>
     </div>
-    <button onclick="skipMoodMove()" style="margin-top:12px;width:100%;padding:10px;background:transparent;border:1.5px solid #EDE8E3;border-radius:14px;color:#B0B0C0;font-weight:700;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;">Skip</button>
+    <button id="mm-ready-btn" onclick="tapToStart()" style="display:none;margin-top:12px;width:100%;padding:12px;background:#4BBFB5;border:none;border-radius:14px;color:white;font-weight:800;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;">Tap to start ▶</button>
+  <button onclick="skipMoodMove()" style="margin-top:8px;width:100%;padding:10px;background:transparent;border:1.5px solid #EDE8E3;border-radius:14px;color:#B0B0C0;font-weight:700;font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;">Skip</button>
   </div>
   <!-- Outro -->
   <div id="mm-outro" style="display:none;margin:0 16px;text-align:center;">
     <div style="font-size:52px;margin-bottom:16px;">✨</div>
     <div id="mm-outro-text" style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2C2C3A;line-height:1.6;margin-bottom:24px;"></div>
-    <button onclick="finishMoodMove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-weight:800;font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Done 💙</button>
+    <button onclick="finishMoodMove()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-weight:800;font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Back to Complete Workout →</button>
   </div>
 </div>
 
@@ -3640,51 +3641,63 @@ function runMoodMoveStep(){
   if(!_mmData) return;
   var steps = _mmData.steps;
 
-  // Check if we've done all rounds
+  // Check if all rounds done
   if(_mmRound > _mmData.rounds && _mmStepIdx >= steps.length){
-    showMoodMoveOutro();
-    return;
+    showMoodMoveOutro(); return;
   }
-
-  // End of steps for this round
   if(_mmStepIdx >= steps.length){
-    if(_mmRound < _mmData.rounds){
-      _mmRound++;
-      _mmStepIdx = 0;
-    } else {
-      showMoodMoveOutro();
-      return;
-    }
+    if(_mmRound < _mmData.rounds){ _mmRound++; _mmStepIdx = 0; }
+    else { showMoodMoveOutro(); return; }
   }
 
   var step = steps[_mmStepIdx];
-  _mmSecsLeft = step.duration;
 
-  // Update UI
+  // Update UI with step info
   document.getElementById('mm-step-icon').textContent = step.icon;
   document.getElementById('mm-step-label').textContent = step.label;
   document.getElementById('mm-step-cue').textContent = step.cue;
-  document.getElementById('mm-countdown').textContent = _mmSecsLeft;
   document.getElementById('mm-round-label').textContent =
-    _mmData.rounds > 1 ? 'Round '+_mmRound+' of '+_mmData.rounds : step.label;
+    _mmData.rounds > 1 ? 'Round '+_mmRound+' of '+_mmData.rounds : 'Step '+((_mmStepIdx+1))+' of '+steps.length;
 
-  // Circle full
+  // Show GET READY for 3 seconds before starting the timer
+  document.getElementById('mm-countdown').textContent = '▶';
+  document.getElementById('mm-circle').style.strokeDashoffset = '0';
+  document.getElementById('mm-circle').style.stroke = '#EDE8E3';
+
+  // Show a "Tap to start / starting in 3s" message
+  var readyBtn = document.getElementById('mm-ready-btn');
+  if(readyBtn){ readyBtn.style.display = 'block'; readyBtn.textContent = 'Tap to start ▶'; }
+
+  // Auto-start after 3 seconds if not tapped
+  clearInterval(_mmTimer);
+  window._mmReadyTimeout = setTimeout(function(){ startCurrentStep(step); }, 3000);
+}
+
+function tapToStart(){
+  clearTimeout(window._mmReadyTimeout);
+  var step = _mmData.steps[_mmStepIdx];
+  startCurrentStep(step);
+}
+
+function startCurrentStep(step){
+  var readyBtn = document.getElementById('mm-ready-btn');
+  if(readyBtn) readyBtn.style.display = 'none';
+
+  _mmSecsLeft = step.duration;
+  document.getElementById('mm-countdown').textContent = _mmSecsLeft;
+  document.getElementById('mm-circle').style.stroke = _mmData.color || '#4BBFB5';
   document.getElementById('mm-circle').style.strokeDashoffset = '0';
 
-  // Start countdown
   clearInterval(_mmTimer);
   _mmTimer = setInterval(function(){
     _mmSecsLeft--;
     document.getElementById('mm-countdown').textContent = _mmSecsLeft;
-
-    // Update circle
     var progress = _mmSecsLeft / step.duration;
     document.getElementById('mm-circle').style.strokeDashoffset = _mmCircleMax * (1-progress);
-
     if(_mmSecsLeft <= 0){
       clearInterval(_mmTimer);
       _mmStepIdx++;
-      setTimeout(runMoodMoveStep, 500);
+      setTimeout(runMoodMoveStep, 800);
     }
   }, 1000);
 }
@@ -3698,12 +3711,26 @@ function showMoodMoveOutro(){
 
 function skipMoodMove(){
   clearInterval(_mmTimer);
+  clearTimeout(window._mmReadyTimeout);
   showMoodMoveOutro();
 }
 
 function finishMoodMove(){
   clearInterval(_mmTimer);
-  finishWk();
+  clearTimeout(window._mmReadyTimeout);
+  // Go BACK to workout screen so user can tap Complete Workout
+  goTo('workout');
+  // Scroll to the Complete Workout button
+  setTimeout(function(){
+    var btn = document.getElementById('done-btn');
+    if(btn){
+      btn.style.display = 'block';
+      btn.textContent = 'Complete Workout ✓';
+      btn.scrollIntoView({behavior:'smooth', block:'center'});
+      // Pulse the button so they notice it
+      btn.style.animation = 'badgeShimmer 1s ease-in-out 3';
+    }
+  }, 300);
 }
 
 function finishWk(){setupHome();goTo('home');setNav('home');setTimeout(function(){},100);}
