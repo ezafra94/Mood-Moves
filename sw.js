@@ -2,6 +2,7 @@
 // Handles: offline caching, background sync, push notifications
 //
 // ── VERSION LOG ──────────────────────────────────────────
+// v20260612 — Force all devices to reload fresh
 // v20260611 — Hard cache clear all
 // v20260609 — Force cache clear, sticky fix, calendar, challenge
 // v20260601 — SW notification fix, sticky note on login, auto permission
@@ -12,7 +13,7 @@
 // Every user's phone will auto-download the fresh version within 24hrs
 // ─────────────────────────────────────────────────────────
 
-const APP_VERSION = 'v20260611';
+const APP_VERSION = 'v20260612';
 const CACHE_NAME = 'mood-moves-' + APP_VERSION;
 const OFFLINE_ASSETS = [
   '/',
@@ -33,7 +34,7 @@ self.addEventListener('install', function(e) {
         })
       );
     }).then(function() {
-      return self.skipWaiting(); // activate immediately
+      return self.skipWaiting();
     })
   );
 });
