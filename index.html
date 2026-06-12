@@ -1832,93 +1832,87 @@ const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration 
 
 // ── MOOD MOVES — post-workout ritual per mood ─────────────────────────────────
 var MOOD_MOVES = {
+
   low: {
-    title: 'Your Mood Move',
-    subtitle: 'You showed up. Now let\'s settle.',
-    color: '#4BBFB5',
-    bg: '#E8F7F5',
-    emoji: '🌊',
-    type: 'breathing',
+    subtitle: 'You showed up. Now let us settle.',
+    color: '#4BBFB5', bg: '#E8F7F5', emoji: '🌊',
+    type: 'yoga+breathing',
+    intro: 'On low days, your nervous system needs gentleness. This 5-minute yoga and breathing sequence tells your body it is safe, cared for, and enough.',
+    outro: 'You moved your body and then you took care of it. That is what Mood Moves is. 💙',
+    rounds: 1,
     steps: [
-      {label:'Inhale', duration:4, cue:'Breathe in slowly through your nose', icon:'🫁'},
-      {label:'Hold', duration:7, cue:'Hold gently — no tension', icon:'✨'},
-      {label:'Exhale', duration:8, cue:'Long slow breath out through your mouth', icon:'🌬️'},
-    ],
-    rounds: 4,
-    intro: 'The 4-7-8 breath activates your parasympathetic nervous system. It tells your body: you are safe. You are okay. You did enough.',
-    outro: 'That\'s it. You moved your body and then you took care of it. That\'s what Mood Moves is. 💙'
+      {label:'Childs Pose', duration:45, cue:'Sit back on your heels, arms forward, forehead down. Breathe into your lower back.', icon:'🙇'},
+      {label:'4-7-8 Breath x3', duration:60, cue:'Inhale 4 counts. Hold 7. Exhale 8. Do 3 rounds. Let your whole body soften.', icon:'🌬️'},
+      {label:'Cat-Cow', duration:40, cue:'On hands and knees. Inhale — drop belly, lift chest. Exhale — round spine to ceiling. Slow and fluid.', icon:'🐱'},
+      {label:'Seated Forward Fold', duration:40, cue:'Legs out, reach toward feet. Do not force it. Just let gravity do the work.', icon:'🧘'},
+      {label:'Savasana Breath', duration:35, cue:'Lie on your back. Eyes closed. Three deep breaths. Feel the ground hold you.', icon:'✨'},
+    ]
   },
+
   angry: {
-    title: 'Your Mood Move',
     subtitle: 'Burn the rest of it out.',
-    color: '#F5A042',
-    bg: '#FFF5E8',
-    emoji: '⚡',
+    color: '#F5A042', bg: '#FFF5E8', emoji: '⚡',
     type: 'hiit',
-    steps: [
-      {label:'Jump Squat', duration:30, cue:'Explode up. Land soft. Use everything.', icon:'💥'},
-      {label:'Rest', duration:10, cue:'Breathe. Shake it out.', icon:'😤'},
-      {label:'Shadowbox', duration:30, cue:'Jab, cross, hook. Let it out.', icon:'🥊'},
-      {label:'Rest', duration:10, cue:'You\'re doing it.', icon:'😤'},
-      {label:'Burpees', duration:30, cue:'All the way down. All the way up.', icon:'🔥'},
-      {label:'Rest', duration:10, cue:'Last one coming.', icon:'😤'},
-      {label:'High Knees', duration:30, cue:'Drive your knees. Fast as you can.', icon:'⚡'},
-    ],
-    rounds: 1,
     intro: 'Anger is energy. You already used most of it in your workout. This 4-minute HIIT finisher burns the rest — so you walk out lighter than you came in.',
-    outro: 'Feel that? That\'s what anger becomes when you direct it. Power. Every single time. ⚡'
+    outro: 'Feel that? That is what anger becomes when you direct it. Power. Every single time. ⚡',
+    rounds: 1,
+    steps: [
+      {label:'Jump Squats', duration:30, cue:'Explode up. Land soft. Every rep is a release.', icon:'💥'},
+      {label:'Rest', duration:10, cue:'Breathe. Shake it out.', icon:'😤'},
+      {label:'Shadowbox', duration:30, cue:'Jab, cross, hook. Let it all out.', icon:'🥊'},
+      {label:'Rest', duration:10, cue:'You are doing it.', icon:'😤'},
+      {label:'Burpees', duration:30, cue:'All the way down. All the way up. Use it.', icon:'🔥'},
+      {label:'Rest', duration:10, cue:'Last one.', icon:'😤'},
+      {label:'High Knees', duration:30, cue:'Drive your knees. As fast as you can. Finish strong.', icon:'⚡'},
+    ]
   },
+
   stressed: {
-    title: 'Your Mood Move',
     subtitle: 'Reset your nervous system.',
-    color: '#8BB8A0',
-    bg: '#EEF5F1',
-    emoji: '🧘',
-    type: 'breathing',
+    color: '#8BB8A0', bg: '#EEF5F1', emoji: '🧘',
+    type: 'meditation+breathing',
+    intro: 'Stress lives in the body. This sequence combines box breathing with a simple body scan meditation — the same technique used by therapists to stop the stress response in its tracks.',
+    outro: 'Stress moves through the body when you give it space. You just did that. Walk out different than you came in. 🧘',
+    rounds: 1,
     steps: [
-      {label:'Inhale', duration:4, cue:'In through the nose, fill your belly first', icon:'🌱'},
-      {label:'Hold', duration:4, cue:'Top of the breath — soft shoulders', icon:'☁️'},
-      {label:'Exhale', duration:4, cue:'Out through the mouth, release everything', icon:'🍃'},
-      {label:'Hold', duration:4, cue:'Empty lungs — pause here', icon:'🌙'},
-    ],
-    rounds: 5,
-    intro: 'Box breathing is used by Navy SEALs to regulate stress response. Equal parts in, hold, out, hold. Your nervous system literally cannot stay in fight-or-flight when you do this.',
-    outro: 'Stress moves through the body. You just gave it somewhere to go. Walk out different than you came in. 🧘'
+      {label:'Box Breath x4', duration:80, cue:'In for 4. Hold 4. Out for 4. Hold 4. Repeat 4 times. This is the reset button.', icon:'🌱'},
+      {label:'Body Scan', duration:60, cue:'Close your eyes. Notice your feet. Your legs. Your belly. Your chest. Your shoulders. Let each one soften.', icon:'☁️'},
+      {label:'Box Breath x4', duration:80, cue:'Four more rounds. Notice how different your breathing feels now versus 2 minutes ago.', icon:'🍃'},
+      {label:'Gentle Intention', duration:40, cue:'Place one hand on your chest. Say silently: I did something good for myself today. That is true.', icon:'💚'},
+    ]
   },
+
   happy: {
-    title: 'Your Mood Move',
-    subtitle: 'Keep that energy alive.',
-    color: '#F5C842',
-    bg: '#FFFBEA',
-    emoji: '🌟',
-    type: 'flow',
-    steps: [
-      {label:'Dance it out', duration:60, cue:'Put on a song you love. Move however you want. No rules.', icon:'💃'},
-      {label:'Jump Rope or Skips', duration:30, cue:'Light and bouncy. Stay playful.', icon:'🎀'},
-      {label:'Victory stretch', duration:60, cue:'Arms wide open. Deep breath in. Smile — you earned this.', icon:'🌈'},
-    ],
+    subtitle: 'Lock in that energy.',
+    color: '#F5C842', bg: '#FFFBEA', emoji: '🌟',
+    type: 'flow+dance',
+    intro: 'Happy workouts are rare and powerful. Your brain is flooded with endorphins right now. This 3-minute joy flow locks that feeling in — so you carry it for hours after you leave.',
+    outro: 'You worked out happy today. That is a version of you worth coming back to. Keep going. 🌟',
     rounds: 1,
-    intro: 'Happy workouts are rare and powerful. Your brain is already flooded with endorphins. This 3-minute flow locks in that feeling — so you carry it for hours.',
-    outro: 'You worked out happy today. That\'s a version of you worth remembering. Keep going. 🌟'
+    steps: [
+      {label:'Free Dance', duration:60, cue:'Put on your favourite song. Move however you want. No rules. No form. Just joy.', icon:'💃'},
+      {label:'Bounce and Skips', duration:30, cue:'Light, bouncy, playful. Stay in the energy.', icon:'🎀'},
+      {label:'Arms Wide', duration:30, cue:'Stand tall. Arms open wide. Big inhale. Hold the feeling.', icon:'🌈'},
+      {label:'Gratitude Breath', duration:30, cue:'One hand on heart. Exhale slowly. You chose to show up happy. That matters.', icon:'🌟'},
+    ]
   },
+
   neutral: {
-    title: 'Your Mood Move',
-    subtitle: 'Tune in before you check out.',
-    color: '#9B8EC4',
-    bg: '#F3F0FA',
-    emoji: '🔮',
-    type: 'mobility',
-    steps: [
-      {label:'Hip Circles', duration:30, cue:'Slow circles each direction. Feel the joint open.', icon:'🔄'},
-      {label:'Thoracic Rotation', duration:30, cue:'Seated or standing, rotate through your mid-back. Each side.', icon:'↩️'},
-      {label:'Forward Fold', duration:30, cue:'Feet hip-width. Hang heavy. Let gravity do the work.', icon:'🌿'},
-      {label:'Neck Rolls', duration:20, cue:'Slow and gentle. No forcing.', icon:'🌀'},
-      {label:'Deep Breath', duration:10, cue:'One big inhale through the nose. Long exhale. Done.', icon:'✨'},
-    ],
+    subtitle: 'Tune in before you go.',
+    color: '#9B8EC4', bg: '#F3F0FA', emoji: '🔮',
+    type: 'mobility+mindfulness',
+    intro: 'Five minutes of intentional mobility and mindfulness after training cuts soreness, accelerates recovery, and brings you fully back into your body. Most people skip this. You are not most people.',
+    outro: 'Consistent training. Smart recovery. That is exactly how results happen. 🔮',
     rounds: 1,
-    intro: 'Five minutes of mobility after training accelerates recovery, reduces soreness, and brings you back into your body. It\'s the part most people skip. You\'re not most people.',
-    outro: 'Neutral day, consistent work, smart recovery. That\'s how results actually happen. 🔮'
+    steps: [
+      {label:'Hip Circles', duration:30, cue:'Slow circles each direction. Feel the joint open and warm.', icon:'🔄'},
+      {label:'Thoracic Rotation', duration:30, cue:'Rotate through your mid-back each side. Unlock the spine.', icon:'↩️'},
+      {label:'Forward Fold', duration:30, cue:'Hang heavy. No forcing. Let gravity do all the work.', icon:'🌿'},
+      {label:'Mindful Moment', duration:40, cue:'Stand still. Notice one thing you did well today. Say it out loud or in your head.', icon:'🔮'},
+      {label:'Deep Breath', duration:20, cue:'One big inhale. Long slow exhale. You are done. You did it.', icon:'✨'},
+    ]
   }
+
 };
 
 const MC={
@@ -2073,7 +2067,7 @@ const EX={
   vpush:[
     {n:'Wall Shoulder Press',e:'Wall',l:'Beginner',m:'Shoulders, Triceps',c:['Stand facing a wall','Place hands on wall at shoulder height','Walk feet back until body is angled','Push through hands like a press','Great beginner shoulder exercise']},
     {n:'Elevated Pike Push-Up',e:'No Equipment',l:'Intermediate/Advanced',m:'Shoulders, Triceps',c:['Place feet on a chair or couch','Walk hands out so hips are high','Lower head toward floor','Push back up strongly','More shoulder work than regular pike']},
-    {n:'Pike Push-Up',e:'No Equipment',l:'Beginner',m:'Shoulders, Triceps',c:['Start in downward dog position','Hands shoulder-width apart','Bend elbows to lower head toward floor','Push back up to starting position','More shoulder than chest push-up']},
+    {n:'Pike Push-Up',e:'No Equipment',l:'Intermediate/Advanced',m:'Shoulders, Triceps',c:['Start in downward dog position','Hands shoulder-width apart','Bend elbows to lower head toward floor','Push back up to starting position','More shoulder than chest push-up']},
             {n:'Dumbbell Shoulder Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
     {n:'Arnold Press',e:'Dumbbell',l:'Intermediate',m:'All 3 Deltoid Heads',c:['Start palms facing you at chin','Rotate palms out as you press','Full rotation at top','Reverse on the way down']},
     {n:'Barbell Overhead Press',e:'Barbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Bar at collarbone','Core braced, glutes squeezed','Press bar up and slightly back','Lock out overhead, bar over ears']},
@@ -2221,8 +2215,11 @@ function goTo(id){
 
 function setNav(k){
   document.querySelectorAll('.ni2').forEach(n=>n.classList.remove('on'));
-  const m={home:'nav-home',exercises:'nav-exercises',profile:'nav-profile'};
-  if(m[k])document.getElementById(m[k]).classList.add('on');
+  const m={home:'nav-home',workout:'nav-workout',exercises:'nav-exercises',profile:'nav-profile'};
+  if(m[k]){
+    var el = document.getElementById(m[k]);
+    if(el) el.classList.add('on');
+  }
 }
 function goToMP(){
   // Check if already completed a workout today
@@ -3079,6 +3076,20 @@ function genWk(mood){window.scrollTo(0,0);
   var seed = (dayNum * 1000 + completedTotal) * 9301 + 49297;
   function seededRand(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
 
+  // ── Phase system — use PHASES object from onboarding, based on S.total ────────
+  var userLevel = lv || 'some';
+  var phaseIdx = 0; // 0-based index into PHASES array
+  // Each phase = ~30 days × avg workout frequency
+  // 3 days/wk × 30 days = ~13 workouts per phase
+  // 5 days/wk × 30 days = ~22 workouts per phase
+  // Use 15 workouts as a reasonable threshold per phase
+  var phaseThresh = 15;
+  phaseIdx = Math.min(Math.floor(S.total / phaseThresh), 3);
+  var phaseData = (PHASES[userLevel] || PHASES['some'])[phaseIdx] || (PHASES[userLevel] || PHASES['some'])[3];
+  var phase = phaseIdx + 1;
+  var phaseLabel = phaseData.name.split(' — ')[1] || phaseData.name; // e.g. "Just Move"
+  var phaseDays = phaseData.days;
+
   const pick=arr=>{
     const f=arr.filter(e=>{
       // Mood-based exercise intensity filter
@@ -3096,10 +3107,12 @@ function genWk(mood){window.scrollTo(0,0);
         // Happy: skip pure beginner (too easy) unless that's their level
         moodOk = lv==='new' ? true : !e.l.startsWith('Beginner') || e.l.includes('Intermediate');
       }
-      // User level filter
+      // Level filter — NEVER locks exercises, just sets sensible DEFAULTS
+      // Users can always swap to anything they want
       const levelOk = lv==='new' ? e.l.includes('Beginner')
         : lv==='some' ? !e.l.startsWith('Advanced')
         : true;
+      // Phase affects sets/reps intensity (handled in MC config), NOT exercise access
       const locOk = loc!=='home' || HOME_EQ.some(eq=>e.e&&e.e.includes(eq));
       return moodOk && levelOk && locOk;
     });
@@ -3129,14 +3142,20 @@ function genWk(mood){window.scrollTo(0,0);
     pats = ['squat','hinge','hpush','hpull','lunge','core'];
 
   } else if(days === 4){
-    // 4 days: Upper / Lower alternating based on total completed
-    const isLower = (totalDone % 2 === 0);
-    if(isLower){
-      splitLabel = 'Lower Body';
+    // 4 days: Push / Lower / Pull / Full Body rotation
+    const rot4 = totalDone % 4;
+    if(rot4 === 0){
+      splitLabel = 'Push Day';
+      pats = ['hpush','vpush','hpush','vpush','hpull','core'];
+    } else if(rot4 === 1){
+      splitLabel = 'Leg Day';
       pats = ['squat','hinge','lunge','squat','hinge','core'];
+    } else if(rot4 === 2){
+      splitLabel = 'Pull Day';
+      pats = ['hpull','vpull','hpull','vpull','vpush','core'];
     } else {
-      splitLabel = 'Upper Body';
-      pats = ['hpush','hpull','vpush','vpull','hpush','core'];
+      splitLabel = 'Full Body';
+      pats = ['squat','hinge','hpush','hpull','lunge','core'];
     }
 
   } else {
@@ -3174,17 +3193,90 @@ function genWk(mood){window.scrollTo(0,0);
     if(result) usedNames.push(result.n);
     return result;
   }
+  // Phase affects intensity — more sets/heavier as you progress
+  var phaseSets = cfg.sets;
+  var phaseReps = cfg.reps;
+  if(phase === 2){
+    phaseSets = String(Math.min(parseInt(cfg.sets)+1, 5));
+  } else if(phase === 3){
+    phaseSets = String(Math.min(parseInt(cfg.sets)+1, 5));
+    // Slightly lower reps = heavier weight territory
+    phaseReps = cfg.reps.replace(/(\d+)-(\d+)/g, function(full,a,b){
+      return Math.max(6,parseInt(a)-2)+'-'+Math.max(8,parseInt(b)-2);
+    });
+  } else if(phase === 4){
+    phaseSets = String(Math.min(parseInt(cfg.sets)+2, 6));
+    phaseReps = cfg.reps.replace(/(\d+)-(\d+)/g, function(full,a,b){
+      return Math.max(4,parseInt(a)-4)+'-'+Math.max(6,parseInt(b)-4);
+    });
+  }
+
   S.currentWorkout = finalPats.map((p,i) => {
     const ex = pickUnique(EX[p]);
-    return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:cfg.sets, reps:cfg.reps, done:false, w:''};
+    return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:phaseSets, reps:phaseReps, done:false, w:''};
   });
 
+  // ── Add Mood Move as final exercise ─────────────────────────────────────────
+  var mmDef = MOOD_MOVES[mood] || MOOD_MOVES['neutral'];
+  var mmExercise = {
+    id: S.currentWorkout.length,
+    n: mmDef.emoji + ' Mood Move: ' + mmDef.subtitle,
+    m: 'Mental & Physical Reset',
+    e: 'No Equipment',
+    p: 'moodmove',
+    sets: '1',
+    reps: mmDef.type === 'hiit' ? '4 min HIIT' : mmDef.type === 'breathing' ? (mmDef.rounds || 4) + ' rounds' : '3 min',
+    done: false,
+    w: '',
+    isMoodMove: true,
+    moodMoveType: mood,
+    sets_log: []
+  };
+  S.currentWorkout.push(mmExercise);
+
   const chip=document.getElementById('wk-chip');chip.textContent=cfg.lb;chip.style.background=cfg.bg;chip.style.color=cfg.co;
-  document.getElementById('wk-title').textContent='Your '+cfg.int+' Workout';
   const goal=S.user.goal||'feelgood';const sr=cfg.rs[goal]||60;
-  document.getElementById('wk-sub').textContent=splitLabel+' · '+cfg.int+' · '+cnt+' exercises · '+sr+'s rest/set';
+
+  // Mood-specific titles and subtitles
+  var moodTitles = {
+    low:     'Gentle Movement Day',
+    angry:   'Power Session. Let It Out.',
+    stressed:'Breathe and Move.',
+    happy:   'Ride the Wave.',
+    neutral: 'Solid Work Today.'
+  };
+  var moodSubs = {
+    low:     'Slow, intentional, yours. No pressure today.',
+    angry:   'Use that energy. Every rep is a release.',
+    stressed:'Rhythmic, focused. Let movement clear your mind.',
+    happy:   'You are in the best state to train. Make it count.',
+    neutral: 'Consistent effort. This is how results happen.'
+  };
+  document.getElementById('wk-title').textContent = moodTitles[mood] || 'Your Workout';
+  document.getElementById('wk-sub').textContent = splitLabel + ' · ' + phaseData.icon + ' ' + phaseLabel + ' · ' + cnt + ' exercises · ' + sr + 's rest';
+  
+  // Add mood message under subtitle if not already there
+  var moodMsg = document.getElementById('wk-mood-msg');
+  if(!moodMsg){
+    moodMsg = document.createElement('div');
+    moodMsg.id = 'wk-mood-msg';
+    moodMsg.style.cssText = 'font-size:12px;color:#7A7A8C;font-style:italic;margin-top:3px;padding:0 20px;text-align:center;';
+    document.getElementById('wk-sub').after(moodMsg);
+  }
+  moodMsg.textContent = moodSubs[mood] || '';
+  moodMsg.style.color = cfg.co;
   renderWk();// rtbar disableddocument.getElementById('rt-n').textContent=sr+'s';S.rtMax=sr;
   document.getElementById('ex-tip').style.display='none';
+  // Mood-specific done button
+  var doneBtnLabels = {
+    low:'✓ I showed up. Done.',
+    angry:'✓ Burned it. Done.',
+    stressed:'✓ Moved through it. Done.',
+    happy:'✓ Crushed it. Done.',
+    neutral:'✓ Complete Workout'
+  };
+  var doneBtn = document.getElementById('done-btn');
+  if(doneBtn) doneBtn.textContent = doneBtnLabels[mood] || '✓ Complete Workout';
   showWorkoutGuide();
 }
 function makeSetRowHTML(exIdx, idx, s, total) {
@@ -3227,6 +3319,31 @@ function renderWk(){
       rows += makeSetRowHTML(i, idx, s, ex.sets_log.length);
     });
 
+    // Mood Move exercise gets a special card
+    if(ex.isMoodMove){
+      var mmDef2 = MOOD_MOVES[ex.moodMoveType] || MOOD_MOVES['neutral'];
+      html += '<div class="ex-c" id="exc-'+i+'" style="background:linear-gradient(135deg,'+mmDef2.bg+',white);border:2px solid '+mmDef2.color+';'+(ex.done?'opacity:0.7;':'')+'">'+
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
+          '<div style="font-size:32px;">'+mmDef2.emoji+'</div>'+
+          '<div>'+
+            '<div style="font-weight:800;font-size:13px;color:#2C2C3A;">Mood Move</div>'+
+            '<div style="font-size:11px;color:'+mmDef2.color+';font-style:italic;">'+mmDef2.subtitle+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="font-size:11px;color:#7A7A8C;margin-bottom:12px;">'+
+          (ex.moodMoveType==='angry'?'4-min HIIT finisher — burn the rest of it out':
+           ex.moodMoveType==='low'?'4-7-8 breathing × 4 rounds — settle and recover':
+           ex.moodMoveType==='stressed'?'Box breathing × 5 rounds — reset your nervous system':
+           ex.moodMoveType==='happy'?'Dance + mobility flow — lock in that energy':
+           '5-min mobility flow — tune in before you leave')+
+        '</div>'+
+        '<button onclick="togDone('+i+')" style="width:100%;padding:11px;background:'+(ex.done?'#EDE8E3':'linear-gradient(135deg,'+mmDef2.color+','+mmDef2.color+'CC)')+';border:none;border-radius:12px;color:'+(ex.done?'#B0B0C0':'white')+';font-weight:800;font-size:13px;cursor:pointer;font-family:Nunito,sans-serif;">'+
+          (ex.done ? '✅ Done' : 'Start Mood Move →')+
+        '</button>'+
+      '</div>';
+      return; // skip normal card render
+    }
+
     html += '<div class="ex-c ' + (ex.done ? 'done' : '') + '" id="exc-' + i + '">'
 
       // Header
@@ -3248,6 +3365,7 @@ function renderWk(){
         + '<span class="ex-tag et-e">' + ex.e + '</span>'
         + '<span class="ex-tag et-t">⏱ ' + sr + 's rest</span>'
       + '</div>'
+
 
       // Weight log card
       + '<div class="w-log">'
@@ -3272,6 +3390,13 @@ function renderWk(){
 }
 function logW(i,v){S.currentWorkout[i].w=v;}
 function togDone(i){ MM_AUDIO.play('done');
+  // If this is the Mood Move exercise, open the Mood Move screen
+  if(S.currentWorkout[i].isMoodMove && !S.currentWorkout[i].done){
+    S.currentWorkout[i].done = true;
+    renderWk();
+    setTimeout(openMoodMove, 400);
+    return;
+  }
   S.currentWorkout[i].done=!S.currentWorkout[i].done;renderWk();
   if(S.currentWorkout[i].done){
     const cfg=MC[S.currentMood];const goal=S.user.goal||'feelgood';const er=cfg?.re[goal]||75;
@@ -3356,10 +3481,10 @@ function openSwap(i){
   var lv=S.user&&S.user.level||'some';
   
   // Filter by level, exclude current exercise
+  // Swaps show everything — user decides what they want to try
   var filtered=pool.filter(function(e){
     if(e.n===ex.n) return false;
-    if(lv==='new') return e.l&&e.l.includes('Beginner');
-    if(lv==='regular') return true;
+    return true; // never filter swaps by level — they can always choose
     return !e.l||!e.l.includes('Advanced');
   });
   
