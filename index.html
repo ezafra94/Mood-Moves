@@ -1288,10 +1288,10 @@ else{setAllLogos();setAllAvatars();}
 <div class="screen" id="postworkout">
   <div class="pw-hero"><span class="pw-em">🎉</span><div class="pw-title" id="pw-title">You showed up!</div><div class="pw-msg" id="pw-msg">That's enough. That's everything.</div></div>
   <div class="pw-body">
-    <div class="card"><div class="pw-q">How do you feel after moving?</div><div class="em-row"><button class="em-btn" onclick="pickPM(this,'😴')">😴</button><button class="em-btn" onclick="pickPM(this,'😐')">😐</button><button class="em-btn" onclick="pickPM(this,'😊')">😊</button><button class="em-btn" onclick="pickPM(this,'🔥')">🔥</button><button class="em-btn" onclick="pickPM(this,'💪')">💪</button></div></div>
+    <div class="card"><div class="pw-q">How do you feel after moving?</div><div class="em-row"><button class="em-btn" onclick="pickPM(this,'😞')">😞</button><button class="em-btn" onclick="pickPM(this,'😐')">😐</button><button class="em-btn" onclick="pickPM(this,'😊')">😊</button><button class="em-btn" onclick="pickPM(this,'😤')">😤</button><button class="em-btn" onclick="pickPM(this,'😵')">😵</button></div></div>
     <div class="ac-card"><div class="ac-t">🌿 Aftercare Tips</div><div class="ac-it"><div class="ac-ic">💧</div><div class="ac-tx" id="ac-hyd">Drink 16–20 oz of water right now.</div></div><div class="ac-it"><div class="ac-ic">😴</div><div class="ac-tx" id="ac-slp">Aim for 7–9 hours tonight.</div></div><div class="ac-it"><div class="ac-ic">🧘</div><div class="ac-tx" id="ac-ref">Take 60 seconds to breathe.</div></div></div>
     <div class="sh-card"><div class="sh-top">Mood Moves · Today's Workout</div><div class="sh-main" id="sh-txt">I showed up. That's enough. 💪</div><button class="sh-btn" onclick="shareWk()">Share this ↗</button></div>
-    <button class="bp" onclick="openMoodMove()">Your Mood Move →</button>
+    <button class="bp" onclick="finishWk()">Back to Home 🏠</button>
     <div style="height:20px;"></div>
   </div>
 </div>
@@ -3592,7 +3592,16 @@ function completeWk_orig(){
 function pickPM(btn,em){
   document.querySelectorAll('.em-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
   const td=tdKey();if(S.calData[td])S.calData[td].emoji=em;
-  setTimeout(()=>showT(em+' '+NP[Math.floor(Math.random()*NP.length)]),400);
+  var moodMessages = {
+    '😞': ['Even on hard days you showed up. That is everything. 💙', 'Low energy, high courage. We see you. 🌙', 'The fact you did it on a hard day? That is the win.'],
+    '😐': ['Steady and consistent. That is how results happen. ⚡', 'Neutral energy, real effort. Solid. 💪', 'Not every day has to be 100%. Today counted.'],
+    '😊': ['That happy energy in your workout? Bottled and saved. 🌟', 'You trained happy today. That is rare and powerful. ☀️', 'Joy + movement = the best combination. Keep it going!'],
+    '😤': ['You turned that fire into fuel. Every rep felt it. 🔥', 'Anger has a purpose. You just found it. ⚡', 'That intensity? That is your superpower. 😤'],
+    '😵': ['You moved through the stress. That takes real strength. 🧘', 'You chose movement over spiraling. Wise and powerful. 💜', 'Your nervous system just got a reset. Feel that? 🌿']
+  };
+  var msgs = moodMessages[em] || ['Great work today! 💪'];
+  setTimeout(()=>showT(msgs[Math.floor(Math.random()*msgs.length)]),400);
+  save();
 }
 // ── MOOD MOVE LOGIC ───────────────────────────────────────────────────────────
 var _mmData = null;
@@ -5104,13 +5113,15 @@ function finishCardio(){
   cardioRunning = false;
   var mins = Math.floor(cardioSeconds/60);
   var cals = document.getElementById('cardio-cals') ? document.getElementById('cardio-cals').textContent : '';
-  showT('🔥 ' + cardioSelected.e + ' ' + cardioSelected.n + ' — ' + mins + ' min done! ' + cals + ' Amazing!');
-  setTimeout(function(){ try{ completeWk(); }catch(e){ console.log(e); } }, 2000);
+  showT('🔥 ' + (window.cardioSelected?window.cardioSelected.e:'') + ' ' + mins + ' min done! Amazing!');
+  // Workout already saved — just go to postworkout
+  setTimeout(function(){ goTo('postworkout'); }, 1500);
 }
 
 function skipCardio(){
   clearInterval(cardioInterval);
-  try{ completeWk(); }catch(e){ console.log(e); }
+  // Workout already saved — just go to postworkout
+  goTo('postworkout');
 }
 
 function doCardio(){
