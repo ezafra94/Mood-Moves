@@ -2,6 +2,7 @@
 // Handles: offline caching, background sync, push notifications
 //
 // ── VERSION LOG ──────────────────────────────────────────
+// v20260617c — Force cache clear for slug fixes
 // v20260612 — Force all devices to reload fresh
 // v20260611 — Hard cache clear all
 // v20260609 — Force cache clear, sticky fix, calendar, challenge
