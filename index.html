@@ -387,8 +387,8 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .ni2-ic{font-size:22px;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;transition:all 0.2s ease;background:rgba(75,191,181,0.08);}
 .ni2-lb{font-size:9px;font-weight:800;color:var(--txt3);letter-spacing:0.3px;transition:color 0.2s;}
 .ni2.on .ni2-lb{color:#4BBFB5;font-weight:900;}
-.ni2.on .ni2-ic{background:#E8F7F5;transform:scale(1.1);box-shadow:0 2px 8px rgba(75,191,181,0.3);}
-.ni2.on::after{content:'';display:block;width:20px;height:3px;background:#4BBFB5;border-radius:2px;margin-top:1px;}
+.ni2.on .ni2-ic{background:linear-gradient(135deg,#E8F7F5,#D0F0EC);transform:scale(1.1);box-shadow:0 3px 12px rgba(75,191,181,0.35);border-radius:14px;}
+.ni2.on::after{content:'';display:block;width:24px;height:3px;background:linear-gradient(90deg,#4BBFB5,#8BB8A0);border-radius:2px;margin-top:2px;}
 .ni2:active{transform:scale(0.93);}
 .hidden{display:none!important;}
 .back{position:absolute;top:46px;left:13px;width:30px;height:30px;background:var(--cream);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt);z-index:10;}
@@ -1288,7 +1288,7 @@ else{setAllLogos();setAllAvatars();}
 <div class="screen" id="postworkout">
   <div class="pw-hero"><span class="pw-em">🎉</span><div class="pw-title" id="pw-title">You showed up!</div><div class="pw-msg" id="pw-msg">That's enough. That's everything.</div></div>
   <div class="pw-body">
-    <div class="card"><div class="pw-q">How do you feel after moving?</div><div class="em-row"><button class="em-btn" onclick="pickPM(this,'⚡')">⚡</button><button class="em-btn" onclick="pickPM(this,'💪')">💪</button><button class="em-btn" onclick="pickPM(this,'😊')">😊</button><button class="em-btn" onclick="pickPM(this,'🧘')">🧘</button><button class="em-btn" onclick="pickPM(this,'🔥')">🔥</button></div></div>
+    <div class="card"><div class="pw-q">How do you feel after moving?</div><div class="em-row"><button class="em-btn" onclick="pickPM(this,'⚡')">⚡</button><button class="em-btn" onclick="pickPM(this,'💪')">💪</button><button class="em-btn" onclick="pickPM(this,'😌')">😌</button><button class="em-btn" onclick="pickPM(this,'🥰')">🥰</button><button class="em-btn" onclick="pickPM(this,'🔥')">🔥</button><button class="em-btn" onclick="pickPM(this,'😐')">😐</button></div></div>
     <div class="ac-card"><div class="ac-t">🌿 Aftercare Tips</div><div class="ac-it"><div class="ac-ic">💧</div><div class="ac-tx" id="ac-hyd">Drink 16–20 oz of water right now.</div></div><div class="ac-it"><div class="ac-ic">😴</div><div class="ac-tx" id="ac-slp">Aim for 7–9 hours tonight.</div></div><div class="ac-it"><div class="ac-ic">🧘</div><div class="ac-tx" id="ac-ref">Take 60 seconds to breathe.</div></div></div>
     <div class="sh-card"><div class="sh-top">Mood Moves · Today's Workout</div><div class="sh-main" id="sh-txt">I showed up. That's enough. 💪</div><button class="sh-btn" onclick="shareWk()">Share this ↗</button></div>
     <button class="bp" onclick="finishWk()">Back to Home 🏠</button>
@@ -2279,16 +2279,8 @@ function setNav(k){
 function goToMP(){
   // Check if already completed a workout today
   var todayKey = new Date().toISOString().slice(0,10);
-  // Check both formats to handle old data
-  var doneToday = S.calData && (
-    (S.calData[todayKey] && S.calData[todayKey].type === 'workout') ||
-    (function(){
-      // Check old format (e.g. "2026-5-9") 
-      var d = new Date(); 
-      var oldKey = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-      return S.calData[oldKey] && S.calData[oldKey].type === 'workout';
-    })()
-  );
+  // Check if completed a workout today
+  var doneToday = S.calData && S.calData[todayKey] && S.calData[todayKey].type === 'workout';
 
   if(doneToday){
     showWorkoutDonePrompt(true, false, S.user.days || 3);
@@ -3657,11 +3649,43 @@ function pickPM(btn,em){
   document.querySelectorAll('.em-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
   const td=tdKey();if(S.calData[td])S.calData[td].emoji=em;
   var moodMessages = {
-    '⚡': ['That energy is real. You built it. ⚡', 'Energized and ready — that is what movement does. 🌊', 'Electric. Carry that feeling all day.'],
-    '💪': ['Strong. Because you showed up and earned it. 💪', 'That strength is yours — nobody can take it. 🏆', 'You feel strong because you ARE strong.'],
-    '😊': ['Happy after a workout — this is the formula. 🌟', 'That smile? You worked for it. ☀️', 'Joy and movement are meant to go together. More of this.'],
-    '🧘': ['Calm and grounded. Movement is medicine. 🌿', 'That peace? You did that. Your body did that. 🧘', 'Reset complete. You are ready for whatever comes next.'],
-    '🔥': ['ON FIRE. That was a session. 🔥', 'That feeling right now? That is why we do this. 💥', 'Absolutely burning. Channel that energy into the rest of your day.']
+    '⚡': [
+      'Charged. That is what movement does to you. ⚡',
+      'You came in one way and left electric. That is Mood Moves. 🌊',
+      'That energy? You created it. Nobody gave it to you.',
+      'Done in my mind with whatever was draining me. I just recharged. ⚡'
+    ],
+    '💪': [
+      'Strong. Because you showed up and earned it. 💪',
+      'That strength is yours and nobody can take it. Not today. 🏆',
+      'You feel strong because you ARE strong. Same person, different proof.',
+      'Done with whoever tried to make me feel small today. Look at me now. 💪'
+    ],
+    '😌': [
+      'Relief. That is what leaving your problems outside the gym feels like. 😌',
+      'Lighter. You moved your body and your mind followed. 🌿',
+      'Whatever was heavy before — did you even notice it during your workout? Exactly.',
+      'Turns out the best therapy is a good sweat and zero apologies. 😌'
+    ],
+    '🥰': [
+      'Proud of yourself? Good. You should be. 🥰',
+      'You showed up for you today. That is the most important relationship you have.',
+      'This is what self-love actually looks like. Not bubble baths. This. 🥰',
+      'Nobody hurt me today. I was too busy crushing it. 💅'
+    ],
+    '🔥': [
+      'ON FIRE. Whatever comes next today does not stand a chance. 🔥',
+      'That feeling? Bottle it. You made it yourself. 💥',
+      'Fired up and ready. Someone is about to have a very good rest of their day.',
+      'I came in with problems and left with power. Nobody can take that. 🔥'
+    ],
+    '😐': [
+      'Same. But you still showed up. And that is everything. 😐',
+      'Not every workout changes your life. Some just keep it on track. That counts.',
+      'Neutral now. Wait 30 minutes. See how you feel then. 💙',
+      'You moved your body on a nothing day. That is actually the hardest kind.',
+      'I do not feel different yet. But I will. I always do eventually.'
+    ]
   };
   var msgs = moodMessages[em] || ['Great work today! 💪'];
   setTimeout(()=>showT(msgs[Math.floor(Math.random()*msgs.length)]),400);
@@ -5974,7 +5998,141 @@ var MW_SLUGS = {
   'Hip Abduction (Machine)':'machine-hip-abduction',
   'Leg Press':'leg-press',
   'Leg Extension':'leg-extension',
-  'Leg Curl':'leg-curl'
+  'Leg Curl':'leg-curl',
+  'Barbell Squat':'barbell-back-squat',
+  'Barbell Front Squat Bodybuilding':'barbell-front-squat',
+  'Barbell Pause Squat':'barbell-pause-squat',
+  'Jump Squats':'jump-squat',
+  'Dumbbell Front Rack Squat':'dumbbell-front-rack-squat',
+  'Machine Hack Squat':'machine-hack-squat',
+  'Plate Squat Hold':'plate-squat-hold',
+  'Bodyweight Single Leg Squat':'bodyweight-single-leg-squat',
+  'TRX Squat':'trx-squat',
+  'Bodyweight Pulse Squat':'bodyweight-squat',
+  'TRX Split Squat':'trx-split-squat',
+  'Stability Ball Squat':'stability-ball-squat',
+  'Barbell Deadlift':'barbell-deadlift',
+  'Kettlebell Single Leg Deadlift':'kettlebell-single-leg-deadlift',
+  'Barbell Sumo Deadlift':'barbell-sumo-deadlift',
+  'Cable Bar Romanian Deadlift':'cable-romanian-deadlift',
+  'Trap Bar Pause Deadlift':'trap-bar-deadlift',
+  'Single Legged Romanian Deadlift':'single-leg-romanian-deadlift',
+  'Bodyweight Heels Elevated Hip Thrust':'bodyweight-hip-thrust',
+  'Cable Single Leg Deadlift':'cable-single-leg-romanian-deadlift',
+  'Dumbbell Single Leg Single Arm Deadlift':'dumbbell-single-leg-deadlift',
+  'Barbell Single Leg Deadlift':'barbell-single-leg-romanian-deadlift',
+  'Bodyweight Deadlift':'bodyweight-romanian-deadlift',
+  'Band Bodyweight Deadlift':'band-romanian-deadlift',
+  'Stability Ball Glute Bridge':'stability-ball-glute-bridge',
+  'Dumbbell Incline Bench Press':'dumbbell-incline-bench-press',
+  'Bench Dips':'bench-dip',
+  'Barbell Close Grip Bench Press':'close-grip-bench-press',
+  'Stability Ball Push-Up':'stability-ball-push-up',
+  'Bodyweight Incline Knee Push-Up':'incline-push-up',
+  'Cable Pec Fly':'cable-chest-fly',
+  'Weighted Push-Ups':'weighted-push-up',
+  'Wall Angels':'wall-angel',
+  'Medicine Ball Push-Up':'medicine-ball-push-up',
+  'Medicine Ball Thruster':'medicine-ball-thruster',
+  'Bodyweight Explosive Push-Up':'clapping-push-up',
+  'Weighted Diamond Push-Up':'diamond-push-up',
+  'Dumbbell Arnold Press':'dumbbell-arnold-press',
+  'Plate Clean and Press':'clean-and-press',
+  'Barbell Z Press':'z-press',
+  'Machine Assisted Parallel Bar Dips':'machine-assisted-dip',
+  'Dumbbell Seated Overhead Press':'dumbbell-seated-overhead-press',
+  'Cable Overhead Press':'cable-overhead-press',
+  'Barbell Front Raises':'barbell-front-raise',
+  'Plate Full Lateral Raise':'plate-lateral-raise',
+  'Plate Front Raise':'plate-front-raise',
+  'Machine Neutral Overhead Press':'machine-shoulder-press',
+  'Dumbbell Front Raise':'dumbbell-front-raise',
+  'Inverted Row':'inverted-row',
+  'Supermans':'superman',
+  'Machine Chest Supported T Bar Row':'machine-chest-supported-row',
+  'Machine Seated Cable Row':'machine-seated-cable-row',
+  'Dumbbell Single Arm Row':'dumbbell-single-arm-row',
+  'Dumbbell Pendlay Row':'dumbbell-pendlay-row',
+  'Cable Rope Face Pulls':'cable-face-pull',
+  'Machine Reverse Fly':'machine-reverse-fly',
+  'Band Pull Apart':'band-pull-apart',
+  'TRX Rear Delt Row':'trx-row',
+  'Machine Plate Loaded Low Row':'machine-low-row',
+  'Push Up to Renegade Row':'renegade-row',
+  'Band Lateral Raise':'band-lateral-raise',
+  'Pull-Ups':'pull-up',
+  'Weighted Pull-Ups':'weighted-pull-up',
+  'L Sit Pull Up':'l-sit-pull-up',
+  'Band Half Kneeling Single Arm Pulldown':'band-pulldown',
+  'Machine Plate Loaded Pulldown':'machine-pulldown',
+  'Chin-Ups':'chin-up',
+  'Band Seated Pulldown':'band-pulldown',
+  'Band Single Arm Pulldown':'band-pulldown',
+  'Machine Pulldown':'machine-pulldown',
+  'Machine Assisted Pull-Up':'machine-assisted-pull-up',
+  'Bodyweight Assisted Pull-Up':'assisted-pull-up',
+  'Smith Machine Reverse Lunge':'smith-machine-reverse-lunge',
+  'Cable Split Squat':'cable-split-squat',
+  'Barbell Split Squat':'barbell-split-squat',
+  'Bodyweight Reverse Lunge':'bodyweight-reverse-lunge',
+  'Barbell Forward Lunge':'barbell-forward-lunge',
+  'Bodyweight Alternating Jump Lunge':'jump-lunge',
+  'Plate Reverse Lunge Twist':'reverse-lunge',
+  'Forward Lunges':'bodyweight-forward-lunge',
+  'Dumbbell Goblet Lateral Lunge':'dumbbell-lateral-lunge',
+  'TRX Ab Rollout':'trx-ab-fallout',
+  'Hanging Knee Raises':'hanging-knee-raise',
+  'Eccentric Dragon Flag':'dragon-flag',
+  'TRX Knee Tuck':'trx-knee-tuck',
+  'Medicine Ball Plank':'plank',
+  'TRX Forearm Side Plank':'side-plank',
+  'Kettlebell Farmers Carry':'farmers-carry',
+  'Cable Pallof Press':'cable-pallof-press',
+  'Cable Kneeling Pallof Press':'half-kneeling-pallof-press',
+  'Crunches':'crunch',
+  'Cable Standing Crunch':'cable-crunch',
+  'Stability Ball V Up Pass':'v-up',
+  'Band Wood Chopper':'band-woodchop',
+  'Cable Pallof Press Rotation':'cable-pallof-press',
+  'Medicine Ball Kneeling Wood Chopper':'medicine-ball-woodchop',
+  'Cable Kneeling Oblique Crunch':'cable-oblique-crunch',
+  'Landmine Oblique Twist':'landmine-rotation',
+  'Calf Raises':'calf-raise',
+  'Dumbbell Calf Raise':'dumbbell-calf-raise',
+  'Machine Hamstring Curl':'machine-leg-curl',
+  'Machine Cable V Bar Push Down':'cable-tricep-pushdown',
+  'Medicine Ball Self Toss':'medicine-ball-slam',
+  'Medicine Ball Wall Ball':'medicine-ball-wall-ball',
+  'Medicine Ball Dead Bug':'dead-bug',
+  'Medicine Ball Hang Clean and Press':'clean-and-press',
+  'Medicine Ball Chest Press Toss':'medicine-ball-chest-pass',
+  'Stability Ball Goblet Wall Squat':'stability-ball-squat',
+  'Bodyweight Stability Ball Crunch':'stability-ball-crunch',
+  'Band Romanian Deadlift':'band-romanian-deadlift',
+  'Band Push-Up':'push-up',
+  'Band Glute Kickback':'glute-kickback',
+  'Mini Band Clamshell':'clamshell',
+  'Mini Band Squat':'bodyweight-squat',
+  'Mini Band Pull Apart':'band-pull-apart',
+  'Mini Band Clock Tap':'single-leg-balance',
+  'Mini Band Fire Hydrant':'fire-hydrant',
+  'Mini Band Hip Abduction':'hip-abduction',
+  'Mini Band Kneeling Row':'band-row',
+  'Mini Band Overhead Fly':'band-overhead-press',
+  'Mini Band Tricep Pushdown':'band-tricep-pushdown',
+  'Mini Band Walking Side to Side':'lateral-band-walk',
+  'Mini Band Plank Step Out':'plank',
+  'Mini Band Bent Over Row':'band-bent-over-row',
+  'Mini Band Bent Over Rear Delt Row':'band-pull-apart',
+  'Standing Mini Band Hip Flexor':'band-hip-flexion',
+  'Barbell Curl':'barbell-curl',
+  'Dumbbell Curl':'dumbbell-curl',
+  'Dumbbell Hammer Curl':'dumbbell-hammer-curl',
+  'Cable Rope Pushdown':'cable-tricep-pushdown',
+  'Cable Rope Overhead Tricep Extension':'cable-overhead-tricep-extension',
+  'Cable Curl':'cable-curl',
+  'Barbell Laying Tricep Extension':'barbell-skull-crusher',
+  'Glute Bridge (Band)':'band-glute-bridge'
 };
 
 
