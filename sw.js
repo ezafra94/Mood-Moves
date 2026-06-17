@@ -13,7 +13,7 @@
 // Every user's phone will auto-download the fresh version within 24hrs
 // ─────────────────────────────────────────────────────────
 
-const APP_VERSION = 'v20260612';
+const APP_VERSION = 'v20260617';
 const CACHE_NAME = 'mood-moves-' + APP_VERSION;
 const OFFLINE_ASSETS = [
   '/',
@@ -126,11 +126,14 @@ self.addEventListener('push', function(e) {
 // ── NOTIFICATION CLICK ────────────────────────────────────
 self.addEventListener('notificationclick', function(e) {
   e.notification.close();
-  var targetUrl = (e.notification.data && e.notification.data.url) || '/';
+  // Open with ?notify=1 so the app knows to show the sticky note
+  var targetUrl = '/?notify=1';
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clients) {
       for (var i = 0; i < clients.length; i++) {
         if (clients[i].url.includes(self.location.origin) && 'focus' in clients[i]) {
+          // Navigate existing window to show sticky
+          clients[i].navigate(targetUrl);
           return clients[i].focus();
         }
       }
