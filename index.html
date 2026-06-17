@@ -767,7 +767,7 @@ function makeLottie(dataVar, size) {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js').then(function(reg) {
-          console.log('SW registered v20260612c');
+          console.log('SW registered v20260617b');
           reg.update(); // check for new version every load
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -4442,7 +4442,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260617b';
+  var deployVersion = 'v20260617c';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
