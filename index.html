@@ -5818,6 +5818,7 @@ function handleMilestonePhoto(e){
 
 
 // MuscleWiki direct exercise URLs — matched to every workout exercise
+
 var MW_SLUGS = {
   'Ab Wheel Rollout':'ab-wheel-rollout',
   'Archer Pull-Up':'archer-pull-up',
@@ -6138,9 +6139,10 @@ var MW_SLUGS = {
 
 function muscleWikiUrl(exerciseName) {
   var slug = MW_SLUGS[exerciseName];
-  if (slug) return 'https://musclewiki.com/exercise/' + slug;
-  // Fallback: search by name — MuscleWiki will find closest match
-  var q = encodeURIComponent(exerciseName.toLowerCase().replace(/\(.*?\)/g,'').trim());
+  var gender = (S.user && S.user.gender === 'male') ? '?model=m' : '?model=f';
+  if (slug) return 'https://musclewiki.com/exercise/' + slug + gender;
+  // Fallback: search by name
+  var q = encodeURIComponent(exerciseName.toLowerCase().replace(/[()]/g,'').trim());
   return 'https://musclewiki.com/search?term=' + q;
 }
 function openMuscleWiki(exerciseName) {
