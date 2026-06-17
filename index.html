@@ -2281,6 +2281,7 @@ function goToMP(){
   var todayKey = new Date().toISOString().slice(0,10);
   // Check if completed a workout today
   var doneToday = S.calData && S.calData[todayKey] && S.calData[todayKey].type === 'workout';
+  console.log('[LOCK] todayKey='+todayKey+' doneToday='+doneToday+' calData='+JSON.stringify(S.calData && S.calData[todayKey]));
 
   if(doneToday){
     showWorkoutDonePrompt(true, false, S.user.days || 3);
@@ -3130,7 +3131,10 @@ function genWk(mood){window.scrollTo(0,0);
   var dayNum = Math.floor(today.getTime() / 86400000);
   // Seed combines day + completed total — so same day + same total = same workout
   // But once you complete and total increases, next open gives fresh workout
-  var seed = (dayNum * 1000 + completedTotal) * 9301 + 49297;
+  // Seed based on day + mood only — same mood same day = same workout
+  // S.total not used in seed so completing a workout doesn't change next one's exercises
+  var moodNum = {low:1,neutral:2,happy:3,angry:4,stressed:5}[mood] || 3;
+  var seed = (dayNum * 1000 + moodNum * 100) * 9301 + 49297;
   function seededRand(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
 
   // ── Phase system — use PHASES object from onboarding, based on S.total ────────
@@ -5861,7 +5865,7 @@ var MW_SLUGS = {
   'Band Pulldown':'lat-pulldown',
   'Band Row':'band-row',
   'Band Squat':'band-squat',
-  'Barbell Back Squat':'barbell-back-squat',
+  
   'Barbell Bench Press':'barbell-bench-press',
   'Barbell Bent Over Row':'barbell-bent-over-row',
   'Barbell Floor Press':'barbell-floor-press',
@@ -5950,7 +5954,7 @@ var MW_SLUGS = {
   'Medicine Ball Slam':'medicine-ball-slam',
   'Nordic Hamstring Curl':'nordic-hamstring-curl',
   'Pallof Press':'pallof-press',
-  'Pause Squat':'barbell-back-squat',
+  
   'Pendlay Row':'pendlay-row',
   'Pike Push-Up':'pike-push-up',
   'Pistol Squat':'pistol-squat',
