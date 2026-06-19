@@ -766,8 +766,29 @@ function makeLottie(dataVar, size) {
     // Register service worker and force updates
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js?v=20260619').then(function(reg) {
-          console.log('SW registered v20260619');
+        navigator.serviceWorker.register('/sw.js?v=20260620').then(function(reg) {
+          console.log('SW registered v20260620');
+          // Listen for direct messages from SW — used so notification taps
+          // can show the sticky note even without a full page reload
+          navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'SHOW_STICKY_NOTE') {
+              console.log('[MM] Received SHOW_STICKY_NOTE message from SW');
+              try { localStorage.removeItem('mm_sticky_date'); } catch(e){}
+              window._mmForceSticky = true; // flag read by showStickyNote itself when it's defined
+              // Defensive: wait until showStickyNote actually exists before calling it
+              var tries = 0;
+              var waitForFn = setInterval(function(){
+                tries++;
+                if (typeof showStickyNote === 'function') {
+                  clearInterval(waitForFn);
+                  if (typeof _stickyShown !== 'undefined') _stickyShown = false;
+                  showStickyNote();
+                } else if (tries > 20) {
+                  clearInterval(waitForFn); // give up after ~6s
+                }
+              }, 300);
+            }
+          });
           // Show version badge for debugging
           window._mmVersion = 'v20260619';
           reg.update(); // check for new version every load
@@ -1426,7 +1447,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260619</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260620</div>
       </div>
     </div>
   </div>
@@ -3835,10 +3856,29 @@ function startRT(){
 }
 function skipRT(){clearInterval(S.rtInterval);document.getElementById('rt-n').textContent='—';document.getElementById('rt-ph').textContent='Lets go! 💪';document.getElementById('rt-start').textContent='Start ▶';document.getElementById('rt-start').style.background='var(--teal)';}
 function addExtraEx(){
-  const extras=['Push-Up','Bodyweight Squat','Reverse Lunge','Plank','Glute Bridge'];
-  const ex=extras[Math.floor(Math.random()*extras.length)];const cfg=MC[S.currentMood];
-  S.currentWorkout.push({id:S.currentWorkout.length,n:ex,m:'Extra Move',e:'No Equipment',p:'core',sets:cfg?.sets||3,reps:cfg?.reps||'10-12',done:false,w:''});
-  renderWk();showT('🔥 Added '+ex+'! You\'re on fire — let\'s go!');
+  var cfg=MC[S.currentMood];
+  // Pick from categories ALREADY in the workout — keeps the split coherent
+  var usedCats=[...new Set(S.currentWorkout
+    .filter(function(e){ return !e.isMoodMove; })
+    .map(function(e){ return e.p; })
+    .filter(function(p){ return p && EX[p]; })
+  )];
+  var mainCats = usedCats.filter(function(c){ return c !== 'core'; });
+  var cat = mainCats.length > 0 ? mainCats[Math.floor(Math.random()*mainCats.length)] : 'core';
+  var pool = EX[cat] || EX['core'];
+  var existing = S.currentWorkout.map(function(e){ return e.n; });
+  var filtered = pool.filter(function(e){ return !existing.includes(e.n); });
+  var pick = filtered.length>0 ? filtered[Math.floor(Math.random()*filtered.length)] : pool[0];
+
+  var ISO_NAMES = ['Plank','Side Plank','Hollow Body Hold','Wall Sit','Dead Hang',
+    'L-Sit','L Sit','Farmers Carry','Carry','Hold','Step Out'];
+  var isIso = ISO_NAMES.some(function(n){ return pick.n && pick.n.includes(n); });
+  var repsVal = isIso ? '20-35' : (cfg?cfg.reps:'10-12');
+
+  S.currentWorkout.push({id:S.currentWorkout.length,n:pick.n,m:pick.m,e:pick.e,p:cat,
+    sets:cfg?cfg.sets:3,reps:repsVal,isHold:isIso,done:false,w:'',sets_log:[]});
+  renderWk();
+  showT('🔥 Added '+pick.n+'!');
 }
 let swIdx=-1;let swOpts=[];
 function openSwap(i){
@@ -3910,7 +3950,27 @@ function openSwap(i){
   document.getElementById('sw-modal').classList.add('on');
 }
 
-function doSwap(si){const s=swOpts[si];Object.assign(S.currentWorkout[swIdx],{n:s.n,m:s.m,e:s.e});closeSwap();renderWk();}
+function doSwap(si){
+  const s=swOpts[si];
+  const ex=S.currentWorkout[swIdx];
+  // Recalculate isometric status for the NEW exercise — reps/hold time must match
+  var ISO_NAMES = ['Plank','Side Plank','Hollow Body Hold','Wall Sit','Dead Hang',
+    'L-Sit','L Sit','Farmers Carry','Carry','Hold','Step Out'];
+  var wasIso = ex.isHold;
+  var isIso = ISO_NAMES.some(function(n){ return s.n && s.n.includes(n); });
+  var newReps = ex.reps;
+  if(isIso && !wasIso){
+    // Switching INTO a hold exercise — assign a sensible hold time
+    newReps = '20-35';
+  } else if(!isIso && wasIso){
+    // Switching OUT of a hold exercise — restore normal rep range
+    var cfg = MC[S.currentMood];
+    newReps = cfg ? cfg.reps : '10-12';
+  }
+  Object.assign(ex,{n:s.n,m:s.m,e:s.e,isHold:isIso,reps:newReps,w:'',sets_log:[]});
+  closeSwap();
+  renderWk();
+}
 function closeSwap(){document.getElementById('sw-modal').classList.remove('on');}
 function tdKey(){return new Date().toISOString().slice(0,10);}
 function completeWk(){
@@ -3918,6 +3978,11 @@ function completeWk(){
   setTimeout(completeWk_orig, 300);
 }
 function completeWk_orig(){
+  // Guard against double-calling (e.g. rapid double-tap on Finish/Skip)
+  if(window._mmCompletingNow) return;
+  window._mmCompletingNow = true;
+  setTimeout(function(){ window._mmCompletingNow = false; }, 2000);
+
   window._mmJustCompleted = Date.now(); // block cloud overwrite for next 30s
   const td=tdKey();if(!S.calData[td]){S.streak++;S.weekW++;}
   S.total++;S.moodCounts[S.currentMood]=(S.moodCounts[S.currentMood]||0)+1;
@@ -4745,12 +4810,27 @@ function signOut(){
 }
 
 // RESET
-function resetApp(){if(confirm('Reset all data and start over?')){try{localStorage.removeItem('mm_v3');}catch(e){}Object.assign(S,{user:{name:'',goal:'',level:'',days:3},streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],currentMood:'',currentWorkout:[],earnedBadges:[],onboarded:false});document.getElementById('bnav').classList.add('hidden');goTo('splash');setTimeout(()=>goTo('auth'),2000);}}
+function resetApp(){if(confirm('Reset all data and start over?')){
+  try{localStorage.removeItem('mm_v3');}catch(e){}
+  try{localStorage.removeItem('mm_sticky_date');}catch(e){}
+  try{localStorage.removeItem('mm_last_notif');}catch(e){}
+  Object.assign(S,{
+    user:{name:'',goal:'',level:'',days:3,location:'both',gender:''},
+    streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],
+    workoutHistory:[],progressPhotos:[],
+    currentMood:'',currentWorkout:[],phSlot:'',earnedBadges:[],onboarded:false,
+    rtInterval:null,rtMax:0,
+    challengeDone:0,challengeRound:0,challengeWeek:'',challengeComplete:false
+  });
+  document.getElementById('bnav').classList.add('hidden');
+  goTo('splash');
+  setTimeout(()=>goTo('auth'),2000);
+}}
 
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260619';
+  var deployVersion = 'v20260620';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5551,13 +5631,15 @@ function finishCardio(){
   var mins = Math.floor(cardioSeconds/60);
   var cals = document.getElementById('cardio-cals') ? document.getElementById('cardio-cals').textContent : '';
   showT('🔥 ' + (window.cardioSelected?window.cardioSelected.e:'') + ' ' + mins + ' min done! Amazing!');
-  // Workout already saved — just go to postworkout
+  // ACTUALLY save the workout now — this was missing entirely before
+  completeWk_orig();
   setTimeout(function(){ goTo('postworkout'); }, 1500);
 }
 
 function skipCardio(){
   clearInterval(cardioInterval);
-  // Workout already saved — just go to postworkout
+  // ACTUALLY save the workout now — this was missing entirely before
+  completeWk_orig();
   goTo('postworkout');
 }
 
