@@ -766,8 +766,10 @@ function makeLottie(dataVar, size) {
     // Register service worker and force updates
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js').then(function(reg) {
-          console.log('SW registered v20260617b');
+        navigator.serviceWorker.register('/sw.js?v=20260618').then(function(reg) {
+          console.log('SW registered v20260618');
+          // Show version badge for debugging
+          window._mmVersion = 'v20260618';
           reg.update(); // check for new version every load
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -777,11 +779,14 @@ function makeLottie(dataVar, size) {
             if (newSW) {
               newSW.addEventListener('statechange', function() {
                 if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('[SW] New version installed, reloading...');
                   window.location.reload(); // new version ready, reload
                 }
               });
             }
           });
+          // Also force-check for updates every 60 seconds while app is open
+          setInterval(function(){ reg.update(); }, 60000);
         }).catch(function(e) { console.log('SW error:', e); });
       });
     }
@@ -1421,6 +1426,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260618</div>
       </div>
     </div>
   </div>
