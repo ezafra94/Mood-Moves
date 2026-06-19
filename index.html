@@ -766,10 +766,10 @@ function makeLottie(dataVar, size) {
     // Register service worker and force updates
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js?v=20260618').then(function(reg) {
-          console.log('SW registered v20260618');
+        navigator.serviceWorker.register('/sw.js?v=20260619').then(function(reg) {
+          console.log('SW registered v20260619');
           // Show version badge for debugging
-          window._mmVersion = 'v20260618';
+          window._mmVersion = 'v20260619';
           reg.update(); // check for new version every load
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -1426,7 +1426,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260618</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260619</div>
       </div>
     </div>
   </div>
@@ -1713,7 +1713,7 @@ else{setAllLogos();setAllAvatars();}
 </div>
 </div>
 <script>
-const S={user:{name:'',goal:'',level:'',days:3,location:'both',gender:''},streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],currentMood:'',currentWorkout:[],phSlot:'',earnedBadges:[],onboarded:false,rtInterval:null,rtMax:0,challengeDone:0,challengeRound:0,challengeWeek:"",challengeComplete:false};
+const S={user:{name:'',goal:'',level:'',days:3,location:'both',gender:''},streak:0,total:0,weekW:0,moodCounts:{},calData:{},journal:[],workoutHistory:[],currentMood:'',currentWorkout:[],phSlot:'',earnedBadges:[],onboarded:false,rtInterval:null,rtMax:0,challengeDone:0,challengeRound:0,challengeWeek:"",challengeComplete:false,progressPhotos:[]};
 const GL={muscle:'Build Muscle 💪',feelgood:'Feel Good ✨',losefat:'Lose Fat 🔥'};
 const GI={muscle:'💪',feelgood:'✨',losefat:'🔥'};
 const LL={new:'New to fitness 🌱',some:'Some experience ⚡',regular:'I train regularly 🏆'};
@@ -2219,6 +2219,10 @@ const EX={
     {n:'Wall Angels',e:'No Equipment',l:'Beginner',m:'Shoulders, Upper Back',c:['Stand against wall arms at 90 degrees','Slide arms up keeping contact with wall','Pause at top','Lower slowly']}
   ,
     {n:'Barbell Z Press',e:'Barbell',l:'Advanced',m:'Shoulders, Core',c:['Sit on floor legs extended','Press barbell overhead from lap level','Keep core tight','Lower with control']}
+  ,
+    {n:'Dumbbell Shoulder Press (Seated)',e:'Dumbbell',l:'Beginner',m:'Shoulders',c:['Sit with back support','Press dumbbells overhead','Do not lock elbows fully','Lower to ear height']},
+    {n:'Band Overhead Press',e:'Band',l:'Beginner',m:'Shoulders',c:['Stand on band, handles at shoulders','Press straight overhead','Keep core braced','Lower with control']},
+    {n:'Dumbbell Lateral Raise (Light)',e:'Dumbbell',l:'Beginner',m:'Lateral Delts',c:['Light dumbbells at sides','Raise to shoulder height leading with elbows','Pause briefly','Lower slowly']}
   ],
   hpull:[
     {n:'Inverted Row',e:'No Equipment',l:'Beginner',m:'Back, Biceps',c:['Lie under a sturdy table','Grip the edge shoulder-width','Keep body straight like a plank','Pull chest up to the table edge','Lower slowly with control']},
@@ -2262,6 +2266,9 @@ const EX={
   ,
     {n:'Plate Front Raise',e:'Weight Plate',l:'Beginner',m:'Front Delts',c:['Hold plate at thighs','Raise straight to eye level','Keep core tight','Lower slowly']},
         {n:'Band Lateral Raise',e:'Band',l:'Beginner',m:'Lateral Delts',c:['Stand on band','Raise arms out to sides','Shoulder height','Lower with control']}
+  ,
+    {n:'Dumbbell Shrug',e:'Dumbbell',l:'Beginner',m:'Traps',c:['Hold dumbbells at sides','Shrug shoulders straight up','Pause at top briefly','Lower with control']},
+    {n:'Barbell Shrug',e:'Barbell',l:'Beginner',m:'Traps',c:['Hold barbell in front','Shrug shoulders up toward ears','Squeeze at top','Lower slowly']}
   ],
   vpull:[
                     
@@ -2444,6 +2451,12 @@ const EX={
     {n:'Machine Cable V Bar Push Down',e:'Machine/Cable',l:'Beginner',m:'Triceps',c:['Set cable high with V bar','Press down keeping elbows fixed','Full extension at bottom','Control the return']}
   ,
     {n:'Mini Band Overhead Fly',e:'Band',l:'Beginner/Intermediate',m:'Shoulders',c:['Stand on band','Press overhead then out to sides','Slow and controlled','Full arc of motion']}
+  ,
+    {n:'Cable Hip Adduction',e:'Cable',l:'Beginner',m:'Adductors, Inner Thigh',c:['Attach cable to ankle','Stand sideways to machine','Pull leg across body','Control return']},
+    {n:'Side Lying Hip Adduction',e:'No Equipment',l:'Beginner',m:'Adductors, Inner Thigh',c:['Lie on side bottom leg straight','Lift bottom leg toward ceiling','Squeeze inner thigh','Lower with control']}
+  ,
+    {n:'Dead Hang',e:'Pull-Up Bar',l:'Beginner/Intermediate',m:'Grip, Forearms, Shoulders',c:['Hang from bar full arm extension','Keep shoulders engaged not shrugged','Hold as long as possible','Lower with control']},
+    {n:'Farmer Carry (Heavy)',e:'Dumbbell',l:'Beginner',m:'Grip, Forearms, Core',c:['Heavy dumbbell or kettlebell each hand','Walk with tall posture','Grip as hard as possible','Controlled steps']}
   ],
   biceps:[
     {n:'Barbell Curl',e:'Barbell',l:'Beginner',m:'Biceps',c:['Hold barbell underhand shoulder-width','Keep elbows fixed at sides','Curl to shoulder height','Lower with control']},
@@ -4186,11 +4199,11 @@ function checkBadges(){
   var calDays = Object.keys(S.calData||{}).filter(function(k){ return S.calData[k]; }).length;
 
   // Count workout types from history
-  var wkTypes = S.wkHistory || [];
-  var legCount  = wkTypes.filter(function(w){ return w && w.split === 'Leg Day'; }).length;
-  var pushCount = wkTypes.filter(function(w){ return w && w.split === 'Push Day'; }).length;
-  var pullCount = wkTypes.filter(function(w){ return w && w.split === 'Pull Day'; }).length;
-  var fbCount   = wkTypes.filter(function(w){ return w && w.split === 'Full Body'; }).length;
+  var wkTypes = S.workoutHistory || [];
+  var legCount  = wkTypes.filter(function(w){ return w && w.splitLabel && w.splitLabel.includes('Leg'); }).length;
+  var pushCount = wkTypes.filter(function(w){ return w && w.splitLabel && w.splitLabel.includes('Push'); }).length;
+  var pullCount = wkTypes.filter(function(w){ return w && w.splitLabel && w.splitLabel.includes('Pull'); }).length;
+  var fbCount   = wkTypes.filter(function(w){ return w && w.splitLabel && w.splitLabel.includes('Full Body'); }).length;
 
   var checks = {
     // Getting started
@@ -4737,7 +4750,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260618';
+  var deployVersion = 'v20260619';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5842,22 +5855,22 @@ var PLAN_DATA = {
 
 var PHASES = {
   new: [
-    {icon:'🌱', name:'Phase 1 — Just Move', days:'Days 1–30',    desc:'Build the habit. Learn proper form. Show up. Your body adapts even when it does not feel like it.'},
-    {icon:'💪', name:'Phase 2 — Build It',  days:'Days 31–60',   desc:'Add load. More volume. You will notice the difference from where you started.'},
-    {icon:'⚡', name:'Phase 3 — Level Up',  days:'Days 61–90',   desc:'Intermediate movements introduced. Strength gains become visible. This is where it gets exciting.'},
-    {icon:'🔥', name:'Phase 4 — Unleashed', days:'Days 91–120',  desc:'Advanced training. Maximum results. You built the foundation — now we build the best version of you.'},
+    {icon:'🌱', name:'Phase 1 — Just Move', days:'Workouts 1–15',    desc:'Build the habit. Learn proper form. Show up. Your body adapts even when it does not feel like it.'},
+    {icon:'💪', name:'Phase 2 — Build It',  days:'Workouts 16–30',   desc:'Add load. More volume. You will notice the difference from where you started.'},
+    {icon:'⚡', name:'Phase 3 — Level Up',  days:'Workouts 31–45',   desc:'Intermediate movements introduced. Strength gains become visible. This is where it gets exciting.'},
+    {icon:'🔥', name:'Phase 4 — Unleashed', days:'Workouts 46+',  desc:'Advanced training. Maximum results. You built the foundation — now we build the best version of you.'},
   ],
   some: [
-    {icon:'🌱', name:'Phase 1 — Activate',  days:'Days 1–30',    desc:'Re-establish your foundation with purpose. More volume than beginner, proper progressive overload from day one.'},
-    {icon:'💪', name:'Phase 2 — Push It',   days:'Days 31–60',   desc:'Heavier loads. Compound movements. Your strength baseline gets reset — higher than you expected.'},
-    {icon:'⚡', name:'Phase 3 — Level Up',  days:'Days 61–90',   desc:'Advanced exercises introduced. Intensity climbs. The transformation becomes visible to others.'},
-    {icon:'🔥', name:'Phase 4 — Unleashed', days:'Days 91–120',  desc:'Peak training. Elite-level intensity. You will not recognise what you could do on Day 1.'},
+    {icon:'🌱', name:'Phase 1 — Activate',  days:'Workouts 1–15',    desc:'Re-establish your foundation with purpose. More volume than beginner, proper progressive overload from day one.'},
+    {icon:'💪', name:'Phase 2 — Push It',   days:'Workouts 16–30',   desc:'Heavier loads. Compound movements. Your strength baseline gets reset — higher than you expected.'},
+    {icon:'⚡', name:'Phase 3 — Level Up',  days:'Workouts 31–45',   desc:'Advanced exercises introduced. Intensity climbs. The transformation becomes visible to others.'},
+    {icon:'🔥', name:'Phase 4 — Unleashed', days:'Workouts 46+',  desc:'Peak training. Elite-level intensity. You will not recognise what you could do on Day 1.'},
   ],
   regular: [
-    {icon:'🌱', name:'Phase 1 — Recalibrate', days:'Days 1–30',  desc:'Even seasoned athletes benefit from a structured reset. High volume, perfect form, building the base for what comes next.'},
-    {icon:'💪', name:'Phase 2 — Overload',    days:'Days 31–60', desc:'Serious progressive overload. Short rest. High intensity. This is where most programs stop — we are just getting started.'},
-    {icon:'⚡', name:'Phase 3 — Dominate',    days:'Days 61–90', desc:'Supersets. Advanced movements. Maximum volume. The kind of training that produces real elite results.'},
-    {icon:'🔥', name:'Phase 4 — Unleashed',   days:'Days 91–120',desc:'The hardest phase. The most rewarding phase. Built for people who do not quit. That is you.'},
+    {icon:'🌱', name:'Phase 1 — Recalibrate', days:'Workouts 1–15',  desc:'Even seasoned athletes benefit from a structured reset. High volume, perfect form, building the base for what comes next.'},
+    {icon:'💪', name:'Phase 2 — Overload',    days:'Workouts 16–30', desc:'Serious progressive overload. Short rest. High intensity. This is where most programs stop — we are just getting started.'},
+    {icon:'⚡', name:'Phase 3 — Dominate',    days:'Workouts 31–45', desc:'Supersets. Advanced movements. Maximum volume. The kind of training that produces real elite results.'},
+    {icon:'🔥', name:'Phase 4 — Unleashed',   days:'Workouts 46+',desc:'The hardest phase. The most rewarding phase. Built for people who do not quit. That is you.'},
   ]
 };
 
@@ -6540,6 +6553,24 @@ var MW_SLUGS = {
   'Plate Single Leg Deadlift':'plate-single-leg-deadlift'
 ,
   'Machine Leg Extension':'machine-leg-extension'
+,
+  'Dumbbell Shrug':'dumbbell-shrug'
+,
+  'Barbell Shrug':'barbell-shrug'
+,
+  'Cable Hip Adduction':'cable-hip-adduction'
+,
+  'Side Lying Hip Adduction':'side-lying-hip-adduction'
+,
+  'Dead Hang':'dead-hang'
+,
+  'Farmer Carry (Heavy)':'farmers-carry'
+,
+  'Dumbbell Shoulder Press (Seated)':'dumbbell-seated-shoulder-press'
+,
+  'Band Overhead Press':'band-overhead-press'
+,
+  'Dumbbell Lateral Raise (Light)':'dumbbell-lateral-raise'
 };
 
 function muscleWikiUrl(exerciseName) {
