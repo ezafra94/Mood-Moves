@@ -14,7 +14,7 @@
 // Every user's phone will auto-download the fresh version within 24hrs
 // ─────────────────────────────────────────────────────────
 
-const APP_VERSION = 'v20260619';
+const APP_VERSION = 'v20260620';
 const CACHE_NAME = 'mood-moves-' + APP_VERSION;
 const OFFLINE_ASSETS = [
   '/',
@@ -127,13 +127,18 @@ self.addEventListener('push', function(e) {
 // ── NOTIFICATION CLICK ────────────────────────────────────
 self.addEventListener('notificationclick', function(e) {
   e.notification.close();
-  // Open with ?notify=1 so the app knows to show the sticky note
+  // Open with ?notify=1 so the app knows to show the sticky note.
+  // IMPORTANT: navigate() alone does NOT reliably re-fire DOMContentLoaded
+  // on an already-open SPA tab, so we ALSO postMessage the page to force
+  // it to show the sticky note directly via JS, no reload dependency.
   var targetUrl = '/?notify=1';
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clients) {
       for (var i = 0; i < clients.length; i++) {
         if (clients[i].url.includes(self.location.origin) && 'focus' in clients[i]) {
-          // Navigate existing window to show sticky
+          // Tell the already-open page directly to show the sticky note —
+          // works regardless of whether navigate() re-triggers page load.
+          clients[i].postMessage({ type: 'SHOW_STICKY_NOTE' });
           clients[i].navigate(targetUrl);
           return clients[i].focus();
         }
