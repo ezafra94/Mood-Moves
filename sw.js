@@ -14,7 +14,7 @@
 // Every user's phone will auto-download the fresh version within 24hrs
 // ─────────────────────────────────────────────────────────
 
-const APP_VERSION = 'v20260617b';
+const APP_VERSION = 'v20260618';
 const CACHE_NAME = 'mood-moves-' + APP_VERSION;
 const OFFLINE_ASSETS = [
   '/',
