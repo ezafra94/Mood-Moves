@@ -694,7 +694,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
   from{opacity:0;transform:rotate(-1.5deg) scale(0.7) translateY(30px)}
   to{opacity:1;transform:rotate(-1.5deg) scale(1) translateY(0)}
 }
-#sticky-popup{display:none !important;}#sticky-popup.show{display:flex !important;}
+#sticky-popup{display:none;}#sticky-popup.show{display:flex;}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -1832,89 +1832,189 @@ const TIPS=[{e:'💧',t:'Drink water before your workout. Even mild dehydration 
   {e:'🌡️',t:'A proper warm-up increases strength output by up to 20%. Never skip the first two sets.'}];
 
 // ── MOOD MOVES — post-workout ritual per mood ─────────────────────────────────
-var MOOD_MOVES = {
+var MOOD_MOVES_VARIANTS = {
 
-  low: {
-    subtitle: 'You showed up. Now let us settle.',
-    color: '#4BBFB5', bg: '#E8F7F5', emoji: '🌊',
-    type: 'yoga+breathing',
-    intro: 'On low days, your nervous system needs gentleness. This 5-minute yoga and breathing sequence tells your body it is safe, cared for, and enough.',
-    outro: 'You moved your body and then you took care of it. That is what Mood Moves is. 💙',
-    rounds: 1,
-    steps: [
-      {label:'Childs Pose', duration:45, cue:'Sit back on heels, arms forward, forehead down. Inhale into your lower back — feel it expand. Exhale and sink deeper. Hold here.', icon:'🙇'},
-      {label:'4-7-8 Breath ×3', duration:75, cue:'Inhale through nose for 4 counts → hold for 7 → exhale through mouth for 8. That is one round. Do 3 rounds slowly.', icon:'🌬️'},
-      {label:'Cat-Cow', duration:40, cue:'On hands and knees. Inhale — drop belly, lift chest, gaze up. Exhale — round spine to ceiling, tuck chin. Fluid and slow.', icon:'🐱'},
-      {label:'Seated Forward Fold', duration:40, cue:'Legs out, reach toward feet. Inhale to lengthen spine. Exhale to fold forward. No forcing — let gravity do the work.', icon:'🧘'},
-      {label:'Savasana Breath', duration:35, cue:'Lie on back, eyes closed. Inhale fully through nose. Exhale everything out through mouth. Let your body be heavy.', icon:'✨'},
-    ]
-  },
+  low: [
+    {
+      subtitle: 'You showed up. Now let us settle.',
+      color: '#4BBFB5', bg: '#E8F7F5', emoji: '\ud83c\udf0a',
+      intro: 'On low days, your nervous system needs gentleness. This sequence tells your body it is safe, cared for, and enough.',
+      outro: 'You moved your body and then you took care of it. That is what Mood Moves is. \ud83d\udc99',
+      rounds: 1,
+      steps: [
+        {label:'Childs Pose', duration:45, cue:'Sit back on heels, arms forward, forehead down. Inhale into your lower back. Exhale and sink deeper.', icon:'\ud83d\ude47'},
+        {label:'4-7-8 Breath x3', duration:75, cue:'Inhale 4 counts. Hold 7. Exhale 8 through mouth. 3 rounds slowly.', icon:'\ud83c\udf2c\ufe0f'},
+        {label:'Cat-Cow', duration:40, cue:'Hands and knees. Inhale drop belly lift chest. Exhale round spine. Fluid and slow.', icon:'\ud83d\udc31'},
+        {label:'Seated Forward Fold', duration:40, cue:'Legs out, inhale lengthen, exhale fold forward. No forcing.', icon:'\ud83e\uddd8'},
+        {label:'Savasana Breath', duration:35, cue:'Lie on back, eyes closed. Inhale fully. Exhale everything out. Be heavy.', icon:'\u2728'},
+      ]
+    },
+    {
+      subtitle: 'Hold yourself like you matter. Because you do.',
+      color: '#4BBFB5', bg: '#E8F7F5', emoji: '\ud83e\udd17',
+      intro: 'A self-hug activates oxytocin and calms your nervous system. Combined with slow breathing, this short ritual is real, evidence-based comfort.',
+      outro: 'That gentleness you just gave yourself? You deserve it every day. \ud83d\udc99',
+      rounds: 1,
+      steps: [
+        {label:'Hug Yourself', duration:40, cue:'Wrap your arms around yourself, hands on opposite shoulders. Inhale slowly. Exhale and squeeze gently. You are safe.', icon:'\ud83e\udd17'},
+        {label:'Gentle Sway', duration:35, cue:'Still hugging yourself, sway side to side slowly. Inhale one way, exhale the other.', icon:'\ud83c\udf0a'},
+        {label:'Standing Forward Fold', duration:35, cue:'Let arms release, fold forward gently. Inhale to rise halfway, exhale to fold deeper.', icon:'\ud83e\uddd8'},
+        {label:'Heart Opener', duration:30, cue:'Stand tall, clasp hands behind back. Inhale and lift chest gently. Exhale and release.', icon:'\ud83c\udf38'},
+        {label:'Closing Breath', duration:30, cue:'Hands on heart. Inhale slowly. Exhale and say silently: I am doing my best. That is enough.', icon:'\u2728'},
+      ]
+    },
+    {
+      subtitle: 'Small steps. Still steps.',
+      color: '#4BBFB5', bg: '#E8F7F5', emoji: '\ud83c\udf31',
+      intro: 'On low days, gentle restorative stretches help your body recover without demanding more energy than you have.',
+      outro: 'You gave your body what it needed today, not what you thought you should give. That is wisdom. \ud83c\udf31',
+      rounds: 1,
+      steps: [
+        {label:'Legs Up The Wall', duration:60, cue:'Lie on back, legs resting up a wall or elevated. Inhale deeply. Exhale and let gravity drain the tension.', icon:'\ud83e\uddb5'},
+        {label:'Gentle Twist', duration:40, cue:'Knees to one side, arms out wide. Inhale center, exhale into the twist. Switch sides.', icon:'\ud83c\udf00'},
+        {label:'Butterfly Stretch', duration:35, cue:'Seated, soles of feet together. Inhale lengthen spine, exhale fold gently forward.', icon:'\ud83e\udd8b'},
+        {label:'Final Rest', duration:35, cue:'Lie flat, arms at sides, palms up. Just breathe. Nothing else required.', icon:'\u2728'},
+      ]
+    },
+  ],
 
-  angry: {
-    subtitle: 'Burn the rest of it out.',
-    color: '#F5A042', bg: '#FFF5E8', emoji: '⚡',
-    type: 'hiit',
-    intro: 'Anger is energy. You already used most of it in your workout. This 4-minute HIIT finisher burns the rest — so you walk out lighter than you came in.',
-    outro: 'Feel that? That is what anger becomes when you direct it. Power. Every single time. ⚡',
-    rounds: 1,
-    steps: [
-      {label:'Jump Squats', duration:30, cue:'Explode up — exhale at the top. Land soft — inhale on the way down. Every rep is a release. Use everything.', icon:'💥'},
-      {label:'Rest — Breathe', duration:10, cue:'Inhale through nose — 2 counts. Exhale through mouth — 4 counts. Shake it out.', icon:'😤'},
-      {label:'Shadowbox', duration:30, cue:'Jab — exhale. Cross — exhale. Hook — exhale. Breathe out on every strike. Let it all go.', icon:'🥊'},
-      {label:'Rest — Breathe', duration:10, cue:'Big inhale. Long exhale. You are doing it.', icon:'😤'},
-      {label:'Burpees', duration:30, cue:'Down — inhale. Up — exhale explosively. All the way down. All the way up. Use every bit.', icon:'🔥'},
-      {label:'Rest — Breathe', duration:10, cue:'Inhale 3 counts. Exhale 5 counts. One more.', icon:'😤'},
-      {label:'High Knees', duration:30, cue:'Exhale with each knee drive — short sharp breaths out. Drive hard. Finish strong. This is the last one.', icon:'⚡'},
-    ]
-  },
+  angry: [
+    {
+      subtitle: 'Burn the rest of it out.',
+      color: '#F5A042', bg: '#FFF5E8', emoji: '\u26a1',
+      intro: 'Anger is energy. You already used most of it in your workout. This finisher burns the rest so you walk out lighter.',
+      outro: 'Feel that? That is what anger becomes when you direct it. Power. \u26a1',
+      rounds: 1,
+      steps: [
+        {label:'Jump Squats', duration:30, cue:'Explode up, exhale at the top. Land soft, inhale down. Every rep is a release.', icon:'\ud83d\udca5'},
+        {label:'Rest', duration:10, cue:'Inhale 2, exhale 4. Shake it out.', icon:'\ud83d\ude24'},
+        {label:'Shadowbox', duration:30, cue:'Jab exhale. Cross exhale. Hook exhale. Let it all go.', icon:'\ud83e\udd4a'},
+        {label:'Rest', duration:10, cue:'Big inhale. Long exhale.', icon:'\ud83d\ude24'},
+        {label:'Burpees', duration:30, cue:'Down inhale. Up exhale explosively. Use every bit.', icon:'\ud83d\udd25'},
+        {label:'Rest', duration:10, cue:'Inhale 3, exhale 5. One more.', icon:'\ud83d\ude24'},
+        {label:'High Knees', duration:30, cue:'Exhale with each knee drive. Drive hard. Finish strong.', icon:'\u26a1'},
+      ]
+    },
+    {
+      subtitle: 'Push it all into the ground.',
+      color: '#F5A042', bg: '#FFF5E8', emoji: '\ud83d\udd25',
+      intro: 'A different way to channel intensity - explosive power moves that demand total focus, leaving no room for anything else.',
+      outro: 'You took something heavy and turned it into strength. That is the whole point. \ud83d\udd25',
+      rounds: 1,
+      steps: [
+        {label:'Mountain Climbers', duration:30, cue:'Drive knees fast, exhale sharp each drive. Plank stays tight.', icon:'\u26f0\ufe0f'},
+        {label:'Rest', duration:10, cue:'Inhale slow, exhale slower.', icon:'\ud83d\ude24'},
+        {label:'Squat Jumps to Slam', duration:30, cue:'Jump up reaching high, land and slam arms down explosively with an exhale.', icon:'\ud83d\udca5'},
+        {label:'Rest', duration:10, cue:'Shake out your arms. Breathe.', icon:'\ud83d\ude24'},
+        {label:'Plank Punches', duration:30, cue:'In plank, punch alternating forward. Exhale each punch.', icon:'\ud83e\udd4a'},
+        {label:'Rest', duration:10, cue:'Almost there. Big breath in.', icon:'\ud83d\ude24'},
+        {label:'Star Jumps', duration:30, cue:'Explode out wide, exhale at the top. Land soft. Empty the tank.', icon:'\u2b50'},
+      ]
+    },
+  ],
 
-  stressed: {
-    subtitle: 'Reset your nervous system.',
-    color: '#8BB8A0', bg: '#EEF5F1', emoji: '🧘',
-    type: 'meditation+breathing',
-    intro: 'Stress lives in the body. This sequence combines box breathing with a simple body scan meditation — the same technique used by therapists to stop the stress response in its tracks.',
-    outro: 'Stress moves through the body when you give it space. You just did that. Walk out different than you came in. 🧘',
-    rounds: 1,
-    steps: [
-      {label:'Box Breath ×4', duration:80, cue:'Inhale through nose — 4 counts. Hold — 4 counts. Exhale through mouth — 4 counts. Hold empty — 4 counts. Repeat 4 times.', icon:'🌱'},
-      {label:'Body Scan', duration:60, cue:'Close eyes. Inhale. Notice your feet and legs — exhale and let them go. Inhale. Notice belly and chest — exhale and soften. Inhale. Shoulders — exhale, drop them.', icon:'☁️'},
-      {label:'Box Breath ×4', duration:80, cue:'Four more rounds. Inhale 4 → hold 4 → exhale 4 → hold 4. Feel how much calmer your exhale is now than when you started.', icon:'🍃'},
-      {label:'Gentle Intention', duration:40, cue:'One hand on chest. Inhale slowly. As you exhale, say silently: I did something good for myself today. That is true. Always true.', icon:'💚'},
-    ]
-  },
+  stressed: [
+    {
+      subtitle: 'Reset your nervous system.',
+      color: '#8BB8A0', bg: '#EEF5F1', emoji: '\ud83e\uddd8',
+      intro: 'Box breathing combined with a body scan stops the stress response in its tracks - used by therapists and Navy SEALs alike.',
+      outro: 'Stress moves through the body when you give it space. You just did that. \ud83e\uddd8',
+      rounds: 1,
+      steps: [
+        {label:'Box Breath x4', duration:80, cue:'In 4. Hold 4. Out 4. Hold 4. Repeat 4 times. This is the reset button.', icon:'\ud83c\udf31'},
+        {label:'Body Scan', duration:60, cue:'Eyes closed. Inhale, notice feet and legs, exhale let them go. Inhale belly and chest, exhale soften.', icon:'\u2601\ufe0f'},
+        {label:'Box Breath x4', duration:80, cue:'Four more rounds. Notice how different your breathing feels now.', icon:'\ud83c\udf43'},
+        {label:'Gentle Intention', duration:40, cue:'Hand on chest. Inhale slowly. Exhale and say: I did something good for myself today.', icon:'\ud83d\udc9a'},
+      ]
+    },
+    {
+      subtitle: 'Give your mind somewhere else to go.',
+      color: '#8BB8A0', bg: '#EEF5F1', emoji: '\ud83c\udf00',
+      intro: 'Rhythmic, repetitive movement paired with counting is a proven way to interrupt anxious thought spirals.',
+      outro: 'Your mind got a break. Your body did the work. That is balance. \ud83c\udf00',
+      rounds: 1,
+      steps: [
+        {label:'Slow March in Place', duration:45, cue:'March slowly, count each step to 4 then restart. Inhale 2 steps, exhale 2 steps.', icon:'\ud83d\udeb6'},
+        {label:'Shoulder Rolls', duration:30, cue:'Roll shoulders back slowly, 5 counts each direction. Breathe naturally.', icon:'\ud83d\udd04'},
+        {label:'Standing Side Stretch', duration:35, cue:'Reach one arm overhead, inhale to lengthen, exhale into the stretch. Switch sides.', icon:'\ud83c\udf3f'},
+        {label:'Hand on Heart Breath', duration:40, cue:'Hand on heart, other on belly. Inhale feel both rise. Exhale slowly. Repeat 5 times.', icon:'\ud83d\udc9a'},
+      ]
+    },
+  ],
 
-  happy: {
-    subtitle: 'Lock in that energy.',
-    color: '#F5C842', bg: '#FFFBEA', emoji: '🌟',
-    type: 'flow+dance',
-    intro: 'Happy workouts are rare and powerful. Your brain is flooded with endorphins right now. This 3-minute joy flow locks that feeling in — so you carry it for hours after you leave.',
-    outro: 'You worked out happy today. That is a version of you worth coming back to. Keep going. 🌟',
-    rounds: 1,
-    steps: [
-      {label:'Free Dance', duration:60, cue:'Put on your favourite song. Move however you want. Breathe naturally — in through your nose, out through your mouth. No rules. Just joy.', icon:'💃'},
-      {label:'Bounce and Skips', duration:30, cue:'Light, bouncy skips. Inhale up — exhale down. Playful and easy. Stay in the energy.', icon:'🎀'},
-      {label:'Victory Stretch', duration:30, cue:'Stand tall, arms wide open. Big inhale through nose — feel your chest expand. Exhale slowly — hold that feeling.', icon:'🌈'},
-      {label:'Gratitude Breath', duration:30, cue:'One hand on heart. Inhale — feel it rise. Exhale slowly through mouth — you chose to show up happy today. That is rare and beautiful.', icon:'🌟'},
-    ]
-  },
+  happy: [
+    {
+      subtitle: 'Lock in that energy.',
+      color: '#F5C842', bg: '#FFFBEA', emoji: '\ud83c\udf1f',
+      intro: 'Happy workouts are rare and powerful. This joy flow locks that feeling in so you carry it for hours after you leave.',
+      outro: 'You worked out happy today. That is a version of you worth coming back to. \ud83c\udf1f',
+      rounds: 1,
+      steps: [
+        {label:'Free Dance', duration:60, cue:'Favourite song. Move however you want. Breathe naturally. Just joy.', icon:'\ud83d\udc83'},
+        {label:'Bounce and Skips', duration:30, cue:'Light bouncy skips. Inhale up, exhale down. Stay in the energy.', icon:'\ud83c\udf80'},
+        {label:'Victory Stretch', duration:30, cue:'Arms wide, big inhale, chest expands. Exhale slowly, hold the feeling.', icon:'\ud83c\udf08'},
+        {label:'Gratitude Breath', duration:30, cue:'Hand on heart, inhale feel it rise. Exhale, you chose to show up happy today.', icon:'\ud83c\udf1f'},
+      ]
+    },
+    {
+      subtitle: 'Celebrate this version of you.',
+      color: '#F5C842', bg: '#FFFBEA', emoji: '\ud83c\udf89',
+      intro: 'A playful flow to match your energy - fun, light movement that keeps that good mood flowing through the rest of your day.',
+      outro: 'That smile during your workout? That is what training is actually for. \ud83c\udf89',
+      rounds: 1,
+      steps: [
+        {label:'Hip Circles to Music', duration:40, cue:'Big loose circles, both directions. Have fun with it. No rules here.', icon:'\ud83c\udfb6'},
+        {label:'Jumping Jacks', duration:30, cue:'Light and playful, inhale arms up, exhale arms down. Smile while you do it.', icon:'\u2728'},
+        {label:'Arm Swings', duration:25, cue:'Swing arms freely side to side, let your hips follow. Loose and joyful.', icon:'\ud83c\udf08'},
+        {label:'Self High Five', duration:25, cue:'Arms up, big inhale. Bring hands together overhead like a high five to yourself.', icon:'\u2728'},
+        {label:'Happy Dance Finish', duration:30, cue:'One more dance moment. However you want to move. You earned this joy.', icon:'\ud83c\udf89'},
+      ]
+    },
+  ],
 
-  neutral: {
-    subtitle: 'Tune in before you go.',
-    color: '#9B8EC4', bg: '#F3F0FA', emoji: '🔮',
-    type: 'mobility+mindfulness',
-    intro: 'Five minutes of intentional mobility and mindfulness after training cuts soreness, accelerates recovery, and brings you fully back into your body. Most people skip this. You are not most people.',
-    outro: 'Consistent training. Smart recovery. That is exactly how results happen. 🔮',
-    rounds: 1,
-    steps: [
-      {label:'Hip Circles', duration:30, cue:'Slow circles each direction. Inhale as you circle forward. Exhale as you circle back. Feel the joint open.', icon:'🔄'},
-      {label:'Thoracic Rotation', duration:30, cue:'Seated or standing. Inhale to sit tall. Exhale and rotate through your mid-back. Each side. Unlock the spine.', icon:'↩️'},
-      {label:'Forward Fold', duration:30, cue:'Feet hip-width. Inhale to lengthen. Exhale and fold forward — hang heavy. Let gravity do everything.', icon:'🌿'},
-      {label:'Mindful Moment', duration:40, cue:'Stand still. Take one inhale. As you exhale — name one thing you did well today. Out loud or in your head. It happened.', icon:'🔮'},
-      {label:'Final Breath', duration:20, cue:'Big inhale through nose — fill your lungs completely. Long slow exhale through mouth — release everything. You are done.', icon:'✨'},
-    ]
-  }
+  neutral: [
+    {
+      subtitle: 'Tune in before you go.',
+      color: '#9B8EC4', bg: '#F3F0FA', emoji: '\ud83d\udd2e',
+      intro: 'Mobility and mindfulness after training cuts soreness and brings you fully back into your body. Most people skip this. You are not most people.',
+      outro: 'Consistent training, smart recovery. That is exactly how results happen. \ud83d\udd2e',
+      rounds: 1,
+      steps: [
+        {label:'Hip Circles', duration:30, cue:'Slow circles each direction. Inhale forward, exhale back.', icon:'\ud83d\udd04'},
+        {label:'Thoracic Rotation', duration:30, cue:'Inhale sit tall, exhale rotate through mid-back each side.', icon:'\u21a9\ufe0f'},
+        {label:'Forward Fold', duration:30, cue:'Inhale lengthen, exhale fold forward. Hang heavy.', icon:'\ud83c\udf3f'},
+        {label:'Mindful Moment', duration:40, cue:'Stand still. Inhale. As you exhale, name one thing you did well today.', icon:'\ud83d\udd2e'},
+        {label:'Final Breath', duration:20, cue:'Big inhale, long slow exhale. You are done.', icon:'\u2728'},
+      ]
+    },
+    {
+      subtitle: 'Steady wins.',
+      color: '#9B8EC4', bg: '#F3F0FA', emoji: '\ud83c\udf3f',
+      intro: 'A grounding sequence for an ordinary day - because ordinary, consistent days are exactly what build extraordinary results.',
+      outro: 'Nothing flashy today. Just steady, reliable work. That is the whole secret. \ud83c\udf3f',
+      rounds: 1,
+      steps: [
+        {label:'Neck Rolls', duration:25, cue:'Slow circles, both directions. Breathe naturally throughout.', icon:'\ud83c\udf00'},
+        {label:'Standing Quad Stretch', duration:30, cue:'Hold ankle behind you, inhale to find balance, exhale into the stretch. Switch sides.', icon:'\ud83e\uddb5'},
+        {label:'Child\'s Pose', duration:35, cue:'Sink back onto heels, arms forward. Inhale into your back, exhale deeper.', icon:'\ud83d\ude47'},
+        {label:'Three Deep Breaths', duration:30, cue:'Sit or stand tall. Three full inhales and exhales. That is it. You are complete.', icon:'\u2728'},
+      ]
+    },
+  ],
 
 };
+
+// Pick a variant based on day number so it rotates and never repeats two days in a row
+var MOOD_MOVES = new Proxy({}, {
+  get: function(target, mood){
+    var variants = MOOD_MOVES_VARIANTS[mood] || MOOD_MOVES_VARIANTS['neutral'];
+    var dayNum = Math.floor(new Date().getTime() / 86400000);
+    var idx = dayNum % variants.length;
+    var chosen = variants[idx];
+    return Object.assign({}, chosen);
+  }
+});
+
 
 const MC={
   low:{lb:'😞 Low Energy',co:'#4BBFB5',bg:'#E8F7F5',sets:'2',reps:'10-12',int:'Light',
@@ -2101,7 +2201,7 @@ const EX={
   ,
     {n:'Plate Clean and Press',e:'Barbell',l:'Advanced',m:'Shoulders, Triceps, Legs',c:['Small knee dip for momentum','Explosive leg drive','Press bar overhead','Receive with locked arms']},
         
-    {n:'Dumbbell Z Press',e:'Dumbbell',l:'Intermediate/Advanced',m:'Shoulders, Core',c:['Sit on floor with legs straight out in front','Hold dumbbells at shoulder height','Press directly overhead, core must stabilize','No leg drive allowed, pure shoulder strength']},
+    {n:'Kettlebell Single Arm Clean and Press',e:'Dumbbell',l:'Intermediate/Advanced',m:'Shoulders, Core',c:['Sit on floor with legs straight out in front','Hold dumbbells at shoulder height','Press directly overhead, core must stabilize','No leg drive allowed, pure shoulder strength']},
     {n:'Machine Assisted Parallel Bar Dips',e:'Dip Bar/Chairs',l:'Intermediate',m:'Chest, Triceps, Shoulders',c:['Grip parallel bars','Lower until upper arms parallel to floor','Slight forward lean for chest focus','Press up to full extension']},
     {n:'Single Arm Landmine Press',e:'Barbell/Landmine',l:'Intermediate/Advanced',m:'Shoulder, Core',c:['Hold landmine with one hand at shoulder height','Staggered stance for stability, brace core','Press at natural arc rotating slightly','Lower with control, no body lean']},
 
@@ -2989,7 +3089,7 @@ const EX_IMAGES = {
   'Shoulder Tap Plank':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushup/0.jpg',
   'Dumbbell Lateral Raise':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Lateral_Raise/0.jpg',
   'Cable Low Single Arm Lateral Raise':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Internal_Rotation/0.jpg',
-  'Dumbbell Z Press':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg',
+  'Kettlebell Single Arm Clean and Press':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Shoulder_Press/0.jpg',
   'Z-Press':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/0.jpg',
   'Barbell Bent Over Row':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Row/0.jpg',
   'Barbell Pendlay Row':'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Row/0.jpg',
@@ -3377,9 +3477,17 @@ function genWk(mood){window.scrollTo(0,0);
   }
 
   // Always include core — slice to cnt-1 from non-core pats, then add core
-  var corePat = pats[pats.length-1]; // last is always core
-  var mainPats = pats.slice(0, pats.length-1).slice(0, cnt-1);
-  var finalPats = mainPats.concat([corePat]);
+  // Always keep BOTH the second-to-last (arms/isolation) and last (core) pattern
+  // so low-energy days still get arms + core, not just compound lifts cut short
+  var corePat = pats[pats.length-1]; // always core
+  var bonusPat = pats.length > 1 ? pats[pats.length-2] : null; // arms/isolation/extra hinge etc
+  var compoundPats = pats.slice(0, pats.length-2); // everything before bonus+core
+  // Take compound exercises up to (cnt-2), always keep bonus + core
+  var slotsForCompound = Math.max(1, cnt - 2);
+  var mainPats = compoundPats.slice(0, slotsForCompound);
+  var finalPats = bonusPat ? mainPats.concat([bonusPat, corePat]) : mainPats.concat([corePat]);
+  // Trim to exact cnt if we went over (shouldn't normally happen)
+  if(finalPats.length > cnt) finalPats = finalPats.slice(0, cnt);
   // Track used exercise names to prevent duplicates
   var usedNames = [];
   function pickUnique(arr){
@@ -3407,9 +3515,23 @@ function genWk(mood){window.scrollTo(0,0);
     });
   }
 
+  var ISO_NAMES = ['Plank','Side Plank','Hollow Body Hold','Wall Sit','Dead Hang',
+    'L-Sit','L Sit','Farmers Carry','Carry','Hold','Step Out'];
+  function isIsoEx(nm){
+    return ISO_NAMES.some(function(n){ return nm && nm.includes(n); });
+  }
+  function holdTimeForPhase(){
+    // Phase-based hold progression: longer holds as you advance
+    if(phase >= 4) return '45-60';
+    if(phase >= 3) return '30-45';
+    if(phase >= 2) return '20-35';
+    return '15-30';
+  }
   S.currentWorkout = finalPats.map((p,i) => {
     const ex = pickUnique(EX[p]);
-    return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:phaseSets, reps:phaseReps, done:false, w:''};
+    var isIso = isIsoEx(ex.n);
+    var repsVal = isIso ? holdTimeForPhase() : phaseReps;
+    return {id:i, n:ex.n, m:ex.m, e:ex.e, p, sets:phaseSets, reps:repsVal, isHold:isIso, done:false, w:'',sets_log:[]};
   });
 
   // ── Add Mood Move as final exercise ─────────────────────────────────────────
@@ -3777,6 +3899,7 @@ function completeWk(){
   setTimeout(completeWk_orig, 300);
 }
 function completeWk_orig(){
+  window._mmJustCompleted = Date.now(); // block cloud overwrite for next 30s
   const td=tdKey();if(!S.calData[td]){S.streak++;S.weekW++;}
   S.total++;S.moodCounts[S.currentMood]=(S.moodCounts[S.currentMood]||0)+1;
   S.calData[td]={type:'workout',emoji:ME[S.currentMood]};
@@ -3817,7 +3940,12 @@ function completeWk_orig(){
 }
 function pickPM(btn,em){
   document.querySelectorAll('.em-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
-  const td=tdKey();if(S.calData[td])S.calData[td].emoji=em;
+  const td=tdKey();
+  if(S.calData[td]){
+    S.calData[td].emoji=em;
+    S.calData[td].postWorkoutFeeling=em; // explicit field for clarity
+    save(); // PERSIST immediately — this was missing before
+  }
   var moodMessages = {
     '⚡': [
       'Charged. That is what movement does to you. ⚡',
@@ -4603,7 +4731,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){try{localStora
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260617c';
+  var deployVersion = 'v20260618';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -4657,6 +4785,11 @@ window.addEventListener('DOMContentLoaded',function(){
         var cloud = res.data.data;
         if(!cloud || typeof cloud !== 'object') return;
         // Only restore from cloud if cloud is strictly newer
+        // Skip cloud overwrite if a workout was JUST completed (within 30s) — local always wins here
+        if(window._mmJustCompleted && (Date.now() - window._mmJustCompleted) < 30000){
+          console.log('[CLOUD] Skipping overwrite — workout just completed');
+          return;
+        }
         var localTotal = S.total || 0;
         var cloudTotal = cloud.total || 0;
         if(cloudTotal > localTotal || !S.onboarded){
@@ -6072,7 +6205,7 @@ var MW_SLUGS = {
   'Dumbbell Shoulder Press':'dumbbell-shoulder-press',
   'Dumbbell Split Squat':'dumbbell-split-squat',
   'Dumbbell Static Lunge':'dumbbell-split-squat',
-  'Dumbbell Z Press':'kettlebell-single-arm-clean-and-press',
+  'Kettlebell Single Arm Clean and Press':'kettlebell-single-arm-clean-and-press',
   'Elevated Pike Push-Up':'elevated-pike-press',
   'Farmer Carry':'farmers-carry',
   'Forward Lunge':'bodyweight-forward-lunge',
@@ -6952,11 +7085,12 @@ function showStickyNote() {
   msgEl.textContent  = booster.msg;
   if(dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
-  // Force show with inline style — most reliable method
-  popup.style.setProperty('display', 'flex', 'important');
+  // Remove any leftover inline display style that could conflict with CSS class
+  popup.style.removeProperty('display');
   popup.classList.add('show');
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
+  console.log('[STICKY] Shown successfully. Computed display:', window.getComputedStyle(popup).display);
 }
 
 function closeStickyNote(){
