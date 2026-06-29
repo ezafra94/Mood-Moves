@@ -776,9 +776,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260623');
+          return navigator.serviceWorker.register('/sw.js?v=20260624');
         }).then(function(reg) {
-          console.log('SW registered v20260623');
+          console.log('SW registered v20260624');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1472,7 +1472,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260623</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260624</div>
       </div>
     </div>
   </div>
@@ -2160,6 +2160,10 @@ const EX={
   ,
     {n:'Machine Leg Press',e:'Machine',l:'Beginner',m:'Quads, Glutes',c:['Sit with feet shoulder-width on platform','Lower weight controlled to 90 degrees','Press through heels to start','Do not lock knees']},
     {n:'Machine Leg Extension',e:'Machine',l:'Beginner',m:'Quads',c:['Sit with pad across shins','Extend legs to full extension','Squeeze quads at top','Lower with control']}
+  ,
+    {n:'Bodyweight Wall Sit',e:'No Equipment',l:'Beginner',m:'Quads, Glutes',c:['Back flat against wall','Slide down to 90 degrees','Hold position','Keep knees over toes']},
+    {n:'Sumo Squat',e:'No Equipment',l:'Beginner',m:'Inner Thighs, Glutes',c:['Feet wide toes turned out','Squat keeping knees tracking toes','Drive through heels','Keep chest tall']},
+    {n:'Chair Squat',e:'No Equipment',l:'Beginner',m:'Quads, Glutes',c:['Stand in front of chair','Lower until you almost touch it','Drive back up','Good for beginners learning the pattern']}
   ],
   hinge:[
     {n:'Glute Bridge',e:'No Equipment',l:'Beginner',m:'Glutes, Hamstrings',c:['Lie on back, feet flat','Drive hips up squeezing glutes','Hold 1 sec at top','Lower with control']},
@@ -2194,6 +2198,10 @@ const EX={
     
   ,
     {n:'Machine Hamstring Curl',e:'Machine',l:'Beginner',m:'Hamstrings',c:['Lie face down on machine','Curl weight toward glutes','Squeeze at top','Lower with control']}
+  ,
+    {n:'Donkey Kick',e:'No Equipment',l:'Beginner',m:'Glutes',c:['Quadruped position on hands and knees','Kick one heel toward ceiling','Squeeze glute at top','Lower with control and switch']},
+    {n:'Fire Hydrant',e:'No Equipment',l:'Beginner',m:'Glutes, Hip Abductors',c:['Quadruped position','Lift knee out to side keeping 90 degree bend','Squeeze at top','Keep hips square']},
+    {n:'Bodyweight Hip Thrust',e:'No Equipment',l:'Beginner',m:'Glutes, Hamstrings',c:['Back on bench or couch edge','Feet flat on floor','Drive hips up squeezing glutes','Hold at top and lower']}
   ],
   hpush:[
     {n:'Incline Push-Up',e:'No Equipment',l:'Beginner',m:'Chest, Triceps',c:['Hands on elevated surface','Body in straight line','Lower chest to surface','Push through palms to return']},
@@ -2243,6 +2251,10 @@ const EX={
     {n:'Bodyweight Plank Arm Lift',e:'No Equipment',l:'Intermediate',m:'Core, Shoulders',c:['High plank on hands','Lift one arm forward parallel to floor','Keep hips square','Alternate sides']}
   ,
     {n:'Dumbbell Incline Bench Press',e:'Dumbbell',l:'Intermediate',m:'Upper Chest, Triceps',c:['Bench at 30–45 degrees','Retract shoulder blades','Lower controlled to upper chest','Press and squeeze at top']}
+  ,
+    {n:'Knee Push-Up',e:'No Equipment',l:'Beginner',m:'Chest, Triceps',c:['Knees on floor hands shoulder width','Lower chest to floor','Press back up','Keep body in straight line from knees']},
+    {n:'Wide Push-Up',e:'No Equipment',l:'Beginner',m:'Chest',c:['Hands wider than shoulder width','Lower chest keeping elbows at 45 degrees','Full range of motion','Great chest opener']},
+    {n:'Tricep Dip (Chair)',e:'No Equipment',l:'Beginner',m:'Triceps, Chest',c:['Hands on chair behind you','Slide hips off edge','Lower bending elbows','Press back to start']}
   ],
   vpush:[
     
@@ -2315,6 +2327,10 @@ const EX={
   ,
     {n:'Dumbbell Shrug',e:'Dumbbell',l:'Beginner',m:'Traps',c:['Hold dumbbells at sides','Shrug shoulders straight up','Pause at top briefly','Lower with control']},
     {n:'Barbell Shrug',e:'Barbell',l:'Beginner',m:'Traps',c:['Hold barbell in front','Shrug shoulders up toward ears','Squeeze at top','Lower slowly']}
+  ,
+    {n:'Door Frame Row',e:'No Equipment',l:'Beginner',m:'Upper Back, Biceps',c:['Hold door frame at chest height','Lean back body straight','Pull yourself toward door','Control the return']},
+    {n:'Prone Y Raise',e:'No Equipment',l:'Beginner',m:'Upper Back, Rear Delts',c:['Lie face down arms in Y shape','Lift arms off floor squeezing shoulder blades','Hold briefly at top','Lower slowly']},
+    {n:'Towel Row',e:'No Equipment',l:'Beginner',m:'Upper Back',c:['Loop towel around table leg','Sit back holding towel','Row yourself toward table','Keep back straight']}
   ],
   vpull:[
                     
@@ -2351,6 +2367,10 @@ const EX={
     {n:'Barbell Reverse Lunge',e:'Barbell',l:'Intermediate/Advanced',m:'Glutes, Quads',c:['Bar on upper traps, stand shoulder-width','Step one foot back into lunge position','Lower back knee to just above floor','Drive through front foot heel to return']},
     {n:'Barbell Split Squat',e:'Barbell',l:'Intermediate',m:'Quads, Glutes',c:['Front foot flat back foot elevated on bench','Bar on upper traps','Lower back knee toward floor','Drive through front heel']},
     {n:'Plate Reverse Lunge Twist',e:'Weight Plate',l:'Intermediate',m:'Quads, Glutes, Obliques',c:['Hold plate at chest','Step back into lunge','Rotate torso toward front leg','Return to start']}
+  ,
+    {n:'Reverse Lunge Knee Drive',e:'No Equipment',l:'Beginner',m:'Quads, Glutes, Balance',c:['Step back into reverse lunge','On the way up drive that knee to chest','Balance for a moment','Control and repeat']},
+    {n:'Lateral Lunge',e:'No Equipment',l:'Beginner',m:'Inner Thighs, Quads, Glutes',c:['Step wide to one side','Sit into that hip keeping other leg straight','Push through heel to return','Alternate sides']},
+    {n:'Step Up (No Weight)',e:'No Equipment',l:'Beginner',m:'Quads, Glutes',c:['Stand facing a step or sturdy chair','Step up with one foot','Drive through heel to stand tall','Step down and switch']}
   ],
   core:[
     {n:'Dead Bug',e:'No Equipment',l:'Beginner',m:'Core, Stability',c:['Lower back pressed to floor','Extend opposite arm and leg slowly','Breathe out as you extend','Return with control']},
@@ -2499,10 +2519,18 @@ const EX={
     {n:'Mini Band Overhead Fly',e:'Band',l:'Beginner/Intermediate',m:'Shoulders',c:['Stand on band','Press overhead then out to sides','Slow and controlled','Full arc of motion']}
   ,
     {n:'Cable Hip Adduction',e:'Cable',l:'Beginner',m:'Adductors, Inner Thigh',c:['Attach cable to ankle','Stand sideways to machine','Pull leg across body','Control return']},
-    {n:'Side Lying Hip Adduction',e:'No Equipment',l:'Beginner',m:'Adductors, Inner Thigh',c:['Lie on side bottom leg straight','Lift bottom leg toward ceiling','Squeeze inner thigh','Lower with control']}
+    {n:'Side-Lying Hip Adduction',e:'No Equipment',l:'Beginner',m:'Adductors, Inner Thigh',c:['Lie on side bottom leg straight','Lift bottom leg toward ceiling','Squeeze inner thigh','Lower with control']}
   ,
     {n:'Dead Hang',e:'Pull-Up Bar',l:'Beginner/Intermediate',m:'Grip, Forearms, Shoulders',c:['Hang from bar full arm extension','Keep shoulders engaged not shrugged','Hold as long as possible','Lower with control']},
     {n:'Farmer Carry (Heavy)',e:'Dumbbell',l:'Beginner',m:'Grip, Forearms, Core',c:['Heavy dumbbell or kettlebell each hand','Walk with tall posture','Grip as hard as possible','Controlled steps']}
+  ,
+    {n:'Mountain Climbers',e:'No Equipment',l:'Beginner/Intermediate',m:'Core, Cardio',c:['High plank position','Drive one knee toward chest','Switch legs quickly','Keep hips level throughout']},
+    {n:'Leg Raises',e:'No Equipment',l:'Beginner',m:'Lower Core',c:['Lie on back hands under lower back','Lift legs to 90 degrees','Lower slowly without touching floor','Keep lower back pressed down']},
+    {n:'Glute Bridge March',e:'No Equipment',l:'Beginner',m:'Glutes, Core',c:['Bridge position hips elevated','March one knee toward chest','Keep hips level','Alternate legs']},
+    {n:'Bear Crawl',e:'No Equipment',l:'Intermediate',m:'Full Body, Core',c:['Start on hands and knees','Lift knees 2 inches off ground','Move opposite hand and foot forward','Keep back flat']},
+    {n:'Superman Hold',e:'No Equipment',l:'Beginner',m:'Lower Back, Glutes',c:['Lie face down','Lift arms and legs simultaneously','Hold at top for 2-3 seconds','Lower with control']},
+    {n:'Bicycle Crunch',e:'No Equipment',l:'Beginner',m:'Obliques, Core',c:['Lie on back hands behind head','Bring opposite elbow to knee','Twist and switch in slow controlled motion','Keep lower back pressed down']},
+    {n:'Inchworm',e:'No Equipment',l:'Beginner',m:'Full Body, Core',c:['Stand tall then hinge and walk hands out to plank','Hold briefly','Walk feet toward hands','Stand and repeat']}
   ],
   biceps:[
     {n:'Barbell Curl',e:'Barbell',l:'Beginner',m:'Biceps',c:['Hold barbell underhand shoulder-width','Keep elbows fixed at sides','Curl to shoulder height','Lower with control']},
@@ -2511,7 +2539,7 @@ const EX={
     {n:'Dumbbell Hammer Curl',e:'Dumbbell',l:'Beginner',m:'Biceps, Brachialis',c:['Neutral grip thumbs up','Keep elbows fixed','Curl to shoulder height','Lower slowly']},
     {n:'Cable Rope Pushdown',e:'Cable',l:'Beginner',m:'Triceps',c:['Rope at top cable elbows at sides','Press down splitting rope','Full extension at bottom','Control return']},
     {n:'Cable Rope Overhead Tricep Extension',e:'Cable',l:'Intermediate',m:'Triceps',c:['Cable low rope attachment','Face away elbows near ears','Extend overhead fully','Control return']},
-    {n:'Barbell Laying Tricep Extension',e:'Barbell',l:'Intermediate',m:'Triceps',c:['Lie on bench bar overhead','Lower to forehead bending elbows','Press to full extension','Keep elbows in']},
+    {n:'Barbell Lying Tricep Extension',e:'Barbell',l:'Intermediate',m:'Triceps',c:['Lie on bench bar overhead','Lower to forehead bending elbows','Press to full extension','Keep elbows in']},
       ,
     
         {n:'Mini Band Tricep Pushdown',e:'Band',l:'Beginner',m:'Triceps',c:['Anchor band above head','Elbows at sides','Press down to extension','Control the return']}
@@ -4535,8 +4563,51 @@ function renderJ(){const c=document.getElementById('journal-list');if(!S.journal
 // EXERCISE LIBRARY
 let elF='';let catF='';var currentMuscleFilter='';
 function buildEl(){
-  const cfs=document.getElementById('cfs');
-  cfs.innerHTML=['','squat','hinge','hpush','vpush','hpull','vpull','lunge','core','biceps'].map(c=>'<div class="cf '+(c===catF&&c?'on':!c&&!catF?'on':'')+'" onclick="setCat(\''+c+'\',this)">'+(c?CL[c]||c:'All')+'</div>').join('');
+  var cfs = document.getElementById('cfs');
+  if(!cfs) return;
+
+  // ── MOVEMENT CATEGORY PILLS ─────────────────────────────
+  var cats = [
+    {k:'',    label:'✦ All'},
+    {k:'squat', label:'🦵 Squat'},
+    {k:'hinge', label:'🔽 Hinge'},
+    {k:'hpush', label:'➡️ Push'},
+    {k:'vpush', label:'⬆️ Press'},
+    {k:'hpull', label:'⬅️ Row'},
+    {k:'vpull', label:'🔝 Pull-Up'},
+    {k:'lunge', label:'🚶 Lunge'},
+    {k:'core',  label:'🌀 Core'},
+    {k:'biceps',label:'💪 Arms'},
+  ];
+  cfs.innerHTML = cats.map(function(c){
+    var on = (c.k === catF) || (!c.k && !catF);
+    return '<button class="cf' + (on?' on':'') + '" onclick="setCat(\''+c.k+'\',this)">' + c.label + '</button>';
+  }).join('');
+
+  // ── EQUIPMENT FILTER PILLS ──────────────────────────────
+  var eqBar = document.getElementById('eq-filter-bar');
+  if(eqBar){
+    var eqs = [
+      {k:'', label:'All Equipment'},
+      {k:'bodyweight', label:'🤸 Bodyweight'},
+      {k:'dumbbell',   label:'🏋️ Dumbbell'},
+      {k:'barbell',    label:'🪨 Barbell'},
+      {k:'cable',      label:'〽️ Cable'},
+      {k:'machine',    label:'⚙️ Machine'},
+      {k:'band',       label:'🔴 Band'},
+      {k:'trx',        label:'🔗 TRX'},
+      {k:'kettlebell', label:'🫙 Kettlebell'},
+      {k:'medicine',   label:'🏀 Med Ball'},
+      {k:'stability',  label:'🟠 Stability Ball'},
+      {k:'plate',      label:'⚫ Plate'},
+      {k:'bosu',       label:'🔵 BOSU'},
+    ];
+    eqBar.innerHTML = eqs.map(function(e){
+      var on = e.k === eqF;
+      return '<button class="eq-flt' + (on?' on':'') + '" onclick="setEqFilter(\''+e.k+'\',this)">' + e.label + '</button>';
+    }).join('');
+  }
+
   renderEl();
 }
 function renderEl(){
@@ -4896,7 +4967,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260623';
+  var deployVersion = 'v20260624';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -4904,7 +4975,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260623 — persistent feeling message');
+    console.log('[MM] v20260624 — filter rebuilt + home exercises');
   }
 
   // Audio debug — shows in browser console
@@ -6446,7 +6517,7 @@ var MW_SLUGS = {
   'Straight Arm Pulldown':'straight-arm-pulldown',
   'Suitcase Carry':'suitcase-carry',
   'Sumo Deadlift':'sumo-deadlift',
-  'Superman Hold':'superman-hold',
+  'Superman Hold':'superman',
   'TRX Fallout':'trx-fallout',
   'TRX Rotating Row':'trx-rotating-row',
   'Trap Bar Deadlift':'trap-bar-deadlift',
@@ -6604,7 +6675,7 @@ var MW_SLUGS = {
   'Cable Rope Pushdown':'cable-rope-pushdown',
   'Cable Rope Overhead Tricep Extension':'cable-rope-overhead-tricep-extension',
   'Cable Curl':'cable-curl',
-  'Barbell Laying Tricep Extension':'barbell-laying-tricep-extension',
+  'Barbell Lying Tricep Extension':'barbell-lying-tricep-extension',
   'Glute Bridge (Band)':'band-glute-bridge'
 ,
   'Stiff Leg Deadlift':'stiff-leg-deadlift'
@@ -6718,6 +6789,46 @@ var MW_SLUGS = {
   'Band Overhead Press':'band-overhead-press'
 ,
   'Dumbbell Lateral Raise (Light)':'dumbbell-lateral-raise'
+,
+  'Side-Lying Hip Adduction':'side-lying-hip-adduction'
+,
+  'Bodyweight Wall Sit':'wall-sit'
+,
+  'Sumo Squat':'sumo-squat'
+,
+  'Chair Squat':'bodyweight-squat'
+,
+  'Donkey Kick':'donkey-kick'
+,
+  'Fire Hydrant':'fire-hydrant'
+,
+  'Bodyweight Hip Thrust':'hip-thrust'
+,
+  'Knee Push-Up':'knee-push-up'
+,
+  'Wide Push-Up':'wide-push-up'
+,
+  'Tricep Dip (Chair)':'bench-dip'
+,
+  'Door Frame Row':'bodyweight-row'
+,
+  'Prone Y Raise':'prone-y-raise'
+,
+  'Towel Row':'bodyweight-row'
+,
+  'Reverse Lunge Knee Drive':'reverse-lunge'
+,
+  'Step Up (No Weight)':'step-up'
+,
+  'Mountain Climbers':'mountain-climbers'
+,
+  'Leg Raises':'leg-raise'
+,
+  'Glute Bridge March':'glute-bridge-march'
+,
+  'Bear Crawl':'bear-crawl'
+,
+  'Inchworm':'inchworm'
 };
 
 function muscleWikiUrl(exerciseName) {
