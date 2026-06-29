@@ -591,6 +591,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
 .cal-done-anim{animation:calDayPop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 
 /* H-badge shimmer */
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 @keyframes badgeShimmer{0%,100%{opacity:1}50%{opacity:0.7;transform:scale(1.04)}}
 .h-badge{animation:badgeShimmer 3s ease-in-out infinite;}
 
@@ -694,7 +695,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
   from{opacity:0;transform:rotate(-1.5deg) scale(0.7) translateY(30px)}
   to{opacity:1;transform:rotate(-1.5deg) scale(1) translateY(0)}
 }
-#sticky-popup{display:none;}#sticky-popup.show{display:flex;}
+#sticky-popup{display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;}#sticky-popup.show{display:flex;}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -766,8 +767,8 @@ function makeLottie(dataVar, size) {
     // Register service worker and force updates
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js?v=20260620').then(function(reg) {
-          console.log('SW registered v20260620');
+        navigator.serviceWorker.register('/sw.js?v=20260623').then(function(reg) {
+          console.log('SW registered v20260623');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1314,7 +1315,21 @@ else{setAllLogos();setAllAvatars();}
 <div class="screen" id="postworkout">
   <div class="pw-hero"><span class="pw-em">🎉</span><div class="pw-title" id="pw-title">You showed up!</div><div class="pw-msg" id="pw-msg">That's enough. That's everything.</div></div>
   <div class="pw-body">
-    <div class="card"><div class="pw-q">How do you feel after moving?</div><div class="em-row"><button class="em-btn" onclick="pickPM(this,'⚡')">⚡</button><button class="em-btn" onclick="pickPM(this,'💪')">💪</button><button class="em-btn" onclick="pickPM(this,'😌')">😌</button><button class="em-btn" onclick="pickPM(this,'🥰')">🥰</button><button class="em-btn" onclick="pickPM(this,'🔥')">🔥</button><button class="em-btn" onclick="pickPM(this,'😐')">😐</button></div></div>
+    <div class="card">
+      <div class="pw-q">How do you feel after moving?</div>
+      <div class="em-row">
+        <button class="em-btn" onclick="pickPM(this,'⚡')">⚡</button>
+        <button class="em-btn" onclick="pickPM(this,'💪')">💪</button>
+        <button class="em-btn" onclick="pickPM(this,'😌')">😌</button>
+        <button class="em-btn" onclick="pickPM(this,'🥰')">🥰</button>
+        <button class="em-btn" onclick="pickPM(this,'🔥')">🔥</button>
+        <button class="em-btn" onclick="pickPM(this,'😐')">😐</button>
+      </div>
+      <!-- Persistent message — slides open when emoji is tapped, stays there -->
+      <div id="pm-message-box" style="display:none;margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,#E8F7F5,#F0EDFF);border-radius:14px;border-left:3px solid #4BBFB5;animation:fadeSlideIn 0.4s ease;">
+        <div id="pm-message-text" style="font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.6;color:#2C2C3A;font-style:italic;text-align:center;"></div>
+      </div>
+    </div>
     <div class="ac-card"><div class="ac-t">🌿 Aftercare Tips</div><div class="ac-it"><div class="ac-ic">💧</div><div class="ac-tx" id="ac-hyd">Drink 16–20 oz of water right now.</div></div><div class="ac-it"><div class="ac-ic">😴</div><div class="ac-tx" id="ac-slp">Aim for 7–9 hours tonight.</div></div><div class="ac-it"><div class="ac-ic">🧘</div><div class="ac-tx" id="ac-ref">Take 60 seconds to breathe.</div></div></div>
     <div class="sh-card"><div class="sh-top">Mood Moves · Today's Workout</div><div class="sh-main" id="sh-txt">I showed up. That's enough. 💪</div><button class="sh-btn" onclick="shareWk()">Share this ↗</button></div>
     <button class="bp" onclick="finishWk()">Back to Home 🏠</button>
@@ -1447,7 +1462,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260620</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260623</div>
       </div>
     </div>
   </div>
@@ -3022,30 +3037,52 @@ function setTip(){
   document.getElementById('tip-tx').textContent = t.t;
 }
 function buildCal(){
-  // Set month label
   var ml = document.getElementById('cal-month-label');
   if(ml){ var now2=new Date(); ml.textContent=now2.toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
   const g=document.getElementById('cal');
-  const days=['S','M','T','W','T','F','S'];
-  g.innerHTML=''; // day labels are now in HTML above
+  g.innerHTML='';
   const now=new Date();const y=now.getFullYear();const m=now.getMonth();
   const first=new Date(y,m,1).getDay();const dim=new Date(y,m+1,0).getDate();
   for(let i=0;i<first;i++)g.innerHTML+='<div class="cal-d"></div>';
   for(let d=1;d<=dim;d++){
-    const k=y+'-'+m+'-'+d;const data=S.calData[k];const today=d===now.getDate()&&!data;
-    let cls='cal-d';let cnt=d;
+    // KEY FIX: use ISO format YYYY-MM-DD with zero-padding to match tdKey()
+    const k = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const data = S.calData[k];
+    const isToday = d===now.getDate() && !data;
+    let cls='cal-d';
+    let cnt=d;
     if(data){
       if(data.type==='rest'){
         cls+=' rest';
         cnt='🛡️';
       } else {
         cls+=' done';
-        // Pick emoji based on mood logged
-        var moodEmojis={happy:'🌟',low:'💙',angry:'⚡',stressed:'🧘',neutral:'✅'};
-        cnt=moodEmojis[data.mood]||data.emoji||'✅';
+        // Priority: post-workout feeling emoji the user chose > mood emoji > default
+        if(data.postWorkoutFeeling){
+          cnt = data.postWorkoutFeeling; // ⚡💪😌🥰🔥😐
+        } else if(data.emoji){
+          cnt = data.emoji; // mood going into workout
+        } else {
+          var moodEmojis={happy:'😊',low:'💙',angry:'😤',stressed:'😵',neutral:'😐'};
+          cnt = moodEmojis[data.mood] || '💪';
+        }
       }
-    } else if(today){ cls+=' today'; }
-    g.innerHTML+='<div class="'+cls+'" title="'+(data?data.type==='rest'?'Rest day':'Workout done':'')+'">'+cnt+'</div>';
+    } else if(isToday){ cls+=' today'; }
+    g.innerHTML+='<div class="'+cls+'" title="'+(data?data.type==='rest'?'Rest day':'Workout done':'')+'" onclick="showDayDetail(this.dataset.k)" data-k="'+k+'">'+cnt+'</div>';
+  }
+}
+
+// Show detail when tapping a calendar day
+function showDayDetail(k){
+  var data = S.calData[k];
+  if(!data) return;
+  var date = new Date(k+'T12:00:00');
+  var label = date.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  if(data.type==='rest'){
+    showT('🛡️ ' + label + ' — Rest day');
+  } else {
+    var feeling = data.postWorkoutFeeling ? ' · Felt ' + data.postWorkoutFeeling : '';
+    showT('💪 ' + label + ' · Workout done' + feeling);
   }
 }
 
@@ -3637,13 +3674,15 @@ function genWk(mood){window.scrollTo(0,0);
   if(doneBtn) doneBtn.textContent = doneBtnLabels[mood] || '✓ Complete Workout';
   showWorkoutGuide();
 }
-var ISOMETRIC_EX = ['Plank','Side Plank','Hollow Body Hold','Medicine Ball Plank',
-  'TRX Forearm Side Plank','Kettlebell Farmers Carry','Mini Band Plank Step Out',
-  'Wall Sit','Dead Hang','L-Sit','L Sit Pull Up'];
+var ISOMETRIC_EX = ['Plank','Side Plank','Hollow Body','Hollow Hold',
+  'Medicine Ball Plank','TRX Forearm Side Plank','Kettlebell Farmers Carry',
+  'Farmer Carry','Mini Band Plank','Dead Bug','Wall Sit','Dead Hang',
+  'L-Sit','L Sit','Carry','Hold'];
 
 function isIsometric(exIdx){
   var ex = S.currentWorkout[exIdx];
   if(!ex) return false;
+  if(ex.isHold) return true; // pre-flagged during generation
   return ISOMETRIC_EX.some(function(n){ return ex.n && ex.n.toLowerCase().includes(n.toLowerCase()); });
 }
 
@@ -3884,7 +3923,8 @@ let swIdx=-1;let swOpts=[];
 function openSwap(i){
   swIdx=i;
   var ex=S.currentWorkout[i];
-  var pool=EX[ex.p]||[];
+  // Guard: if category is wrong/missing, fall back to same muscle group search
+  var pool = (ex.p && EX[ex.p]) ? EX[ex.p] : EX['core'];
   var HOME_EQ=['No Equipment','Dumbbell','Band','Wall','Bench','Pull-Up Bar','Ab Wheel','Med Ball','TRX','Bodyweight/Weight'];
   var lv=S.user&&S.user.level||'some';
   
@@ -4070,7 +4110,23 @@ function pickPM(btn,em){
     ]
   };
   var msgs = moodMessages[em] || ['Great work today! 💪'];
-  setTimeout(()=>showT(msgs[Math.floor(Math.random()*msgs.length)]),400);
+  var msg = msgs[Math.floor(new Date().getDate() * 7 % msgs.length)]; // rotate by day
+  
+  // Show message in persistent box — no timer, stays open
+  var box = document.getElementById('pm-message-box');
+  var txt = document.getElementById('pm-message-text');
+  if(box && txt){
+    txt.textContent = msg;
+    // Animate in fresh each time
+    box.style.display = 'none';
+    setTimeout(function(){
+      box.style.display = 'block';
+      // Reset animation
+      box.style.animation = 'none';
+      box.offsetHeight; // trigger reflow
+      box.style.animation = 'fadeSlideIn 0.4s ease';
+    }, 200);
+  }
   save();
 }
 // ── MOOD MOVE LOGIC ───────────────────────────────────────────────────────────
@@ -4830,7 +4886,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260620';
+  var deployVersion = 'v20260623';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -4838,8 +4894,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260617 — sticky cleared for today');
-    console.log('[MM] Deploy reset v20260612b — sticky + notif cleared');
+    console.log('[MM] v20260623 — persistent feeling message');
   }
 
   // Audio debug — shows in browser console
@@ -7204,20 +7259,20 @@ function showStickyNote() {
   msgEl.textContent  = booster.msg;
   if(dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
-  // Remove any leftover inline display style that could conflict with CSS class
+  // Clear any leftover inline style, then show via class only
   popup.style.removeProperty('display');
   popup.classList.add('show');
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
-  console.log('[STICKY] Shown successfully. Computed display:', window.getComputedStyle(popup).display);
+  console.log('[STICKY] Shown. Class list:', popup.className);
 }
 
 function closeStickyNote(){
   var popup = document.getElementById('sticky-popup');
   if(popup){
     popup.classList.remove('show');
+    // Do NOT set any inline display style — CSS class handles it cleanly
     popup.style.removeProperty('display');
-    popup.style.setProperty('display','none','important');
   }
 }
 
@@ -7727,7 +7782,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
 
 <!-- ── DAILY STICKY NOTE POPUP ─────────────────────────────── -->
-<div id="sticky-popup" style="position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;">
+<div id="sticky-popup">
   <!-- Backdrop -->
   <div onclick="closeStickyNote()" style="position:absolute;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:blur(3px);"></div>
   <!-- Sticky note card -->
