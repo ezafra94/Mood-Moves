@@ -776,12 +776,18 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260626');
+          return navigator.serviceWorker.register('/sw.js?v=20260627');
         }).then(function(reg) {
-          console.log('SW registered v20260626');
+          console.log('SW registered v20260627');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'SW_UPDATED') {
+              // New SW version activated — reload to get fresh code
+              console.log('[MM] New SW version activated, reloading for:', event.data.version);
+              window.location.reload();
+              return;
+            }
             if (event.data && event.data.type === 'SHOW_STICKY_NOTE') {
               console.log('[MM] Received SHOW_STICKY_NOTE message from SW');
               try { localStorage.removeItem('mm_sticky_date'); } catch(e){}
@@ -801,7 +807,7 @@ function makeLottie(dataVar, size) {
             }
           });
           // Show version badge for debugging
-          window._mmVersion = 'v20260624';
+          window._mmVersion = 'v20260626';
           reg.update(); // check for new version every load
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -1471,7 +1477,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260626</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260627</div>
       </div>
     </div>
   </div>
@@ -5083,7 +5089,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260626';
+  var deployVersion = 'v20260627';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -6590,7 +6596,7 @@ var MW_SLUGS = {
   'Glute Bridge':'glute-bridge',
   'Glute Bridge (Barbell)':'barbell-glute-bridge',  'Glute Ham Raise':'glute-ham-raise',
   'Goblet Squat':'dumbbell-goblet-squat',
-  'Good Morning':'good-morning',  'Machine Hack Squat':'hack-squat',
+  'Good Morning':'barbell-high-bar-good-morning',  'Machine Hack Squat':'hack-squat',
   'Half Kneeling Cable Rotation':'half-kneeling-cable-rotation',
   'Half Kneeling Pallof Press':'half-kneeling-pallof-press',
   'Handstand Push-Up':'handstand-push-up',
@@ -6613,7 +6619,7 @@ var MW_SLUGS = {
   'Lateral Step-Up':'dumbbell-side-step-up',
   'Machine Underhand Row':'machine-underhand-row',
   'Med Ball Rotational Throw':'medicine-ball-slam',
-  'Medicine Ball Slam':'medicine-ball-slam',
+  'Medicine Ball Slam':'slam',
   'Nordic Hamstring Curl':'nordic-hamstring-curl',
   'Pallof Press':'pallof-press',
   
@@ -6653,7 +6659,7 @@ var MW_SLUGS = {
   'Split Squat':'split-squat',
   'Static Lunge':'split-squat',
   'Step-Up':'dumbbell-step-up',
-  'Stiff Leg Deadlift':'stiff-leg-deadlift',
+  'Stiff Leg Deadlift':'barbell-stiff-leg-deadlifts',
   'Straight Arm Band Pulldown':'band-straight-arm-pulldown',
   'Straight Arm Pulldown':'straight-arm-pulldown',
   'Suitcase Carry':'suitcase-carry',
@@ -6663,7 +6669,7 @@ var MW_SLUGS = {
   'TRX Rotating Row':'trx-rotating-row',
   'Trap Bar Deadlift':'trap-bar-deadlift',
   'V-Up':'v-up',
-  'Walking Lunge':'walking-lunge',
+  'Walking Lunge':'lunge-walking',
   'Wall Push-Up':'wall-push-up',
   'Wall Shoulder Press':'wall-shoulder-press',
   'Weighted Dip':'dip',
@@ -6738,7 +6744,7 @@ var MW_SLUGS = {
   'Machine Seated Cable Row':'machine-seated-cable-row',
   'Dumbbell Single Arm Row':'dumbbell-single-arm-row',
   'Dumbbell Pendlay Row':'dumbbell-pendlay-row',
-  'Cable Rope Face Pulls':'cable-rope-face-pulls',
+  'Cable Rope Face Pulls':'machine-face-pulls',
   'Machine Reverse Fly':'machine-reverse-fly',
   'Band Pull Apart':'band-pull-apart',
   'TRX Rear Delt Row':'trx-rear-delt-row',
@@ -6769,7 +6775,7 @@ var MW_SLUGS = {
   'Hanging Knee Raises':'hanging-knee-raises',
   'Eccentric Dragon Flag':'eccentric-dragonflag',
   'TRX Knee Tuck':'trx-knee-tuck',
-  'Medicine Ball Plank':'medicine-ball-plank',
+  'Medicine Ball Plank':'plank',
   'TRX Forearm Side Plank':'trx-forearm-side-plank',
   'Kettlebell Farmers Carry':'kettlebell-farmers-carry',
   'Cable Pallof Press':'cable-pallof-press',
@@ -6786,11 +6792,11 @@ var MW_SLUGS = {
   'Dumbbell Calf Raise':'dumbbell-calf-raise',
   'Machine Hamstring Curl':'machine-hamstring-curl',
   'Machine Cable V Bar Push Down':'machine-cable-v-bar-push-downs',
-  'Medicine Ball Self Toss':'medicine-ball-self-toss',
-  'Medicine Ball Wall Ball':'medicine-ball-wall-ball',
+  'Medicine Ball Self Toss':'self-toss',
+  'Medicine Ball Wall Ball':'wall-ball',
   'Medicine Ball Dead Bug':'medicine-ball-dead-bug',
   'Medicine Ball Hang Clean and Press':'medicine-ball-hang-clean-and-press',
-  'Medicine Ball Chest Press Toss':'medicine-ball-chest-press-toss',
+  'Medicine Ball Chest Press Toss':'chest-press-slam',
   'Stability Ball Goblet Wall Squat':'stability-ball-goblet-wall-squat',
   'Bodyweight Stability Ball Crunch':'bodyweight-stability-ball-crunch',
   'Band Romanian Deadlift':'band-romanian-deadlift',
@@ -6815,11 +6821,11 @@ var MW_SLUGS = {
   'Dumbbell Hammer Curl':'dumbbell-hammer-curl',
   'Cable Rope Pushdown':'cable-rope-pushdown',
   'Cable Rope Overhead Tricep Extension':'cable-rope-overhead-tricep-extension',
-  'Cable Curl':'cable-curl',
-  'Barbell Lying Tricep Extension':'barbell-lying-tricep-extension',
+  'Cable Curl':'cable-bar-curl',
+  'Barbell Lying Tricep Extension':'skull-crusher',
   'Glute Bridge (Band)':'band-glute-bridge'
 ,
-  'Stiff Leg Deadlift':'stiff-leg-deadlift'
+  'Stiff Leg Deadlift':'barbell-stiff-leg-deadlifts'
 ,
   'Cable Rope Single Arm Low Lateral Raise':'cable-rope-single-arm-low-lateral-raise'
 ,
@@ -6865,7 +6871,7 @@ var MW_SLUGS = {
 ,
   'Landmine Alternating Lunge and Twist':'landmine-alternating-lunge-and-twist'
 ,
-  'Medicine Ball Squat Reach':'medicine-ball-squat-reach'
+  'Medicine Ball Squat Reach':'squat-reach'
 ,
   'Stability Ball Knee Tuck':'stability-ball-knee-tuck'
 ,
@@ -6917,12 +6923,12 @@ var MW_SLUGS = {
 ,
   'Barbell Shrug':'barbell-shrug'
 ,
-  'Cable Hip Adduction':'cable-hip-adduction'
+  'Cable Hip Adduction':'machine-hip-adduction'
 ,
 
   'Dead Hang':'dead-hang'
 ,
-  'Farmer Carry (Heavy)':'farmers-carry'
+  'Farmer Carry (Heavy)':'kettlebell-farmers-carry'
 ,
   'Dumbbell Shoulder Press (Seated)':'dumbbell-seated-shoulder-press'
 ,
