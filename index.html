@@ -776,9 +776,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260624');
+          return navigator.serviceWorker.register('/sw.js?v=20260626');
         }).then(function(reg) {
-          console.log('SW registered v20260624');
+          console.log('SW registered v20260626');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -801,7 +801,7 @@ function makeLottie(dataVar, size) {
             }
           });
           // Show version badge for debugging
-          window._mmVersion = 'v20260619';
+          window._mmVersion = 'v20260624';
           reg.update(); // check for new version every load
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
@@ -1467,18 +1467,93 @@ else{setAllLogos();setAllAvatars();}
     <div style="text-align:center;padding:20px 0 8px;border-top:1px solid #EDE8E3;margin-top:8px;">
       <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:#4BBFB5;margin-bottom:4px;">Our Mood Moves Us</div>
       <div style="font-size:10px;color:#C0C0D0;line-height:1.8;">© 2026 Mood Moves. All rights reserved.<br>Made with 💙 for the 10% days.</div>
-      <div style="font-size:9px;color:#D0D0E0;margin-top:4px;">Version v20260531</div>
       <div style="display:flex;justify-content:center;gap:16px;margin-top:10px;">
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260624</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260626</div>
       </div>
     </div>
   </div>
 </div>
 
 
+<!-- ── EXERCISE FILTER PANEL ──────────────────────────────── -->
+<div id="filter-panel-overlay" onclick="closeFilterPanel()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:2000;"></div>
+<div id="filter-panel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:white;z-index:2001;border-radius:24px 24px 0 0;padding:0 0 40px;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);">
+  <div style="padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #EDE8E3;margin-bottom:4px;">
+    <span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;color:#2C2C3A;">Filter Exercises</span>
+    <button onclick="clearAllFilters()" style="font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:#4BBFB5;background:none;border:none;cursor:pointer;">Clear all</button>
+  </div>
+
+  <!-- MOVEMENT -->
+  <div style="padding:16px 20px 8px;">
+    <div style="font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:#9090A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Movement Pattern</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <button class="fp-btn" data-type="cat" data-val="" onclick="toggleFilter('cat','',this)">All</button>
+      <button class="fp-btn" data-type="cat" data-val="squat" onclick="toggleFilter('cat','squat',this)">🦵 Squat</button>
+      <button class="fp-btn" data-type="cat" data-val="hinge" onclick="toggleFilter('cat','hinge',this)">🔽 Hinge</button>
+      <button class="fp-btn" data-type="cat" data-val="hpush" onclick="toggleFilter('cat','hpush',this)">➡️ Push</button>
+      <button class="fp-btn" data-type="cat" data-val="vpush" onclick="toggleFilter('cat','vpush',this)">⬆️ Press</button>
+      <button class="fp-btn" data-type="cat" data-val="hpull" onclick="toggleFilter('cat','hpull',this)">⬅️ Row</button>
+      <button class="fp-btn" data-type="cat" data-val="vpull" onclick="toggleFilter('cat','vpull',this)">🔝 Pull</button>
+      <button class="fp-btn" data-type="cat" data-val="lunge" onclick="toggleFilter('cat','lunge',this)">🚶 Lunge</button>
+      <button class="fp-btn" data-type="cat" data-val="core" onclick="toggleFilter('cat','core',this)">🌀 Core</button>
+      <button class="fp-btn" data-type="cat" data-val="biceps" onclick="toggleFilter('cat','biceps',this)">💪 Arms</button>
+    </div>
+  </div>
+
+  <!-- MUSCLE GROUP -->
+  <div style="padding:8px 20px;">
+    <div style="font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:#9090A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Muscle Group</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <button class="fp-btn" data-type="muscle" data-val="glutes" onclick="toggleFilter('muscle','glutes',this)">🍑 Glutes</button>
+      <button class="fp-btn" data-type="muscle" data-val="quads" onclick="toggleFilter('muscle','quads',this)">🦿 Quads</button>
+      <button class="fp-btn" data-type="muscle" data-val="hamstrings" onclick="toggleFilter('muscle','hamstrings',this)">🦵 Hamstrings</button>
+      <button class="fp-btn" data-type="muscle" data-val="chest" onclick="toggleFilter('muscle','chest',this)">💪 Chest</button>
+      <button class="fp-btn" data-type="muscle" data-val="back" onclick="toggleFilter('muscle','back',this)">🔙 Back</button>
+      <button class="fp-btn" data-type="muscle" data-val="shoulders" onclick="toggleFilter('muscle','shoulders',this)">⬆️ Shoulders</button>
+      <button class="fp-btn" data-type="muscle" data-val="biceps" onclick="toggleFilter('muscle','biceps',this)">💪 Biceps</button>
+      <button class="fp-btn" data-type="muscle" data-val="triceps" onclick="toggleFilter('muscle','triceps',this)">💪 Triceps</button>
+      <button class="fp-btn" data-type="muscle" data-val="core" onclick="toggleFilter('muscle','core',this)">🌀 Core</button>
+      <button class="fp-btn" data-type="muscle" data-val="obliques" onclick="toggleFilter('muscle','obliques',this)">🌀 Obliques</button>
+      <button class="fp-btn" data-type="muscle" data-val="calves" onclick="toggleFilter('muscle','calves',this)">🦶 Calves</button>
+      <button class="fp-btn" data-type="muscle" data-val="adductors" onclick="toggleFilter('muscle','adductors',this)">🦵 Inner Thigh</button>
+    </div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div style="padding:8px 20px;">
+    <div style="font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:#9090A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Equipment</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <button class="fp-btn" data-type="eq" data-val="bodyweight" onclick="toggleFilter('eq','bodyweight',this)">🤸 Bodyweight</button>
+      <button class="fp-btn" data-type="eq" data-val="dumbbell" onclick="toggleFilter('eq','dumbbell',this)">🏋️ Dumbbell</button>
+      <button class="fp-btn" data-type="eq" data-val="barbell" onclick="toggleFilter('eq','barbell',this)">🪨 Barbell</button>
+      <button class="fp-btn" data-type="eq" data-val="cable" onclick="toggleFilter('eq','cable',this)">〽️ Cable</button>
+      <button class="fp-btn" data-type="eq" data-val="machine" onclick="toggleFilter('eq','machine',this)">⚙️ Machine</button>
+      <button class="fp-btn" data-type="eq" data-val="band" onclick="toggleFilter('eq','band',this)">🔴 Band</button>
+      <button class="fp-btn" data-type="eq" data-val="trx" onclick="toggleFilter('eq','trx',this)">🔗 TRX</button>
+      <button class="fp-btn" data-type="eq" data-val="kettlebell" onclick="toggleFilter('eq','kettlebell',this)">🫙 Kettlebell</button>
+      <button class="fp-btn" data-type="eq" data-val="medicine" onclick="toggleFilter('eq','medicine',this)">🏀 Med Ball</button>
+      <button class="fp-btn" data-type="eq" data-val="plate" onclick="toggleFilter('eq','plate',this)">⚫ Plate</button>
+    </div>
+  </div>
+
+  <!-- LOCATION -->
+  <div style="padding:8px 20px 16px;">
+    <div style="font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;color:#9090A8;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Location</div>
+    <div style="display:flex;gap:8px;">
+      <button class="fp-btn" data-type="loc" data-val="home" onclick="toggleFilter('loc','home',this)">🏠 Home</button>
+      <button class="fp-btn" data-type="loc" data-val="gym" onclick="toggleFilter('loc','gym',this)">🏋️ Gym</button>
+    </div>
+  </div>
+
+  <div style="padding:0 20px;">
+    <button onclick="applyFiltersAndClose()" style="width:100%;padding:15px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:16px;color:white;font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;cursor:pointer;">
+      Show Results
+    </button>
+  </div>
+</div>
 <!-- WORKOUT HISTORY SCREEN -->
 <div class="screen" id="history-screen" style="background:var(--cream);padding-bottom:85px;">
   <div class="h-hdr">
@@ -2145,7 +2220,6 @@ const EX={
     {n:'Barbell Squat',e:'Barbell',l:'Intermediate',m:'Quads, Glutes, Core',c:['Bar on upper traps','Feet shoulder-width, toes slightly out','Break at hips and knees together','Drive knees out, chest tall']},
     {n:'Bulgarian Split Squat',e:'Dumbbell',l:'Intermediate',m:'Glutes, Quads',c:['Rear foot elevated on bench','Front foot far enough forward','Lower until rear knee nearly touches','Squeeze glute at top']},
     {n:'Bodyweight Single Leg Squat',e:'No Equipment',l:'Advanced',m:'Quads, Glutes, Balance',c:['Stand on one leg','Extend other leg forward','Lower slowly under control','Push through heel to rise']},
-  ,
     {n:'Barbell Front Squat Bodybuilding',e:'Barbell',l:'Advanced',m:'Quads, Core, Upper Back',c:['Bar rests on front deltoids','Elbows high and forward','Upright torso throughout','Drive knees out, chest tall']},
     {n:'Barbell Pause Squat',e:'Barbell',l:'Advanced',m:'Quads, Glutes, Core',c:['Set up like back squat','Pause 3 full seconds at bottom','No bouncing out of the hole','Drive explosively to stand']},
     {n:'Jump Squats',e:'No Equipment',l:'Advanced',m:'Quads, Glutes, Power',c:['Feet shoulder-width','Squat to parallel','Explode up leaving the ground','Land softly with bent knees']}
@@ -2155,9 +2229,6 @@ const EX={
     {n:'Dumbbell Front Rack Squat',e:'Dumbbell',l:'Intermediate',m:'Quads, Glutes',c:['Hold dumbbells at shoulders or sides','Feet shoulder-width, toes slightly out','Sit into the squat, keep chest tall','Drive through heels to stand, squeeze glutes']},
     {n:'Smith Machine Squat',e:'Machine',l:'Beginner/Intermediate',m:'Quads',c:['Set bar at upper trap level, feet slightly forward','Unrack and stand shoulder-width apart','Lower until thighs parallel, knees track over toes','Drive through heels to stand, re-rack with control']},
     {n:'Machine Hack Squat',e:'Machine',l:'Intermediate',m:'Quads',c:['Place shoulders under pads, feet on platform','Feet hip-width, toes 30 degrees out','Lower until thighs are at least parallel to platform','Push through full foot to extend legs back up']},
-    
-    
-  ,
     {n:'Machine Leg Press',e:'Machine',l:'Beginner',m:'Quads, Glutes',c:['Sit with feet shoulder-width on platform','Lower weight controlled to 90 degrees','Press through heels to start','Do not lock knees']},
     {n:'Machine Leg Extension',e:'Machine',l:'Beginner',m:'Quads',c:['Sit with pad across shins','Extend legs to full extension','Squeeze quads at top','Lower with control']}
   ,
@@ -2172,7 +2243,6 @@ const EX={
     {n:'Barbell Deadlift',e:'Barbell',l:'Intermediate',m:'Full Posterior Chain',c:['Bar over mid-foot','Chest up, lats engaged','Push floor away','Keep bar close to body']},
     {n:'Kettlebell Swing',e:'Kettlebell',l:'Intermediate',m:'Glutes, Hamstrings',c:['Hinge — not squat — to load hips','Explosive hip drive to swing','Arms float to shoulder height','Control the descent']},
     {n:'Kettlebell Single Leg Deadlift',e:'Dumbbell',l:'Intermediate',m:'Hamstrings, Glutes',c:['Soft bend in standing knee','Hinge forward, leg extends back','Keep hips square to floor','Return by squeezing standing glute']},
-  ,
     
     {n:'Hip Thrust (Machine)',e:'Machine',l:'Beginner',m:'Glutes',c:['Sit in machine with pad across upper hips','Feet flat on platform, shoulder-width apart','Drive hips forward squeezing glutes hard at top','Lower with control until hips just above start']},
     {n:'Glute Bridge (Barbell)',e:'Barbell',l:'Beginner/Intermediate',m:'Glutes',c:['Lie on floor, bar across hip crease with pad','Feet flat, knees bent at 90 degrees','Drive hips up squeezing glutes powerfully at top','Lower hips to floor between each rep']},
@@ -2191,12 +2261,9 @@ const EX={
     {n:'Dumbbell Single Leg Single Arm Deadlift',e:'Dumbbell',l:'Intermediate',m:'Hamstrings, Glutes',c:['Hold dumbbell in opposite hand to standing leg','Hinge forward letting back leg float behind','Lower until you feel hamstring stretch','Drive hip forward and squeeze glute to stand']},
     {n:'Single Leg Hip Thrust (Dumbbell)',e:'Dumbbell/Bench',l:'Intermediate/Advanced',m:'Glutes',c:['Upper back on bench, dumbbell on working hip','One foot flat on floor, other leg raised','Drive single hip up, squeezing glute at top','Keep hips level, lower with full control']},
     {n:'Barbell Single Leg Deadlift',e:'Barbell',l:'Advanced',m:'Hamstrings, Glutes',c:['Hold barbell in front of you, stand on one leg','Hinge forward, back leg rises as counterbalance','Keep hips square, feel hamstring loading','Drive standing hip forward to return upright']},
-    ,
     {n:'Barbell High Bar Good Morning',e:'Barbell',l:'Intermediate',m:'Hamstrings, Lower Back',c:['Bar on upper traps','Hinge at hips slowly','Keep back flat','Drive hips forward to stand']},
     {n:'Plate Glute Bridge to Pullover',e:'Weight Plate',l:'Intermediate',m:'Glutes, Lats',c:['Lie on back plate on hips','Bridge up','Lower plate overhead','Return and repeat']},
     {n:'Mini Band Laying Glute Bridge Abduction',e:'Band',l:'Beginner',m:'Glutes, Hip Abductors',c:['Mini band above knees','Lie on back feet flat','Bridge up pushing knees out','Hold at top']},
-    
-  ,
     {n:'Machine Hamstring Curl',e:'Machine',l:'Beginner',m:'Hamstrings',c:['Lie face down on machine','Curl weight toward glutes','Squeeze at top','Lower with control']}
   ,
     {n:'Donkey Kick',e:'No Equipment',l:'Beginner',m:'Glutes',c:['Quadruped position on hands and knees','Kick one heel toward ceiling','Squeeze glute at top','Lower with control and switch']},
@@ -2226,13 +2293,9 @@ const EX={
     {n:'Band Push-Up',e:'Band',l:'Intermediate',m:'Chest, Triceps',c:['Band across upper back','Push-up position','Added resistance at top','Full range of motion']}
   ,
     {n:'Skater Squat',e:'No Equipment',l:'Advanced',m:'Glutes, Quads',c:['Stand on one leg, other leg bent behind you','Hinge at hip and bend standing knee simultaneously','Lower until rear knee nearly touches ground','Drive through standing leg to return to top']},
-    
-  ,
     {n:'BOSU Ball Walkover Push-Up',e:'BOSU Ball',l:'Intermediate',m:'Chest, Core',c:['One hand on BOSU one on floor','Push-up','Walk hands over BOSU','Repeat other side']}
   ,
     {n:'Step-Up',e:'Dumbbell',l:'Beginner/Intermediate',m:'Glutes, Quads',c:['Stand facing a bench or box at knee height','Place one foot fully on the box','Drive through the heel of that foot to step up','Stand tall at the top, then lower back with control']},
-    
-  ,
     {n:'Medicine Ball Chest Press Toss',e:'Medicine Ball',l:'Intermediate',m:'Chest, Power',c:['Lie on back','Press ball explosively off chest','Toss and catch','Control landing']}
   ,
     {n:'Plate Single Leg Deadlift',e:'Weight Plate',l:'Intermediate',m:'Hamstrings, Glutes',c:['Hold plate in both hands','Single leg hinge','Keep back flat','Drive through standing heel']}
@@ -2240,8 +2303,6 @@ const EX={
     {n:'TRX Push-Up',e:'TRX',l:'Intermediate',m:'Chest, Triceps',c:['Hands in TRX handles','Plank position','Lower chest to handles','Press back up']}
   ,
     {n:'Dumbbell Single Leg Glute Bridge',e:'Dumbbell',l:'Beginner/Intermediate',m:'Glutes',c:['Dumbbell on one hip','One foot lifted','Bridge up on single leg','Squeeze glute at top']}
-  ,
-    
   ,
     {n:'Bench Dips',e:'Dip Bar',l:'Advanced',m:'Chest, Triceps, Shoulders',c:['Add weight via belt or vest','Slight forward lean for chest','Lower until shoulders below elbows','Press to full lockout']}
   ,
@@ -2262,7 +2323,6 @@ const EX={
             {n:'Dumbbell Seated Overhead Press',e:'Dumbbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Start at ear height','Press straight overhead','Don\'t lock out at top','Lower with control']},
     {n:'Dumbbell Arnold Press',e:'Dumbbell',l:'Intermediate',m:'All 3 Deltoid Heads',c:['Start palms facing you at chin','Rotate palms out as you press','Full rotation at top','Reverse on the way down']},
     {n:'Barbell Overhead Press',e:'Barbell',l:'Intermediate',m:'Shoulders, Triceps',c:['Bar at collarbone','Core braced, glutes squeezed','Press bar up and slightly back','Lock out overhead, bar over ears']},
-  ,
     {n:'Plate Clean and Press',e:'Barbell',l:'Advanced',m:'Shoulders, Triceps, Legs',c:['Small knee dip for momentum','Explosive leg drive','Press bar overhead','Receive with locked arms']},
         
     {n:'Kettlebell Single Arm Clean and Press',e:'Dumbbell',l:'Intermediate/Advanced',m:'Shoulders, Core',c:['Sit on floor with legs straight out in front','Hold dumbbells at shoulder height','Press directly overhead, core must stabilize','No leg drive allowed, pure shoulder strength']},
@@ -2272,8 +2332,6 @@ const EX={
     {n:'Cable Overhead Press',e:'Cable',l:'Intermediate',m:'Shoulders, Triceps',c:['Set cables low at sides','Press overhead in arc','Keep core braced','Lower with control']},
     {n:'Barbell Front Raises',e:'Barbell',l:'Intermediate',m:'Front Delts',c:['Hold barbell at thighs','Raise straight to shoulder height','Keep arms nearly straight','Lower slowly']},
     {n:'Plate Full Lateral Raise',e:'Weight Plate',l:'Beginner/Intermediate',m:'Lateral Delts',c:['Hold plate with both hands','Raise to shoulder height','Lead with elbows','Lower with control']},
-    
-  ,
     {n:'Wall Angels',e:'No Equipment',l:'Beginner',m:'Shoulders, Upper Back',c:['Stand against wall arms at 90 degrees','Slide arms up keeping contact with wall','Pause at top','Lower slowly']}
   ,
     {n:'Barbell Z Press',e:'Barbell',l:'Advanced',m:'Shoulders, Core',c:['Sit on floor legs extended','Press barbell overhead from lap level','Keep core tight','Lower with control']}
@@ -2290,10 +2348,7 @@ const EX={
     {n:'Machine Seated Cable Row',e:'Cable',l:'Beginner/Intermediate',m:'Lats, Rhomboids',c:['Sit tall, slight lean back','Pull handle to lower ribs','Squeeze lats and mid-back','Extend with control']},
     {n:'Dumbbell Single Arm Row',e:'Dumbbell',l:'Intermediate',m:'Lats, Rhomboids',c:['Brace on bench with off hand','Pull elbow past hip','Keep shoulder packed down','Don\'t rotate torso']},
     {n:'Barbell Bent Over Row',e:'Barbell',l:'Intermediate',m:'Lats, Rhomboids',c:['Hip hinge at 45°','Pull to lower rib cage','Lead with elbows','Control the descent']},
-  ,
     {n:'Dumbbell Pendlay Row',e:'Barbell',l:'Advanced',m:'Lats, Rhomboids, Power',c:['Bar starts on floor each rep','Explosive pull from dead stop','Horizontal torso position','Bar to lower chest then reset']},
-    
-  ,
     {n:'Band Pull-Apart',e:'Band',l:'Beginner',m:'Rear Delt, Rhomboids',c:['Hold band at shoulder height with both hands','Arms straight, pull band apart to chest level','Squeeze shoulder blades together at end range','Return slowly with controlled tension']},
     
     {n:'Single Arm Cable Row',e:'Cable',l:'Intermediate',m:'Lats, Rhomboids',c:['Stand or kneel beside cable, grab handle','Pull elbow back driving it past your side','Squeeze lat and rhomboid at end of pull','Return arm to full extension with control']},
@@ -2303,8 +2358,6 @@ const EX={
     {n:'Cable Rope Face Pulls',e:'Cable',l:'Beginner/Intermediate',m:'Rear Delts, Upper Back',c:['Set cable at face height with rope','Pull rope toward face splitting it apart','Lead with elbows high','Squeeze rear delts at end']},
     
     {n:'TRX Rear Delt Row',e:'TRX',l:'Beginner/Intermediate',m:'Rear Delts, Upper Back',c:['Hold TRX with arms extended','Lean back 45 degrees','Pull elbows wide to sides','Squeeze rear delts at top']},
-    
-  ,
     {n:'TRX Single Arm Row',e:'TRX',l:'Intermediate',m:'Upper Back, Biceps',c:['Hold one TRX handle','Lean back single arm extended','Row to hip','Rotate slightly at top']},
     {n:'Kettlebell Single Arm Pendlay Row',e:'Kettlebell',l:'Intermediate',m:'Upper Back',c:['Hinge to parallel','Kettlebell on floor below shoulder','Row explosively to hip','Lower with control']},
     {n:'Cable Rope Front Raise',e:'Cable',l:'Beginner/Intermediate',m:'Front Delts',c:['Attach rope low','Face away from cable','Raise rope to eye level','Lower slowly']},
@@ -2340,7 +2393,6 @@ const EX={
     {n:'Machine Assisted Pull-Up',e:'Machine',l:'Beginner/Intermediate',m:'Lats, Biceps',c:['Use assistance to learn the pattern','Start from dead hang','Pull chest to bar','Lower all the way down']},
     {n:'Bodyweight Assisted Pull-Up',e:'Band',l:'Intermediate',m:'Lats, Biceps',c:['Loop band around bar, step or knee in band','Hang with full arm extension, engage core','Pull chest to bar driving elbows down and back','Lower slowly using band to assist return']},
     {n:'Pull-Ups',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Biceps',c:['Hang with full extension','Pull until chin clears bar','Control the descent','Full hang between reps']},
-  ,
     {n:'Weighted Pull-Ups',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Biceps, Strength',c:['Add weight via belt or vest','Full dead hang start','Chin over bar','Slow controlled descent']},
         {n:'L Sit Pull Up',e:'Pull-Up Bar',l:'Advanced',m:'Lats, Core, Hip Flexors',c:['Hang from bar no swinging','Raise straight legs to horizontal','Pull chin over bar','Core must not drop']}
   ,
@@ -2356,7 +2408,6 @@ const EX={
     {n:'Dumbbell Reverse Lunge',e:'Dumbbell',l:'Intermediate',m:'Glutes, Quads',c:['Weights at sides','Step back with control','Torso upright throughout','Drive through front heel']},
     {n:'Walking Lunge',e:'Dumbbell',l:'Intermediate',m:'Quads, Glutes',c:['Step forward into lunge','Lower back knee','Drive front foot for next step','Alternate legs continuously']},
     {n:'Curtsy Lunge',e:'No Equipment',l:'Intermediate',m:'Glutes, Abductors',c:['Step behind and across body','Lower back knee toward floor','Keep hips square as much as possible','Drive back through front heel']},
-  ,
     {n:'Barbell Forward Lunge',e:'Barbell',l:'Advanced',m:'Quads, Glutes, Balance',c:['Bar on upper traps','Take controlled steps forward','Both knees to 90 degrees','Stay tall, core braced']},
     {n:'Bodyweight Alternating Jump Lunge',e:'No Equipment',l:'Advanced',m:'Quads, Glutes, Power',c:['Start in lunge position','Jump explosively','Switch legs in the air','Land softly, absorb impact']},
     
@@ -2379,7 +2430,6 @@ const EX={
     {n:'Side Plank',e:'No Equipment',l:'Intermediate',m:'Obliques',c:['Stack feet or stagger them','Elbow under shoulder','Hips high, body straight','Breathe through the hold']},
     {n:'Hollow Body Hold',e:'No Equipment',l:'Intermediate',m:'Core',c:['Lower back pressed to floor','Arms overhead, legs extended','Lift shoulders and legs','Find lowest point you can hold']},
     {n:'Medicine Ball Slam',e:'Med Ball',l:'Intermediate',m:'Core, Full Body',c:['Raise ball overhead fully','Slam down with full force','Hinge to pick it up','Reset and repeat']},
-  ,
     {n:'TRX Ab Rollout',e:'Ab Wheel',l:'Advanced',m:'Core, Shoulders, Lats',c:['Start kneeling on the floor','Roll out slowly until nearly flat','Back stays neutral no sagging','Pull back with core and lats']},
     {n:'Hanging Knee Raises',e:'Pull-Up Bar',l:'Advanced',m:'Core, Hip Flexors',c:['Hang from bar no swinging','Raise straight legs to horizontal','Control the descent fully','Avoid using momentum']},
     {n:'Eccentric Dragon Flag',e:'Bench',l:'Advanced',m:'Full Core, Stability',c:['Grab bench behind head','Keep body rigid like a plank','Lower legs toward floor controlled','Never let lower back arch']}
@@ -2401,9 +2451,6 @@ const EX={
     {n:'Woodchop (High to Low)',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Set cable high, stand sideways to machine','Grip handle with both hands, arms extended','Pull diagonally down and across body','Return slowly with control to start']},
     {n:'Woodchop (Low to High)',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Set cable low, stand sideways to machine','Grip handle with both hands, arms extended','Pull diagonally up and across body','Return slowly with control to start']},
     {n:'Medicine Ball Kneeling Wood Chopper',e:'Med Ball/Wall',l:'Intermediate',m:'Obliques, Core',c:['Stand sideways beside wall, feet shoulder-width','Hold ball at hip, wind up rotating away','Explosively rotate throwing ball at wall','Catch and repeat, feel obliques working']},
-    
-    
-  ,
 
     {n:'Medicine Ball Self Toss',e:'Medicine Ball',l:'Beginner/Intermediate',m:'Core, Power',c:['Lie on back holding ball','Toss ball straight up','Catch at arms length','Lower with control']},
     {n:'Medicine Ball Wall Ball',e:'Medicine Ball',l:'Intermediate',m:'Full Body',c:['Stand facing wall','Squat with ball at chest','Drive up throwing ball to wall','Catch and repeat']},
@@ -2440,35 +2487,23 @@ const EX={
     {n:'Mini Band Plank Hand Step Out',e:'Band',l:'Intermediate',m:'Core, Shoulders',c:['Mini band around wrists','Plank on hands','Step one hand out wide','Return and alternate']},
     {n:'Bodyweight Curtsy Step Down',e:'No Equipment',l:'Intermediate',m:'Glutes, Quads',c:['Stand on elevated surface','Lower into curtsy behind and down','Control the descent','Drive up to stand']},
     {n:'Bodyweight Step Down',e:'No Equipment',l:'Intermediate',m:'Quads, Glutes',c:['Stand on step edge','Lower one foot toward floor','Control descent','Return to start']},
-    
-    
-  ,
     {n:'Belt Squat',e:'Cable/Machine',l:'Intermediate',m:'Quads, Glutes',c:['Attach belt to cable between legs','Stand on elevated platform','Squat keeping torso upright','Drive through heels']}
-  ,
-    
   ,
     {n:'Landmine Oblique Twist',e:'Barbell/Landmine',l:'Intermediate',m:'Obliques, Core',c:['Hold end of barbell with both hands extended','Stand with feet wider than shoulder-width','Rotate bar from hip to hip in an arc','Keep arms extended, power comes from core']}
   ,
     {n:'TRX Jumping Squat',e:'TRX',l:'Intermediate',m:'Quads, Glutes',c:['Hold TRX handles','Squat down','Jump explosively','Land soft and repeat']}
   ,
-        ,
 
     {n:'Calf Raises',e:'No Equipment/Machine',l:'Beginner',m:'Calves',c:['Stand on edge of step','Rise up on toes','Hold at top','Lower with control']}
   ,
     {n:'Bodyweight Pop Squat',e:'No Equipment',l:'Beginner',m:'Quads, Glutes',c:['Stand feet together','Jump feet wide into squat','Jump back to start','Stay light and bouncy']},
-    
-  ,
     {n:'Cable Kneeling Oblique Crunch',e:'Cable',l:'Intermediate',m:'Obliques, Core',c:['Kneel on one knee beside cable set at chest','Hold handle with both hands, brace core','Rotate torso pulling cable toward back foot','Return with control, hips stay square']}
   ,
     {n:'Bodyweight Pulse Squat',e:'No Equipment',l:'Beginner',m:'Quads, Glutes',c:['Stand feet shoulder-width','Squat to parallel','Pulse up and down 2-3 inches','Stay in tension throughout']},
-    
-  ,
         
     {n:'Dumbbell Calf Raise',e:'Dumbbell',l:'Beginner',m:'Calves',c:['Hold dumbbells at sides','Rise on toes','Pause at top','Lower slowly']}
   ,
     {n:'TRX Squat',e:'TRX',l:'Beginner',m:'Quads, Glutes',c:['Hold TRX handles at chest','Sit back into squat','Keep chest tall','Drive through heels to stand']},
-    
-  ,
     {n:'BOSU Ball Toe Tap',e:'BOSU Ball',l:'Beginner',m:'Agility',c:['BOSU dome up','Alternate tapping toes on top','Quick light taps','Keep upright posture']}
   ,
     {n:'Plate Squat Hold',e:'Band',l:'Intermediate',m:'Quads',c:['Hold a band or post for support','Stand on one leg, other leg extended forward','Slowly lower on one leg as deep as you can','Drive through heel to stand, use support as needed']},
@@ -2495,8 +2530,6 @@ const EX={
   ,
     {n:'Good Mornings',e:'Barbell',l:'Intermediate',m:'Hamstrings, Lower Back',c:['Bar on upper traps','Hinge at hips keeping back flat','Lower until parallel','Drive hips forward to stand']}
   ,
-    
-  ,
         
   ,
     {n:'Band Glute Kickback',e:'Band',l:'Beginner',m:'Glutes',c:['Band around ankles','Kick one leg back','Squeeze glute at top','Control return']}
@@ -2510,8 +2543,6 @@ const EX={
     {n:'TRX Oblique Crunch',e:'TRX',l:'Intermediate',m:'Obliques',c:['Feet in TRX handles plank position','Pull knees to one side','Return to center','Alternate sides']}
   ,
     {n:'Machine Neutral Overhead Press',e:'Machine',l:'Beginner/Intermediate',m:'Shoulders, Triceps',c:['Sit with back supported','Grip handles at shoulder level','Press overhead','Lower to shoulder height']},
-    
-  ,
     {n:'Mini Band Clamshell',e:'Band',l:'Beginner',m:'Glutes, Hip Abductors',c:['Band above knees','Lie on side','Open top knee like clamshell','Keep hips stacked']}
   ,
     {n:'Machine Cable V Bar Push Down',e:'Machine/Cable',l:'Beginner',m:'Triceps',c:['Set cable high with V bar','Press down keeping elbows fixed','Full extension at bottom','Control the return']}
@@ -2540,7 +2571,6 @@ const EX={
     {n:'Cable Rope Pushdown',e:'Cable',l:'Beginner',m:'Triceps',c:['Rope at top cable elbows at sides','Press down splitting rope','Full extension at bottom','Control return']},
     {n:'Cable Rope Overhead Tricep Extension',e:'Cable',l:'Intermediate',m:'Triceps',c:['Cable low rope attachment','Face away elbows near ears','Extend overhead fully','Control return']},
     {n:'Barbell Lying Tricep Extension',e:'Barbell',l:'Intermediate',m:'Triceps',c:['Lie on bench bar overhead','Lower to forehead bending elbows','Press to full extension','Keep elbows in']},
-      ,
     
         {n:'Mini Band Tricep Pushdown',e:'Band',l:'Beginner',m:'Triceps',c:['Anchor band above head','Elbows at sides','Press down to extension','Control the return']}
   ]
@@ -2834,6 +2864,7 @@ function handleLogin(){
       // Save to localStorage so future sessions work offline
       try{ localStorage.setItem('mm_v3', JSON.stringify(S)); }catch(e){}
       localStorage.setItem('mm_uid', u.id);
+      localStorage.setItem('mm_remembered_email', email); // persist for auto-restore
       updateFounderCounter();
       showAuthError('');
       if(restored && S.onboarded){
@@ -4613,10 +4644,20 @@ function buildEl(){
 function renderEl(){
   const all=Object.entries(EX).flatMap(([cat,exs])=>exs.map(e=>({...e,cat})));
   const filtered=all.filter(e=>{
+    // Category filter
     if(catF && e.cat !== catF) return false;
+    // Search filter
     if(elF && !e.n.toLowerCase().includes(elF.toLowerCase()) && !(e.m||'').toLowerCase().includes(elF.toLowerCase())) return false;
-    if(currentMuscleFilter && !(e.m||'').toLowerCase().includes(currentMuscleFilter.toLowerCase())) return false;
+    // Muscle filter (from panel)
+    var muscleF = activeFilters.muscle || currentMuscleFilter || '';
+    if(muscleF && !(e.m||'').toLowerCase().includes(muscleF.toLowerCase())) return false;
+    // Equipment filter
     if(eqF && !(e.e||'').toLowerCase().includes(eqF.toLowerCase())) return false;
+    // Location filter — home = bodyweight/band/no equipment
+    if(activeFilters.loc === 'home'){
+      var homeEq = ['no equipment','bodyweight','band','trx'];
+      if(!homeEq.some(function(h){ return (e.e||'').toLowerCase().includes(h); })) return false;
+    }
     return true;
   });
   _lastFilteredEx=filtered;
@@ -4648,6 +4689,81 @@ function filterMuscle(btn,muscle){
   renderEl();
 }
 var eqF = '';
+// ── New filter panel state ─────────────────────────────────
+var activeFilters = { cat: '', muscle: '', eq: '', loc: '' };
+
+function openFilterPanel(){
+  var overlay = document.getElementById('filter-panel-overlay');
+  var panel   = document.getElementById('filter-panel');
+  if(!overlay || !panel) return;
+  overlay.style.display = 'block';
+  panel.style.display = 'block';
+  setTimeout(function(){ panel.style.transform = 'translateY(0)'; }, 10);
+  // Restore button states
+  document.querySelectorAll('.fp-btn').forEach(function(btn){
+    var type = btn.dataset.type;
+    var val  = btn.dataset.val;
+    btn.classList.toggle('on', activeFilters[type] === val && val !== '');
+  });
+}
+
+function closeFilterPanel(){
+  var panel = document.getElementById('filter-panel');
+  var overlay = document.getElementById('filter-panel-overlay');
+  if(panel) panel.style.transform = 'translateY(100%)';
+  setTimeout(function(){
+    if(panel) panel.style.display = 'none';
+    if(overlay) overlay.style.display = 'none';
+  }, 350);
+}
+
+function toggleFilter(type, val, btn){
+  // Toggle — if already active, clear it
+  if(activeFilters[type] === val){ activeFilters[type] = ''; btn.classList.remove('on'); }
+  else {
+    // Deselect others of same type
+    document.querySelectorAll('.fp-btn[data-type="'+type+'"]').forEach(function(b){ b.classList.remove('on'); });
+    activeFilters[type] = val;
+    if(val) btn.classList.add('on');
+  }
+  // Home = bodyweight/band/no equipment; Gym = everything else
+  if(type === 'loc' && val === 'home'){
+    activeFilters.eq = 'bodyweight';
+    document.querySelectorAll('.fp-btn[data-type="eq"]').forEach(function(b){ b.classList.remove('on'); });
+    var bwBtn = document.querySelector('.fp-btn[data-val="bodyweight"]');
+    if(bwBtn) bwBtn.classList.add('on');
+  }
+}
+
+function clearAllFilters(){
+  activeFilters = { cat: '', muscle: '', eq: '', loc: '' };
+  document.querySelectorAll('.fp-btn').forEach(function(b){ b.classList.remove('on'); });
+  catF = ''; eqF = '';
+  renderEl();
+  updateFilterBadge();
+}
+
+function applyFiltersAndClose(){
+  catF = activeFilters.cat || '';
+  eqF  = activeFilters.eq  || '';
+  renderEl();
+  updateFilterBadge();
+  closeFilterPanel();
+}
+
+function updateFilterBadge(){
+  var active = Object.values(activeFilters).filter(Boolean).length;
+  var badge = document.getElementById('filter-badge');
+  if(badge){
+    if(active > 0){
+      badge.textContent = active;
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+}
+
 function setEqFilter(eq, btn){
   eqF = eq;
   document.querySelectorAll('.eq-flt').forEach(function(b){ b.classList.remove('on'); });
@@ -4967,7 +5083,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260624';
+  var deployVersion = 'v20260626';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -4975,7 +5091,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260624 — filter rebuilt + home exercises');
+    console.log('[MM] v20260625 — filter panel + data restore');
   }
 
   // Audio debug — shows in browser console
@@ -5000,11 +5116,36 @@ window.addEventListener('DOMContentLoaded',function(){
   try{
     const d=localStorage.getItem('mm_v3');
     if(d){
-      const data=JSON.parse(d);
-      Object.assign(S,data);
-      if(S.onboarded){
-        setupHome();buildEl();goTo('home');
-        document.getElementById('bnav').classList.remove('hidden');
+      try{
+        const data=JSON.parse(d);
+        Object.assign(S,data);
+        if(S.onboarded){
+          setupHome();buildEl();goTo('home');
+          document.getElementById('bnav').classList.remove('hidden');
+        }
+      }catch(e){}
+    } else {
+      // No local data — check if user had an account (email stored separately)
+      // We store email in a separate key that survives "clear site data" less often
+      var savedEmail = localStorage.getItem('mm_remembered_email');
+      if(savedEmail){
+        // Auto-attempt cloud restore
+        console.log('[MM] No local data but email found — attempting cloud restore');
+        supa.from('users').select('*').ilike('email', savedEmail).limit(1)
+          .then(function(res){
+            if(res.error || !res.data || res.data.length === 0) return;
+            var u = res.data[0];
+            if(u.data && u.data.user && u.data.onboarded){
+              Object.assign(S, u.data);
+              S.currentWorkout = []; S.currentMood = ''; S.rtInterval = null;
+              try{ localStorage.setItem('mm_v3', JSON.stringify(S)); }catch(e){}
+              localStorage.setItem('mm_uid', u.id);
+              setupHome(); buildEl(); goTo('home');
+              document.getElementById('bnav').classList.remove('hidden');
+              showT('Welcome back ' + (S.user.name||'') + '! Your data is restored. 💪');
+              console.log('[MM] Auto-restored from cloud');
+            }
+          }).catch(function(){ console.log('[MM] Auto-restore failed — offline?'); });
       }
     }
   }catch(e){}
@@ -6778,8 +6919,7 @@ var MW_SLUGS = {
 ,
   'Cable Hip Adduction':'cable-hip-adduction'
 ,
-  'Side Lying Hip Adduction':'side-lying-hip-adduction'
-,
+
   'Dead Hang':'dead-hang'
 ,
   'Farmer Carry (Heavy)':'farmers-carry'
