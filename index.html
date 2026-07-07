@@ -695,7 +695,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;
   from{opacity:0;transform:rotate(-1.5deg) scale(0.7) translateY(30px)}
   to{opacity:1;transform:rotate(-1.5deg) scale(1) translateY(0)}
 }
-#sticky-popup{display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:20px;}#sticky-popup.show{display:flex;}
+#sticky-popup{display:none;position:fixed;inset:0;z-index:999999;align-items:center;justify-content:center;padding:20px;}#sticky-popup.show{display:flex;}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
@@ -776,9 +776,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260630');
+          return navigator.serviceWorker.register('/sw.js?v=20260631');
         }).then(function(reg) {
-          console.log('SW registered v20260630');
+          console.log('SW registered v20260631');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1478,10 +1478,10 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:90%;margin:12px auto 0;padding:12px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin-top:8px;font-size:9px;color:#D0D0D8;">App version: v20260630</div>
       </div>
     </div>
+      <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260631</div>
   </div>
 </div>
 
@@ -5110,7 +5110,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260630';
+  var deployVersion = 'v20260631';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5118,7 +5118,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260630 — filter rebuild + sticky debug');
+    console.log('[MM] v20260631 — z-index fix');
   }
 
   // Audio debug — shows in browser console
