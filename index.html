@@ -776,9 +776,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260627');
+          return navigator.serviceWorker.register('/sw.js?v=20260629');
         }).then(function(reg) {
-          console.log('SW registered v20260627');
+          console.log('SW registered v20260629');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1425,23 +1425,24 @@ else{setAllLogos();setAllAvatars();}
 <!-- EXERCISES -->
 <div class="screen" id="exercises">
   <div class="el-hdr">
-    <div class="el-row">
-      <img src="" class="mm-logo" style="width:38px;height:38px;object-fit:contain;border-radius:10px;" alt="MM">
-      <div><div style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--charcoal);">Exercise Library</div><div style="font-size:10px;color:var(--txt2);">Tap any exercise to learn more</div></div>
+    <div class="el-row" style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="" class="mm-logo" style="width:38px;height:38px;object-fit:contain;border-radius:10px;" alt="MM">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--charcoal);">Exercise Library</div>
+          <div style="font-size:10px;color:var(--txt2);">Tap any exercise to learn more</div>
+        </div>
+      </div>
+      <!-- Filter funnel button -->
+      <button onclick="openFilterPanel()" id="filter-funnel-btn" type="button" style="background:white;border:1.5px solid #EDE8E3;border-radius:12px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:#4BBFB5;position:relative;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4BBFB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+        Filter
+        <span id="filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;background:#4BBFB5;color:white;border-radius:50%;width:16px;height:16px;font-size:9px;align-items:center;justify-content:center;font-weight:900;">0</span>
+      </button>
     </div>
-    <div class="srch"><span class="s-ic">🔍</span><input class="s-inp" id="el-search" type="text" placeholder="Search exercises..." oninput="filterEl(this.value)"></div>
-    <div id="muscle-filters" style="display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;scrollbar-width:none;-ms-overflow-style:none;">
-      <button onclick="filterMuscle(this,'')" class="mf-btn mf-active" type="button">All</button>
-      <button onclick="filterMuscle(this,'Glute')" class="mf-btn" type="button">🍑 Glutes</button>
-      <button onclick="filterMuscle(this,'Quad')" class="mf-btn" type="button">🦵 Quads</button>
-      <button onclick="filterMuscle(this,'Hamstring')" class="mf-btn" type="button">🦵 Hamstrings</button>
-      <button onclick="filterMuscle(this,'Core')" class="mf-btn" type="button">🔥 Core</button>
-      <button onclick="filterMuscle(this,'Chest')" class="mf-btn" type="button">💪 Chest</button>
-      <button onclick="filterMuscle(this,'Lat')" class="mf-btn" type="button">🔙 Lats</button>
-      <button onclick="filterMuscle(this,'Shoulder')" class="mf-btn" type="button">🏋️ Shoulders</button>
-      <button onclick="filterMuscle(this,'Oblique')" class="mf-btn" type="button">🔥 Obliques</button>
-    </div>
-  <div class="cfs" id="cfs" style="padding:0 18px 8px;border-bottom:1px solid var(--border);"></div>
+    <div class="srch"><span class="s-ic">🔍</span><input class="s-inp" id="el-search" type="text" placeholder="Search by name or muscle..." oninput="filterEl(this.value)"></div>
+    <!-- Category pills (built by buildEl) -->
+    <div id="cfs" style="display:flex;gap:6px;padding:6px 0 6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;"></div>
   </div>
   <div class="el-list" id="el-list"></div>
   <div style="height:18px;"></div>
@@ -1477,7 +1478,7 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('terms-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Terms</span>
         <span style="font-size:10px;color:#EDE8E3;">|</span>
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
-      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260627</div>
+      <div style="text-align:center;margin-top:12px;font-size:9px;color:#D0D0D8;">App version: v20260629</div>
       </div>
     </div>
   </div>
@@ -2558,8 +2559,7 @@ const EX={
     {n:'Cable Hip Adduction',e:'Cable',l:'Beginner',m:'Adductors, Inner Thigh',c:['Attach cable to ankle','Stand sideways to machine','Pull leg across body','Control return']},
     {n:'Side-Lying Hip Adduction',e:'No Equipment',l:'Beginner',m:'Adductors, Inner Thigh',c:['Lie on side bottom leg straight','Lift bottom leg toward ceiling','Squeeze inner thigh','Lower with control']}
   ,
-    {n:'Dead Hang',e:'Pull-Up Bar',l:'Beginner/Intermediate',m:'Grip, Forearms, Shoulders',c:['Hang from bar full arm extension','Keep shoulders engaged not shrugged','Hold as long as possible','Lower with control']},
-    {n:'Farmer Carry (Heavy)',e:'Dumbbell',l:'Beginner',m:'Grip, Forearms, Core',c:['Heavy dumbbell or kettlebell each hand','Walk with tall posture','Grip as hard as possible','Controlled steps']}
+    
   ,
     {n:'Mountain Climbers',e:'No Equipment',l:'Beginner/Intermediate',m:'Core, Cardio',c:['High plank position','Drive one knee toward chest','Switch legs quickly','Keep hips level throughout']},
     {n:'Leg Raises',e:'No Equipment',l:'Beginner',m:'Lower Core',c:['Lie on back hands under lower back','Lift legs to 90 degrees','Lower slowly without touching floor','Keep lower back pressed down']},
@@ -2579,6 +2579,8 @@ const EX={
     {n:'Barbell Lying Tricep Extension',e:'Barbell',l:'Intermediate',m:'Triceps',c:['Lie on bench bar overhead','Lower to forehead bending elbows','Press to full extension','Keep elbows in']},
     
         {n:'Mini Band Tricep Pushdown',e:'Band',l:'Beginner',m:'Triceps',c:['Anchor band above head','Elbows at sides','Press down to extension','Control the return']}
+  ,
+    {n:'Dumbbell Skullcrusher',e:'Dumbbell',l:'Beginner',m:'Triceps',c:['Lie on bench dumbbells above chest palms facing each other','Bend elbows lowering weights toward forehead','Keep upper arms still and elbows close','Extend back to start']}
   ]
 };
 const CL={squat:'Squat',hinge:'Hinge',hpush:'H.Push',vpush:'V.Push',hpull:'H.Pull',vpull:'V.Pull',lunge:'Lunge',core:'Core'};
@@ -4082,7 +4084,10 @@ function doSwap(si){
     var cfg = MC[S.currentMood];
     newReps = cfg ? cfg.reps : '10-12';
   }
-  Object.assign(ex,{n:s.n,m:s.m,e:s.e,isHold:isIso,reps:newReps,w:'',sets_log:[]});
+  // Always use current mood sets so swapped exercise matches rest of workout
+  var moodCfg = MC[S.currentMood] || {};
+  var newSets = moodCfg.sets || ex.sets || '3';
+  Object.assign(ex,{n:s.n,m:s.m,e:s.e,isHold:isIso,reps:newReps,sets:newSets,w:'',sets_log:[]});
   closeSwap();
   renderWk();
 }
@@ -5089,7 +5094,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260627';
+  var deployVersion = 'v20260629';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -6733,7 +6738,7 @@ var MW_SLUGS = {
   'Machine Assisted Parallel Bar Dips':'machine-assisted-parallel-bar-dips',
   'Dumbbell Seated Overhead Press':'dumbbell-seated-overhead-press',
   'Cable Overhead Press':'cable-overhead-press',
-  'Barbell Front Raises':'ez-front-raise',
+  'Barbell Front Raises':'barbell-front-raise',
   'Plate Full Lateral Raise':'plate-full-lateral-raise',
   'Plate Front Raise':'plate-front-raise',
   'Machine Neutral Overhead Press':'machine-neutral-overhead-press',
@@ -6822,7 +6827,7 @@ var MW_SLUGS = {
   'Cable Rope Pushdown':'cable-rope-pushdown',
   'Cable Rope Overhead Tricep Extension':'cable-rope-overhead-tricep-extension',
   'Cable Curl':'cable-bar-curl',
-  'Barbell Lying Tricep Extension':'skull-crusher',
+  'Barbell Lying Tricep Extension':'barbell-skullcrusher',
   'Glute Bridge (Band)':'band-glute-bridge'
 ,
   'Stiff Leg Deadlift':'barbell-stiff-leg-deadlifts'
@@ -6881,7 +6886,7 @@ var MW_SLUGS = {
 ,
   'BOSU Ball Up and Over':'bosu-ball-up-and-over'
 ,
-  'BOSU Ball Walkover Push-Up':'bosu-ball-walkover-push-up'
+  'BOSU Ball Walkover Push-Up':'bosu-ball-walkover-pushup'
 ,
   'BOSU Ball Toe Tap':'bosu-ball-toe-tap'
 ,
@@ -6899,7 +6904,7 @@ var MW_SLUGS = {
 ,
   'TRX Oblique Crunch':'trx-oblique-crunch'
 ,
-  'TRX Push-Up':'trx-push-up'
+  'TRX Push-Up':'trx-pushup'
 ,
   'TRX Kneeling Ab Rollout':'trx-kneeling-ab-rollout'
 ,
@@ -6936,7 +6941,7 @@ var MW_SLUGS = {
 ,
   'Dumbbell Lateral Raise (Light)':'dumbbell-lateral-raise'
 ,
-  'Side-Lying Hip Adduction':'side-lying-hip-adduction'
+  'Side-Lying Hip Adduction':'machine-hip-adduction'
 ,
   'Bodyweight Wall Sit':'wall-sit'
 ,
@@ -6975,6 +6980,8 @@ var MW_SLUGS = {
   'Bear Crawl':'bear-crawl'
 ,
   'Inchworm':'inchworm'
+,
+  'Dumbbell Skullcrusher':'dumbbell-skullcrusher'
 };
 
 function muscleWikiUrl(exerciseName) {
