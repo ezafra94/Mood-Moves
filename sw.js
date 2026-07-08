@@ -1,18 +1,18 @@
 // Mood Moves Service Worker v20260623
 // NUCLEAR CACHE BUST — clears all previous versions
 
-const APP_VERSION = 'v20260632';
-const CACHE_NAME = 'mood-moves-v20260623';
+const APP_VERSION = 'v20260635';
+const CACHE_NAME = 'mood-moves-v20260634';
 
 // On install — take control immediately, don't wait
 self.addEventListener('install', function(e) {
-  console.log('[SW] Installing v20260623');
+  console.log('[SW] Installing v20260634');
   self.skipWaiting(); // activate immediately without waiting
 });
 
 // On activate — delete ALL old caches and claim all clients
 self.addEventListener('activate', function(e) {
-  console.log('[SW] Activating v20260623 — clearing all old caches');
+  console.log('[SW] Activating v20260634 — clearing all old caches');
   e.waitUntil(
     caches.keys().then(function(names) {
       return Promise.all(
@@ -100,5 +100,26 @@ self.addEventListener('message', function(e) {
   }
   if (e.data.type === 'CANCEL_TIMER_NOTIF') {
     // handled by app
+  }
+  // App sends SHOW_NOTIFICATION when it wants to display a local notification
+  if (e.data.type === 'SHOW_NOTIFICATION') {
+    var title = e.data.title || 'Mood Moves 💫';
+    var body  = e.data.body  || 'Your daily message is waiting.';
+    var tag   = e.data.tag   || 'mm-notif';
+    self.registration.showNotification(title, {
+      body: body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: tag,
+      data: { url: '/?notify=1' },
+      requireInteraction: false,
+      vibrate: [200, 100, 200]
+    });
+  }
+  // SW_UPDATED: tell clients to reload for new version
+  if (e.data.type === 'SW_UPDATED') {
+    self.clients.matchAll({ type: 'window' }).then(function(clients) {
+      clients.forEach(function(client) { client.postMessage({ type: 'SW_UPDATED' }); });
+    });
   }
 });
