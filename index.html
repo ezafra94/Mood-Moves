@@ -835,9 +835,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260637');
+          return navigator.serviceWorker.register('/sw.js?v=20260638');
         }).then(function(reg) {
-          console.log('SW registered v20260637');
+          console.log('SW registered v20260638');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1540,7 +1540,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
       <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260637</div>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260638</div>
   </div>
 </div>
 
@@ -5242,7 +5242,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260637';
+  var deployVersion = 'v20260638';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5250,7 +5250,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260637 — sticky inline fix + swap seed fix + transform phases');
+    console.log('[MM] v20260638 — new VAPID keys + cron push ready');
   }
 
   // Audio debug — shows in browser console
@@ -7941,7 +7941,7 @@ async function saveNotifSettings(){
 
 
 // ── WEB PUSH SUBSCRIPTION ────────────────────────────────
-var VAPID_PUBLIC_KEY = 'BPJEkPmgwGQXVe-zAH50Dns6AxhlL7QNVRKqV-R27oF76ym2oNBHFYOBcGlZUxc-cU2TI5H3CSXgpCVp-MVLpF4';
+var VAPID_PUBLIC_KEY = 'BAQCwuOZoikyeNU6yd0A_wauvFQFuki-e4JjejSYuzxwdz-TOsin5g6GNeO80e76TwsQgcxtB6h9elVUbdpFQI4';
 
 function urlBase64ToUint8Array(base64String) {
   var padding = '='.repeat((4 - base64String.length % 4) % 4);
