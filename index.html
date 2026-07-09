@@ -835,9 +835,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260635');
+          return navigator.serviceWorker.register('/sw.js?v=20260637');
         }).then(function(reg) {
-          console.log('SW registered v20260635');
+          console.log('SW registered v20260637');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1540,7 +1540,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
       <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260635</div>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260637</div>
   </div>
 </div>
 
@@ -1787,6 +1787,13 @@ else{setAllLogos();setAllAvatars();}
       <div style="font-size:36px;margin-bottom:10px;">📷</div>
       <div style="font-size:13px;font-weight:700;">No photos yet</div>
       <div style="font-size:11px;margin-top:4px;">Add your first photo to start your transformation diary!</div>
+    </div>
+
+    <!-- PHASE TRACKER -->
+    <div style="margin-top:20px;padding-bottom:30px;">
+      <div style="font-size:10px;font-weight:900;color:#4BBFB5;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Your Training Phases</div>
+      <div id="transform-phase-card" style="background:linear-gradient(135deg,#2C2C3A,#3D3D52);border-radius:18px;padding:18px;color:white;margin-bottom:12px;"></div>
+      <div id="transform-phase-timeline" style="background:white;border-radius:18px;padding:18px;border:1.5px solid #EDE8E3;"></div>
     </div>
   </div>
 </div>
@@ -4125,7 +4132,7 @@ function openSwap(i){
   var ex=S.currentWorkout[i];
   // Guard: if category is wrong/missing, fall back to same muscle group search
   var pool = (ex.p && EX[ex.p]) ? EX[ex.p] : EX['core'];
-  var HOME_EQ=['No Equipment','Dumbbell','Band','Wall','Bench','Pull-Up Bar','Ab Wheel','Med Ball','TRX','Bodyweight/Weight'];
+  var HOME_EQ=['No Equipment','Dumbbell','Band','Kettlebell','Medicine Ball','Weight Plate'];
   var lv=S.user&&S.user.level||'some';
   
   // Filter swaps: exclude current exercise, prefer same muscle group
@@ -4149,7 +4156,10 @@ function openSwap(i){
       return (seed/233280) - 0.5; 
     }); 
   }
-  var swSeed = (swIdx * 137 + ex.n.charCodeAt(0)) * 9301;
+  // Seed based on exercise name so same exercise ALWAYS shows same swap options
+  // regardless of position in workout array
+  var nameHash = ex.n.split('').reduce(function(h,c){ return (h*31 + c.charCodeAt(0)) & 0xFFFFFF; }, 0);
+  var swSeed = nameHash * 9301;
   var hShuf=seededShuffle(homeOpts, swSeed);
   var gShuf=seededShuffle(gymOpts, swSeed+1);
   var noEqOpts=hShuf.filter(function(e){ return e.e==='No Equipment'||e.e==='Bodyweight'||e.e==='Bodyweight/Weight'; });
@@ -5232,7 +5242,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260635';
+  var deployVersion = 'v20260637';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5240,7 +5250,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260635 — sticky fixed + notif fixed + onboarding updated');
+    console.log('[MM] v20260637 — sticky inline fix + swap seed fix + transform phases');
   }
 
   // Audio debug — shows in browser console
@@ -6552,6 +6562,72 @@ function updateJPreview(){
 // PROGRESS PHOTOS
 var ppPhotos = [];
 
+
+function renderTransformPhases(){
+  var lv = S.user && S.user.level || 'some';
+  var total = S.total || 0;
+  var phaseThresh = 15;
+  var phaseIdx = Math.min(Math.floor(total / phaseThresh), 3);
+  var phases = PHASES[lv] || PHASES['some'];
+  var cur = phases[phaseIdx];
+  var next = phases[Math.min(phaseIdx+1, 3)];
+  var inPhase = total - (phaseIdx * phaseThresh);
+  var toNext = phaseThresh - inPhase;
+  var pct = Math.min(100, Math.round((inPhase / phaseThresh) * 100));
+  var isLast = phaseIdx >= 3;
+
+  // Current phase card
+  var card = document.getElementById('transform-phase-content');
+  if(card){
+    var html = '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">';
+    html += '<div style="font-size:32px;">'+cur.icon+'</div>';
+    html += '<div><div style="font-size:15px;font-weight:800;">'+cur.name+'</div>';
+    html += '<div style="font-size:11px;opacity:0.6;margin-top:2px;">'+cur.days+'</div></div></div>';
+    html += '<div style="font-size:11px;opacity:0.7;line-height:1.6;margin-bottom:14px;">'+cur.desc+'</div>';
+    if(!isLast){
+      html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">';
+      html += '<span style="font-size:11px;font-weight:800;">To Phase '+(phaseIdx+2)+'</span>';
+      html += '<span style="font-size:11px;opacity:0.6;">'+inPhase+' / 15 workouts</span></div>';
+      html += '<div style="background:rgba(255,255,255,0.15);border-radius:20px;height:8px;overflow:hidden;margin-bottom:6px;">';
+      html += '<div style="height:100%;background:#4BBFB5;border-radius:20px;width:'+pct+'%;"></div></div>';
+      html += '<div style="font-size:11px;color:#4BBFB5;font-weight:800;">'+toNext+' more workouts → '+next.icon+' '+next.name.split(' — ')[1]+'</div>';
+    } else {
+      html += '<div style="font-size:11px;color:#4BBFB5;font-weight:800;">🏆 Maximum level reached</div>';
+    }
+    card.innerHTML = html;
+  }
+
+  // Phase timeline
+  var tl = document.getElementById('transform-phase-timeline');
+  if(!tl) return;
+  var tlHtml = '<div style="font-size:11px;font-weight:800;color:#2C2C3A;margin-bottom:14px;">All Phases</div>';
+  phases.forEach(function(ph, i){
+    var done = i < phaseIdx;
+    var active = i === phaseIdx;
+    var upcoming = i > phaseIdx;
+    tlHtml += '<div style="display:flex;gap:12px;margin-bottom:'+(i<3?'14':'0')+'px;">';
+    // dot + line
+    tlHtml += '<div style="display:flex;flex-direction:column;align-items:center;">';
+    tlHtml += '<div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;';
+    if(done) tlHtml += 'background:#4BBFB5;">';
+    else if(active) tlHtml += 'background:linear-gradient(135deg,#4BBFB5,#8BB8A0);box-shadow:0 2px 8px rgba(75,191,181,0.4);">';
+    else tlHtml += 'background:#F0F0F5;">';
+    tlHtml += ph.icon+'</div>';
+    if(i<3) tlHtml += '<div style="width:2px;flex:1;min-height:14px;background:'+(done?'#4BBFB5':'#EDE8E3')+';margin-top:4px;"></div>';
+    tlHtml += '</div>';
+    // text
+    tlHtml += '<div style="flex:1;">';
+    tlHtml += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">';
+    tlHtml += '<span style="font-size:13px;font-weight:800;color:'+(upcoming?'#B0B0C0':'#2C2C3A')+';">'+ph.name+'</span>';
+    if(done) tlHtml += '<span style="font-size:9px;background:#E8F7F5;color:#4BBFB5;padding:2px 6px;border-radius:8px;font-weight:800;">DONE ✓</span>';
+    if(active) tlHtml += '<span style="font-size:9px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;padding:2px 8px;border-radius:8px;font-weight:800;">YOU ARE HERE</span>';
+    tlHtml += '</div>';
+    tlHtml += '<div style="font-size:10px;color:#B0B0C0;margin-bottom:3px;">Workouts '+(i*15+1)+'–'+((i+1)*15)+'</div>';
+    if(!upcoming) tlHtml += '<div style="font-size:11px;color:#7A7A8C;line-height:1.5;">'+ph.desc+'</div>';
+    tlHtml += '</div></div>';
+  });
+  tl.innerHTML = tlHtml;
+}
 function openProgress(){
   // Check 30-day reminder
   var lastPhoto = ppPhotos.length > 0 ? ppPhotos[ppPhotos.length-1] : null;
@@ -6566,6 +6642,7 @@ function openProgress(){
   }
   renderProgressGrid();
   goTo('progress-screen');
+  setTimeout(renderTransformPhases, 100);
 }
 
 function handleProgressPhoto(e){
@@ -7672,21 +7749,23 @@ function showStickyNote() {
   msgEl.textContent  = booster.msg;
   if(dateEl) dateEl.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 
-  // Clear any leftover inline style, then show via class only
-  popup.style.cssText = '';
-  popup.classList.add('show');
+  // Force show with inline style — most reliable across all mobile browsers
+  popup.style.display = 'flex';
+  popup.style.position = 'fixed';
+  popup.style.inset = '0';
+  popup.style.zIndex = '999999';
+  popup.style.alignItems = 'center';
+  popup.style.justifyContent = 'center';
+  popup.style.padding = '20px';
+  popup.style.background = 'rgba(0,0,0,0.5)';
   _stickyShown = true;
   localStorage.setItem('mm_sticky_date', today);
-  console.log('[STICKY] Shown. Class list:', popup.className);
+  console.log('[STICKY] Shown via inline style. display:', popup.style.display);
 }
 
 function closeStickyNote(){
   var popup = document.getElementById('sticky-popup');
-  if(popup){
-    popup.classList.remove('show');
-    // Do NOT set any inline display style — CSS class handles it cleanly
-    popup.style.removeProperty('display');
-  }
+  if(popup){ popup.style.display = 'none'; }
 }
 
 function getDailyBooster(){
@@ -8192,7 +8271,6 @@ window.addEventListener('DOMContentLoaded', function(){
   setTimeout(initCookieBanner, 2000);
 });
 </script>
-
 
 <!-- ── DAILY STICKY NOTE POPUP ─────────────────────────────── -->
 <div id="sticky-popup">
