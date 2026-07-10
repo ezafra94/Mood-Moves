@@ -835,9 +835,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260639');
+          return navigator.serviceWorker.register('/sw.js?v=20260640');
         }).then(function(reg) {
-          console.log('SW registered v20260639');
+          console.log('SW registered v20260640');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -859,8 +859,8 @@ function makeLottie(dataVar, size) {
                   clearInterval(waitForFn);
                   if (typeof _stickyShown !== 'undefined') _stickyShown = false;
                   showStickyNote();
-                } else if (tries > 20) {
-                  clearInterval(waitForFn); // give up after ~6s
+                } else if (tries > 60) {
+                  clearInterval(waitForFn); // give up after ~18s
                 }
               }, 300);
             }
@@ -1540,7 +1540,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
       <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260639</div>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260640</div>
   </div>
 </div>
 
@@ -3207,12 +3207,13 @@ function setupHome(){window.scrollTo(0,0);
   // ── Show sticky note — first open each day (or always if from notification)
   setTimeout(function(){
     // If opened via notification, always show regardless of date
-    if(window.location.search.includes('notify=1')){
+    if(window.location.search.includes('notify=1') || window._mmForceSticky){
       localStorage.removeItem('mm_sticky_date');
       _stickyShown = false;
+      window._mmForceSticky = false;
     }
     showStickyNote();
-  }, 1500);
+  }, 800);
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -5242,7 +5243,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260639';
+  var deployVersion = 'v20260640';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5250,7 +5251,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260639 — full progress screen + edge fn fix');
+    console.log('[MM] v20260640 — sticky notification tap fix');
   }
 
   // Audio debug — shows in browser console
@@ -7871,9 +7872,10 @@ var _stickyShown = false;
 
 function showStickyNote() {
   var today = new Date().toDateString();
-  console.log('[STICKY DEBUG] showStickyNote called. _stickyShown='+_stickyShown+' mm_sticky_date='+localStorage.getItem('mm_sticky_date')+' today='+today);
-  if (_stickyShown) { console.log('[STICKY DEBUG] Blocked: _stickyShown=true'); return; }
-  if (localStorage.getItem('mm_sticky_date') === today) { console.log('[STICKY DEBUG] Blocked: already shown today'); return; }
+  var forced = window._mmForceSticky === true;
+  if(forced) { window._mmForceSticky = false; _stickyShown = false; localStorage.removeItem('mm_sticky_date'); }
+  if (_stickyShown && !forced) return;
+  if (localStorage.getItem('mm_sticky_date') === today && !forced) return;
 
   var booster = getDailyBooster();
   var typeLabels = {
