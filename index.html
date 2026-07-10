@@ -52,7 +52,7 @@
 body{font-family:'Nunito',sans-serif;background:var(--cream);margin:0;padding:0;overflow-x:hidden;}
 .app{width:100%;max-width:430px;background:var(--cream);margin:0 auto;}
 .screen{display:none;}
-.screen.active{display:flex;flex-direction:column;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--cream);z-index:1;scrollbar-width:none;-ms-overflow-style:none;}
+.screen.active{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;margin:0 auto;width:100%;max-width:430px;height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--cream);z-index:1;scrollbar-width:none;-ms-overflow-style:none;}
 #auth.active{min-height:100vh;}
 
 /* LOGO SVG - inline, no image needed */
@@ -835,9 +835,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260642');
+          return navigator.serviceWorker.register('/sw.js?v=20260645');
         }).then(function(reg) {
-          console.log('SW registered v20260642');
+          console.log('SW registered v20260645');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1547,8 +1547,8 @@ else{setAllLogos();setAllAvatars();}
         <span onclick="document.getElementById('privacy-modal').style.display='flex'" style="font-size:10px;color:#B0B0C0;cursor:pointer;text-decoration:underline;">Privacy Policy</span>
       </div>
     </div>
-      <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260642</div>
+      
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260645</div>
   </div>
 </div>
 
@@ -5254,7 +5254,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260642';
+  var deployVersion = 'v20260645';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5262,7 +5262,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260642 — sticky 3-layer fix + mood moves plan');
+    console.log('[MM] v20260645 — all-split cards + life cards + doing-well cards');
   }
 
   // Audio debug — shows in browser console
@@ -6576,332 +6576,512 @@ var ppPhotos = [];
 
 
 function renderTransformPhases(){
-  var lv      = (S.user && S.user.level)    || 'some';
-  var goal    = (S.user && S.user.goal)     || 'feelgood';
-  var days    = (S.user && S.user.days)     || 3;
-  var loc     = (S.user && S.user.location) || 'both';
-  var total   = S.total || 0;
+  var lv      = (S.user&&S.user.level)||'some';
+  var goal    = (S.user&&S.user.goal)||'feelgood';
+  var days    = parseInt((S.user&&S.user.days)||3);
+  var loc     = (S.user&&S.user.location)||'both';
+  var total   = S.total||0;
   var thresh  = 15;
-  var phaseIdx = Math.min(Math.floor(total / thresh), 3);
-  var phases   = (PHASES && PHASES[lv]) || (PHASES && PHASES['some']) || [];
+  var phaseIdx= Math.min(Math.floor(total/thresh),3);
+  var phases  = (PHASES&&PHASES[lv])||(PHASES&&PHASES['some'])||[];
   if(!phases.length) return;
-  var cur      = phases[phaseIdx];
-  var next     = phases[Math.min(phaseIdx+1,3)];
-  var inPhase  = total - (phaseIdx * thresh);
-  var toNext   = thresh - inPhase;
-  var pct      = Math.min(100, Math.round((inPhase/thresh)*100));
-  var isLast   = phaseIdx >= 3;
+  var cur     = phases[phaseIdx];
+  var next    = phases[Math.min(phaseIdx+1,3)];
+  var inPhase = total-(phaseIdx*thresh);
+  var toNext  = thresh-inPhase;
+  var isLast  = phaseIdx>=3;
 
-  // History analysis
-  var history  = S.workoutHistory || [];
-  var moodCounts = {}, splitCounts = {};
+  var history = S.workoutHistory||[];
+  var moodCounts={},splitCounts={};
   history.forEach(function(w){
-    moodCounts[w.mood] = (moodCounts[w.mood]||0)+1;
-    var sp = w.splitLabel||'';
-    var cat = sp.includes('Push')?'Push':sp.includes('Pull')?'Pull':
-              sp.includes('Leg')||sp.includes('Glute')?'Legs':
-              sp.includes('Upper')?'Upper':'Full Body';
+    moodCounts[w.mood]=(moodCounts[w.mood]||0)+1;
+    var sp=w.splitLabel||'';
+    var cat=sp.includes('Push')?'Push':sp.includes('Pull')?'Pull':
+            sp.includes('Leg')||sp.includes('Glute')?'Legs':
+            sp.includes('Upper')?'Upper':'Full Body';
     splitCounts[cat]=(splitCounts[cat]||0)+1;
   });
-  var topMoodEntry = Object.entries(moodCounts).sort(function(a,b){return b[1]-a[1];})[0];
-  var topMood = topMoodEntry ? topMoodEntry[0] : null;
-  var streak  = S.streak || 0;
-  var journalCount = (S.journal||[]).length;
-  var photoCount = 0;
-  try{ photoCount = JSON.parse(localStorage.getItem('mm_photos')||'[]').length; }catch(e){}
 
-  var goalLabels = {muscle:'Build Muscle',feelgood:'Feel Good',losefat:'Lose Fat'};
-  var moodEmojis = {low:'😞',neutral:'😐',happy:'😊',angry:'😤',stressed:'😵'};
-  var moodColors = {low:'#4BBFB5',neutral:'#8BB8A0',happy:'#D4847C',angry:'#D4832A',stressed:'#8B75C4'};
-  var splitIcons = {Push:'➡️',Pull:'⬅️',Legs:'🦵','Full Body':'⚡',Upper:'💪'};
+  var lowCount=moodCounts['low']||0;
+  var stressCount=moodCounts['stressed']||0;
+  var happyCount=moodCounts['happy']||0;
+  var angryCount=moodCounts['angry']||0;
+  var neutralCount=moodCounts['neutral']||0;
+  var totalMoods=history.length;
+  var journalCount=(S.journal||[]).length;
+  var streak=S.streak||0;
+  var photoCount=0;
+  try{photoCount=JSON.parse(localStorage.getItem('mm_photos')||'[]').length;}catch(e){}
 
-  // Goal-specific logic
-  var goalNeeds = {
-    muscle: ['Progressive overload — add weight each phase','Compound movements every session (Squat, Deadlift, Press, Row)','3–5 sets per exercise in Phase 2+','Adequate rest between sets (2–3 min)','Consistent schedule — '+days+'x per week'],
-    feelgood: ['Showing up even on low-energy days','Variety across all mood types','Completing the Mood Move at the end','Journaling to track how movement shifts your mood','Building a streak — consistency matters more than intensity'],
-    losefat: ['Training on high-energy days (Happy, Angry) for max intensity','Including Leg Days — biggest calorie burn per session','Caloric awareness outside the app','Consistency over perfection — '+days+'x per week','Cardio finishers after strength work'],
-  };
-  var goalIssues = [];
-  var goalSolutions = [];
-  if(goal==='muscle'){
-    if((splitCounts['Legs']||0) < Math.max(1,(splitCounts['Push']||0)/2)){ goalIssues.push('Leg days are underrepresented'); goalSolutions.push('Add a Legs day — your biggest muscle groups drive the most growth and burn'); }
-    if(phaseIdx===0 && total>=8){ goalIssues.push('Still on Phase 1 after '+total+' workouts'); goalSolutions.push('You\'re nearly at Phase 2 ('+toNext+' more workouts) — heavier sets unlock there'); }
-    if(total < 4){ goalIssues.push('Not enough data yet — keep going'); goalSolutions.push('Complete 4+ workouts so we can analyze your patterns'); }
-  } else if(goal==='feelgood'){
-    if(!moodCounts['low'] && total>3){ goalIssues.push('No low-energy days logged yet'); goalSolutions.push('On tough days, open Mood Moves anyway \u2014 the low-energy workout is designed exactly for that'); }
-    if(journalCount < 2){ goalIssues.push('Journal is empty or barely used'); goalSolutions.push('Write one line after your next workout \u2014 "I felt ___." That is enough to start tracking patterns'); }
-    if(streak < 3){ goalIssues.push('Streak is '+streak+' days — consistency is your #1 tool'); goalSolutions.push('Schedule your next 3 workouts now. Consistency beats intensity every time'); }
-  } else if(goal==='losefat'){
-    var hiCount = (moodCounts['angry']||0)+(moodCounts['happy']||0);
-    if(hiCount===0 && total>3){ goalIssues.push('No high-intensity sessions logged'); goalSolutions.push('On your next Happy or Angry day, push harder — those sessions burn the most calories'); }
-    if(!(splitCounts['Legs'])){ goalIssues.push('No Leg Days completed yet'); goalSolutions.push('Add a Leg Day this week — squats and deadlifts elevate your metabolism for 24+ hours after'); }
-    if(total<5){ goalIssues.push('Frequency too low — aim for '+days+'x per week'); goalSolutions.push('Set a specific time for your next workout right now. The decision to show up is the hardest part'); }
+  // Rings data
+  var consistencyPct = days>0 ? Math.min(100,Math.round((Math.min(totalMoods,days)/days)*100)) : 0;
+  var phasePct = Math.min(100,Math.round((inPhase/thresh)*100));
+  var moodsUsed = Object.keys(moodCounts).length;
+  var moodVarietyPct = Math.min(100,Math.round((moodsUsed/5)*100));
+  var mmCount = history.filter(function(w){return w.moodMove;}).length;
+  var mmPct = totalMoods>0?Math.min(100,Math.round((mmCount/totalMoods)*100)):0;
+
+  var goalLabels={muscle:'Build Muscle',feelgood:'Feel Good',losefat:'Lose Fat'};
+  var moodEmojis={low:'😞',neutral:'😐',happy:'😊',angry:'😤',stressed:'😵'};
+  var moodColors={low:'#4BBFB5',neutral:'#8BB8A0',happy:'#D4847C',angry:'#D4832A',stressed:'#8B75C4'};
+
+  function ring(pct,color,r){
+    var circ=2*Math.PI*r;
+    var offset=circ-(pct/100)*circ;
+    return '<svg width="70" height="70" viewBox="0 0 70 70" style="transform:rotate(-90deg);">'+
+      '<circle cx="35" cy="35" r="'+r+'" fill="none" stroke="#EDE8E3" stroke-width="6"/>'+
+      '<circle cx="35" cy="35" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+circ.toFixed(1)+'" stroke-dashoffset="'+offset.toFixed(1)+'" style="transition:stroke-dashoffset 0.8s ease;"/>'+
+      '</svg>';
   }
 
-  var card = document.getElementById('transform-phase-card');
-  var tl   = document.getElementById('transform-phase-timeline');
+  var card=document.getElementById('transform-phase-card');
+  var tl=document.getElementById('transform-phase-timeline');
   if(!card||!tl) return;
 
-  // ── PHASE CARD ──────────────────────────────────────────────
-  var ch = '';
-  ch += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">';
-  ch += '<div style="font-size:40px;">'+cur.icon+'</div>';
-  ch += '<div><div style="font-size:18px;font-weight:800;letter-spacing:-0.3px;">'+cur.name+'</div>';
-  ch += '<div style="font-size:11px;opacity:0.55;margin-top:2px;">Workouts '+(phaseIdx*15+1)+'–'+((phaseIdx+1)*15)+'  ·  '+cur.days+'</div></div>';
-  ch += '</div>';
-  ch += '<div style="font-size:12px;opacity:0.75;line-height:1.75;margin-bottom:16px;">'+cur.desc+'</div>';
+  // ── CURRENT PHASE CARD ──
+  var ch='';
+  ch+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">';
+  ch+='<div style="font-size:38px;">'+cur.icon+'</div>';
+  ch+='<div><div style="font-size:17px;font-weight:800;letter-spacing:-0.3px;">'+cur.name+'</div>';
+  ch+='<div style="font-size:11px;opacity:0.55;margin-top:2px;">Workouts '+(phaseIdx*15+1)+'–'+((phaseIdx+1)*15)+'  ·  '+cur.days+'</div></div>';
+  ch+='</div>';
+  ch+='<div style="font-size:12px;opacity:0.75;line-height:1.7;margin-bottom:14px;">'+cur.desc+'</div>';
   if(!isLast){
-    ch += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">';
-    ch += '<span style="font-size:11px;font-weight:800;">Phase '+(phaseIdx+2)+' in '+toNext+' workouts</span>';
-    ch += '<span style="font-size:11px;opacity:0.5;">'+inPhase+' / '+thresh+'</span></div>';
-    ch += '<div style="background:rgba(255,255,255,0.15);border-radius:20px;height:10px;overflow:hidden;margin-bottom:10px;">';
-    ch += '<div style="height:100%;background:#4BBFB5;border-radius:20px;width:'+pct+'%;transition:width 0.6s;"></div></div>';
-    ch += '<div style="background:rgba(75,191,181,0.15);border-radius:12px;padding:11px 14px;">';
-    ch += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;margin-bottom:4px;">UNLOCKS IN PHASE '+(phaseIdx+2)+'</div>';
-    ch += '<div style="font-size:11px;opacity:0.8;line-height:1.6;">'+next.icon+' '+next.name+' — '+next.desc+'</div></div>';
+    ch+='<div style="display:flex;justify-content:space-between;margin-bottom:5px;">';
+    ch+='<span style="font-size:11px;font-weight:800;">Phase '+(phaseIdx+2)+' in '+toNext+' workouts</span>';
+    ch+='<span style="font-size:11px;opacity:0.5;">'+inPhase+' / '+thresh+'</span></div>';
+    ch+='<div style="background:rgba(255,255,255,0.15);border-radius:20px;height:8px;overflow:hidden;margin-bottom:10px;">';
+    ch+='<div style="height:100%;background:#4BBFB5;border-radius:20px;width:'+phasePct+'%;transition:width 0.6s;"></div></div>';
+    ch+='<div style="background:rgba(75,191,181,0.15);border-radius:12px;padding:10px 13px;">';
+    ch+='<div style="font-size:10px;font-weight:900;color:#4BBFB5;margin-bottom:3px;">UNLOCKS IN PHASE '+(phaseIdx+2)+'</div>';
+    ch+='<div style="font-size:11px;opacity:0.8;line-height:1.6;">'+next.icon+' '+next.name+' — '+next.desc+'</div></div>';
   } else {
-    ch += '<div style="background:rgba(255,215,0,0.15);border-radius:12px;padding:12px;border:1px solid rgba(255,215,0,0.3);">';
-    ch += '<div style="font-size:12px;font-weight:800;color:#FFD700;">🏆 Maximum Phase Reached</div>';
-    ch += '<div style="font-size:11px;opacity:0.7;margin-top:4px;line-height:1.6;">You are at peak training intensity. Focus on progressive overload — increase weight or reps each session.</div></div>';
+    ch+='<div style="background:rgba(255,215,0,0.15);border-radius:12px;padding:12px;">';
+    ch+='<div style="font-size:12px;font-weight:800;color:#FFD700;">Maximum Phase Reached</div>';
+    ch+='<div style="font-size:11px;opacity:0.7;margin-top:4px;line-height:1.6;">Focus on progressive overload — increase weight each session.</div></div>';
   }
-  card.innerHTML = ch;
+  card.innerHTML=ch;
 
-  // ── TIMELINE + EVERYTHING ELSE ──────────────────────────────
-  var html = '';
+  // ── BUILD MAIN TIMELINE DIV ──
+  var html='';
 
-  // Phase timeline
-  html += '<div style="margin-bottom:20px;">';
-  html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Phase Journey</div>';
+  // ── RINGS SECTION ──
+  html+='<div style="margin-bottom:22px;">';
+  html+='<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Your Progress at a Glance</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">';
+
+  // Ring 1: Phase progress
+  html+='<div style="background:#F8F8FA;border-radius:14px;padding:14px;text-align:center;" onclick="document.getElementById(\'phase-detail\').scrollIntoView({behavior:\'smooth\'});" style="cursor:pointer;">';
+  html+='<div style="position:relative;display:inline-block;">'+ring(phasePct,'#4BBFB5',28)+'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:800;color:#2C2C3A;">'+phasePct+'%</div></div>';
+  html+='<div style="font-size:12px;font-weight:800;color:#2C2C3A;margin-top:6px;">Phase progress</div>';
+  html+='<div style="font-size:11px;color:#7A7A8C;">'+inPhase+' of '+thresh+' done</div></div>';
+
+  // Ring 2: Weekly consistency
+  html+='<div style="background:#F8F8FA;border-radius:14px;padding:14px;text-align:center;">';
+  html+='<div style="position:relative;display:inline-block;">'+ring(consistencyPct,'#8B75C4',28)+'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:800;color:#2C2C3A;">'+consistencyPct+'%</div></div>';
+  html+='<div style="font-size:12px;font-weight:800;color:#2C2C3A;margin-top:6px;">Consistency</div>';
+  html+='<div style="font-size:11px;color:#7A7A8C;">'+Math.min(totalMoods,days)+' of '+days+' days</div></div>';
+
+  // Ring 3: Mood variety
+  html+='<div style="background:#F8F8FA;border-radius:14px;padding:14px;text-align:center;">';
+  html+='<div style="position:relative;display:inline-block;">'+ring(moodVarietyPct,'#D4832A',28)+'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:800;color:#2C2C3A;">'+moodsUsed+'/5</div></div>';
+  html+='<div style="font-size:12px;font-weight:800;color:#2C2C3A;margin-top:6px;">Mood variety</div>';
+  html+='<div style="font-size:11px;color:#7A7A8C;">moods trained</div></div>';
+
+  // Ring 4: Streak
+  var streakPct=Math.min(100,Math.round((streak/7)*100));
+  html+='<div style="background:#F8F8FA;border-radius:14px;padding:14px;text-align:center;">';
+  html+='<div style="position:relative;display:inline-block;">'+ring(streakPct,'#D4847C',28)+'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:800;color:#2C2C3A;">'+streak+'</div></div>';
+  html+='<div style="font-size:12px;font-weight:800;color:#2C2C3A;margin-top:6px;">Day streak</div>';
+  html+='<div style="font-size:11px;color:#7A7A8C;">best is 7</div></div>';
+
+  html+='</div></div>';
+
+  // ── PHASE TIMELINE ──
+  html+='<div id="phase-detail" style="margin-bottom:22px;">';
+  html+='<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Phase Journey</div>';
   phases.forEach(function(ph,i){
-    var done=i<phaseIdx, active=i===phaseIdx, up=i>phaseIdx;
-    html += '<div style="display:flex;gap:12px;margin-bottom:'+(i<3?'14':'0')+'px;">';
-    html += '<div style="display:flex;flex-direction:column;align-items:center;">';
-    html += '<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;';
-    if(done) html += 'background:#4BBFB5;">';
-    else if(active) html += 'background:linear-gradient(135deg,#4BBFB5,#8BB8A0);box-shadow:0 3px 10px rgba(75,191,181,0.4);">';
-    else html += 'background:#F0F0F5;">';
-    html += ph.icon+'</div>';
-    if(i<3) html += '<div style="width:2px;flex:1;min-height:12px;margin-top:4px;background:'+(done?'#4BBFB5':'#EDE8E3')+';"></div>';
-    html += '</div><div style="flex:1;padding-bottom:'+(i<3?'4':'0')+'px;">';
-    html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">';
-    html += '<span style="font-size:13px;font-weight:800;color:'+(up?'#C0C0C8':'#2C2C3A')+';">'+ph.name+'</span>';
-    if(done) html += '<span style="font-size:9px;background:#E8F7F5;color:#4BBFB5;padding:2px 7px;border-radius:8px;font-weight:800;">DONE ✓</span>';
-    if(active) html += '<span style="font-size:9px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;padding:2px 8px;border-radius:8px;font-weight:800;">YOU ARE HERE</span>';
-    html += '</div>';
-    html += '<div style="font-size:10px;color:#B0B0C0;margin-bottom:'+(up?'0':'4px')+';">Workouts '+(i*15+1)+'–'+((i+1)*15)+'</div>';
-    if(!up) html += '<div style="font-size:11px;color:#7A7A8C;line-height:1.55;">'+ph.desc+'</div>';
-    html += '</div></div>';
+    var done=i<phaseIdx,active=i===phaseIdx,up=i>phaseIdx;
+    var wkStart=i*15+1,wkEnd=(i+1)*15;
+    html+='<div style="display:flex;gap:12px;margin-bottom:'+(i<3?'14':'0')+'px;">';
+    html+='<div style="display:flex;flex-direction:column;align-items:center;">';
+    html+='<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;';
+    if(done) html+='background:#4BBFB5;">';
+    else if(active) html+='background:linear-gradient(135deg,#4BBFB5,#8BB8A0);box-shadow:0 3px 10px rgba(75,191,181,0.4);">';
+    else html+='background:#F0F0F5;">';
+    html+=ph.icon+'</div>';
+    if(i<3) html+='<div style="width:2px;flex:1;min-height:12px;margin-top:4px;background:'+(done?'#4BBFB5':'#EDE8E3')+'"></div>';
+    html+='</div>';
+    html+='<div style="flex:1;padding-bottom:4px;">';
+    html+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">';
+    html+='<span style="font-size:13px;font-weight:800;color:'+(up?'#B0B0C0':'#2C2C3A')+';">'+ph.name+'</span>';
+    if(done) html+='<span style="font-size:9px;background:#E8F7F5;color:#4BBFB5;padding:2px 7px;border-radius:8px;font-weight:800;">DONE</span>';
+    if(active) html+='<span style="font-size:9px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;padding:2px 8px;border-radius:8px;font-weight:800;">YOU ARE HERE</span>';
+    html+='</div>';
+    html+='<div style="font-size:10px;color:#B0B0C0;margin-bottom:'+(up?'0':'3px')+';">Workouts '+wkStart+'–'+wkEnd+'</div>';
+    if(!up) html+='<div style="font-size:11px;color:#7A7A8C;line-height:1.55;">'+ph.desc+'</div>';
+    html+='</div></div>';
   });
-  html += '</div>';
+  html+='</div>';
 
-  // Stats bar
-  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px;">';
-  html += '<div style="background:#F8F8FA;border-radius:14px;padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:#2C2C3A;">'+total+'</div><div style="font-size:10px;color:#7A7A8C;margin-top:2px;">Workouts</div></div>';
-  html += '<div style="background:#F8F8FA;border-radius:14px;padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:#4BBFB5;">'+streak+'</div><div style="font-size:10px;color:#7A7A8C;margin-top:2px;">Day streak</div></div>';
-  html += '<div style="background:#F8F8FA;border-radius:14px;padding:12px;text-align:center;"><div style="font-size:22px;font-weight:900;color:#8B75C4;">'+journalCount+'</div><div style="font-size:10px;color:#7A7A8C;margin-top:2px;">Journal entries</div></div>';
-  html += '</div>';
-
-  // Mood patterns
-  if(Object.keys(moodCounts).length > 0){
-    html += '<div style="margin-bottom:20px;">';
-    html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Mood Patterns ('+history.length+' workouts)</div>';
+  // ── MOOD PATTERNS ──
+  if(totalMoods>0){
+    html+='<div style="margin-bottom:22px;">';
+    html+='<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Mood Patterns</div>';
     Object.entries(moodCounts).sort(function(a,b){return b[1]-a[1];}).forEach(function(e){
-      var p = Math.round((e[1]/history.length)*100);
-      html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">';
-      html += '<span style="font-size:16px;width:22px;">'+moodEmojis[e[0]]+'</span>';
-      html += '<div style="flex:1;">';
-      html += '<div style="display:flex;justify-content:space-between;margin-bottom:3px;">';
-      html += '<span style="font-size:11px;font-weight:700;color:#2C2C3A;text-transform:capitalize;">'+e[0]+'</span>';
-      html += '<span style="font-size:11px;color:#7A7A8C;">'+e[1]+' sessions · '+p+'%</span></div>';
-      html += '<div style="background:#F0F0F5;border-radius:20px;height:7px;overflow:hidden;">';
-      html += '<div style="height:100%;border-radius:20px;width:'+p+'%;background:'+(moodColors[e[0]]||'#4BBFB5')+';"></div></div></div>';
-      html += '</div>';
+      var p=Math.round((e[1]/totalMoods)*100);
+      html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">';
+      html+='<span style="font-size:15px;width:22px;">'+moodEmojis[e[0]]+'</span>';
+      html+='<div style="flex:1;">';
+      html+='<div style="display:flex;justify-content:space-between;margin-bottom:3px;">';
+      html+='<span style="font-size:11px;font-weight:700;color:#2C2C3A;text-transform:capitalize;">'+e[0]+'</span>';
+      html+='<span style="font-size:11px;color:#7A7A8C;">'+e[1]+' sessions</span></div>';
+      html+='<div style="background:#F0F0F5;border-radius:20px;height:7px;overflow:hidden;">';
+      html+='<div style="height:100%;border-radius:20px;width:'+p+'%;background:'+(moodColors[e[0]]||'#4BBFB5')+';transition:width 0.6s;"></div></div></div></div>';
     });
-    if(topMood) html += '<div style="background:#E8F7F5;border-radius:12px;padding:10px 12px;margin-top:8px;font-size:11px;color:#2D9E94;line-height:1.6;"><strong>Your dominant mood:</strong> '+topMood+' '+moodEmojis[topMood]+' — your workouts are shaped around how you actually feel. That is exactly right.</div>';
-    html += '</div>';
+    html+='</div>';
   }
 
-  // Split breakdown
-  if(Object.keys(splitCounts).length > 0){
-    html += '<div style="margin-bottom:20px;">';
-    html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Split Breakdown</div>';
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-    Object.entries(splitCounts).sort(function(a,b){return b[1]-a[1];}).forEach(function(e){
-      html += '<div style="background:#F8F8FA;border-radius:12px;padding:12px;display:flex;align-items:center;gap:10px;">';
-      html += '<span style="font-size:20px;">'+(splitIcons[e[0]]||'💪')+'</span>';
-      html += '<div><div style="font-size:12px;font-weight:800;color:#2C2C3A;">'+e[0]+'</div>';
-      html += '<div style="font-size:11px;color:#7A7A8C;">'+e[1]+' sessions</div></div></div>';
+  // ── SPLIT BREAKDOWN (no emojis) ──
+  if(Object.keys(splitCounts).length>0){
+    html+='<div style="margin-bottom:22px;">';
+    html+='<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Split Breakdown</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+    var expectedSplits={3:['Full Body','Full Body','Full Body'],4:['Push','Legs','Pull','Full Body'],5:['Push','Legs','Pull','Legs','Upper']};
+    var expectedForDays=expectedSplits[days]||expectedSplits[3];
+    var expectedCounts={};
+    expectedForDays.forEach(function(s){expectedCounts[s]=(expectedCounts[s]||0)+1;});
+    var allSplits=Array.from(new Set(Object.keys(splitCounts).concat(Object.keys(expectedCounts))));
+    allSplits.forEach(function(s){
+      var actual=splitCounts[s]||0;
+      var expected=expectedCounts[s]||0;
+      var ok=actual>=expected*0.6;
+      html+='<div style="background:#F8F8FA;border-radius:12px;padding:12px;border-left:3px solid '+(ok?'#4BBFB5':'#F5A042')+';">';
+      html+='<div style="font-size:14px;font-weight:800;color:#2C2C3A;">'+actual+'</div>';
+      html+='<div style="font-size:12px;color:#5A5A6A;">'+s+'</div>';
+      if(expected>0) html+='<div style="font-size:10px;color:#7A7A8C;margin-top:2px;">expect ~'+expected+'/week</div>';
+      html+='</div>';
     });
-    html += '</div></div>';
+    html+='</div></div>';
   }
 
-  // Goal analysis
-  html += '<div style="margin-bottom:20px;">';
-  html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Goal: '+goalLabels[goal]+'</div>';
-  html += '<div style="font-size:11px;font-weight:800;color:#2C2C3A;margin-bottom:8px;">What this goal requires</div>';
-  (goalNeeds[goal]||[]).forEach(function(n){
-    html += '<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:7px;">';
-    html += '<span style="color:#4BBFB5;font-weight:900;margin-top:1px;">✓</span>';
-    html += '<span style="font-size:12px;color:#5A5A6A;line-height:1.6;">'+n+'</span></div>';
+  // ── ACTION CARDS — data-driven, covers every person's pattern ──
+  var html_cards = '';
+  html_cards += '<div style="margin-bottom:22px;">';
+  html_cards += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">Your Progress Cards</div>';
+
+  var cards = [];
+
+  // ── 1. SPLIT IMBALANCE: check EVERY split, not just legs ──
+  if(totalMoods >= 4){
+    var expectedSplitMap = {
+      3: {'Full Body': 3},
+      4: {'Push':1,'Legs':1,'Pull':1,'Full Body':1},
+      5: {'Push':1,'Legs':2,'Pull':1,'Upper':1}
+    };
+    var expected = expectedSplitMap[days] || {'Full Body':days};
+    // Find the most underrepresented split
+    var worstSplit = null, worstRatio = 1;
+    Object.keys(expected).forEach(function(sp){
+      var exp = expected[sp];
+      var got = splitCounts[sp] || 0;
+      var ratio = got / (exp * Math.max(1, Math.floor(totalMoods/days)));
+      if(ratio < worstRatio){ worstRatio = ratio; worstSplit = sp; }
+    });
+    if(worstSplit && worstRatio < 0.6){
+      var splitInfo = {
+        'Legs':   {icon:'🦵', why:"Legs contain 60%+ of your muscle mass. More leg work drives testosterone, growth hormone, and higher resting metabolism.", fn:"genWk('neutral')"},
+        'Push':   {icon:'💪', why:"Pushing muscles (chest, shoulders, triceps) respond fast to consistent training. Imbalance here shows up in posture and upper body strength.", fn:"genWk('neutral')"},
+        'Pull':   {icon:'🔙', why:"Pulling muscles (lats, rhomboids, biceps) are your posture muscles. Most people under-train these relative to pushing.", fn:"genWk('neutral')"},
+        'Upper':  {icon:'⬆️', why:"Upper body sessions that combine push and pull give you balanced shoulder health and strength.", fn:"genWk('neutral')"},
+        'Full Body': {icon:'⚡', why:"Full body sessions hit every muscle group and maximize calorie burn per session.", fn:"genWk('neutral')"}
+      };
+      var si = splitInfo[worstSplit] || {icon:'💪', why:'Balanced training across all split days gives you the best overall progress.', fn:"genWk('neutral')"};
+      var gotCount = splitCounts[worstSplit] || 0;
+      var expCount = expected[worstSplit] || 1;
+      cards.push({
+        icon: si.icon, color:'#8B75C4', bg:'#F0EDFF',
+        title: worstSplit+' days are being skipped',
+        body: 'You have done '+gotCount+' '+worstSplit+' session'+(gotCount!==1?'s':'')+' but your '+days+'-day split needs about '+expCount+' per week. Imbalance here slows overall progress.',
+        learn: 'Why '+worstSplit+' matters',
+        learnFn: "showT('"+si.why+"')",
+        action: 'Do a '+worstSplit+' workout now',
+        actionFn: si.fn
+      });
+    }
+  }
+
+  // ── 2. PHASE ADVANCEMENT ──
+  if(!isLast){
+    cards.push({
+      icon: cur.icon, color:'#4BBFB5', bg:'#E8F7F5',
+      title: 'Phase '+(phaseIdx+1)+': '+toNext+' workouts to Phase '+(phaseIdx+2),
+      body: next.icon+' Phase '+(phaseIdx+2)+': '+next.name.split(' — ')[1]+'. '+next.desc+' Every workout you do right now is moving you there.',
+      learn: 'How phases build on each other',
+      learnFn: "showT('Each phase adds progressive overload — more sets, different rep ranges. Your body adapts every 3-4 weeks and needs new stimulus to keep growing. Phases make that automatic.')",
+      action: 'Log a workout now',
+      actionFn: "genWk(S.currentMood||'neutral')"
+    });
+  }
+
+  // ── 3. PHOTO MILESTONE ──
+  var photoLabels = ['starting point','after Phase 1','after Phase 2','after Phase 3'];
+  var nextLabel = photoLabels[Math.min(phaseIdx, 3)];
+  cards.push({
+    icon:'📸', color:'#E8832A', bg:'#FEF3E8',
+    title: 'Add your '+nextLabel+' photo',
+    body: 'Phase transitions are the best time to capture progress. Results are also emotional — feeling proud of Phase 1 is a result. Same pose, same lighting, every phase.',
+    learn: 'Why photo timing matters',
+    learnFn: "showT('Capturing at phase transitions gives you comparable reference points. The compounding effect becomes visible when you compare Phase 1 vs Phase 4 side by side. Most people are shocked at what consistent showing up looks like.')",
+    action: 'Add photo now',
+    actionFn: "goTo('progress-screen');setTimeout(function(){var b=document.getElementById('ph-btn');if(b)b.click();},300);"
   });
 
-  if(goalIssues.length > 0){
-    html += '<div style="margin-top:14px;">';
-    html += '<div style="font-size:11px;font-weight:800;color:#E8832A;margin-bottom:8px;">⚡ Where you are falling behind</div>';
-    goalIssues.forEach(function(issue, i){
-      html += '<div style="background:linear-gradient(135deg,#FEF3E8,#FAF8F5);border-radius:14px;padding:14px;margin-bottom:8px;border-left:3px solid #F5A042;">';
-      html += '<div style="font-size:12px;font-weight:800;color:#2C2C3A;margin-bottom:5px;">'+issue+'</div>';
-      if(goalSolutions[i]) html += '<div style="font-size:11px;color:#7A7A8C;line-height:1.6;"><strong style="color:#4BBFB5;">Fix:</strong> '+goalSolutions[i]+'</div>';
-      html += '</div>';
+  // ── 4. CONSISTENCY (any underperformance) ──
+  if(consistencyPct < 70 && days > 0 && totalMoods >= 2){
+    cards.push({
+      icon:'📅', color:'#4BBFB5', bg:'#E8F7F5',
+      title: 'Showing up '+Math.min(totalMoods,days)+' of '+days+' days',
+      body: 'One extra session per week adds up to 52 extra workouts per year — equivalent to 3 extra months of training. On the days you almost skip, try Rest Day mode or a Low Energy workout. Both count.',
+      learn: 'The compound effect of consistency',
+      learnFn: "showT('Research shows 3 consistent workouts beats 5 inconsistent ones. Your body adapts to routine. The single biggest predictor of long-term results is showing up regularly — not intensity, not perfect nutrition.')",
+      action: 'Try a low-energy day workout',
+      actionFn: "genWk('low')"
     });
-    html += '</div>';
-  } else if(total > 0){
-    html += '<div style="margin-top:12px;background:#E8F7F5;border-radius:12px;padding:12px;">';
-    html += '<div style="font-size:12px;font-weight:800;color:#2D9E94;">✅ You are on track</div>';
-    html += '<div style="font-size:11px;color:#5A5A6A;margin-top:4px;line-height:1.6;">Keep showing up. The results compound every session.</div></div>';
-  }
-  html += '</div>';
-
-  // Next steps
-  var steps = [];
-  if(total===0) steps.push({t:'Complete your first workout',d:'Pick your mood and go. The first one is the most important.'});
-  else {
-    if(!isLast) steps.push({t:'Reach Phase '+(phaseIdx+2)+' — '+toNext+' workouts away',d:next.icon+' '+next.name+': '+next.desc});
-    if(streak < 3) steps.push({t:'Build a 3-day streak',d:'Schedule your next '+Math.max(1,3-streak)+' workout'+(3-streak===1?'':'s')+' right now — put them in your calendar.'});
-    if(journalCount===0) steps.push({t:'Write your first journal entry',d:'After your next workout, write one line: "I felt ___." That is it.'});
-    if(photoCount===0) steps.push({t:'Add a starting photo',d:'Take one today. You will want this reference point in 8 weeks.'});
-    if(goalIssues.length>0) steps.push({t:'Address your #1 gap',d:goalSolutions[0]||'See the goal analysis above.'});
-    if(steps.length===0) steps.push({t:'Keep going — you are doing great',d:'Every workout compounds. You are building something real.'});
   }
 
-  html += '<div style="background:linear-gradient(135deg,#E8F7F5,#F0EDFF);border-radius:18px;padding:18px;border:1px solid rgba(75,191,181,0.25);">';
-  html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Your Next Steps</div>';
-  steps.forEach(function(s,i){
-    html += '<div style="display:flex;gap:12px;margin-bottom:'+(i<steps.length-1?'12':'0')+'px;align-items:flex-start;">';
-    html += '<div style="width:24px;height:24px;border-radius:50%;background:#4BBFB5;color:white;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">'+(i+1)+'</div>';
-    html += '<div><div style="font-size:12px;font-weight:800;color:#2C2C3A;margin-bottom:3px;">'+s.t+'</div>';
-    html += '<div style="font-size:11px;color:#7A7A8C;line-height:1.55;">'+s.d+'</div></div></div>';
-  });
-  html += '</div>';
+  // ── 5. LOW MOOD / STRESS SUPPORT ──
+  if(lowCount >= 2 || stressCount >= 2){
+    var hardMoods = lowCount + stressCount;
+    var dominant = lowCount > stressCount ? 'Low Energy' : 'Stressed';
+    cards.push({
+      icon:'🫁', color:'#8B75C4', bg:'#F0EDFF',
+      title: 'You train through tough moods',
+      body: 'You have shown up '+hardMoods+' times feeling '+dominant+'. That takes real strength. Your Mood Move on these days is doing real neurochemical work — not just a stretch.',
+      learn: 'What happens in your brain on hard days',
+      learnFn: "showT('Low-energy and stressed workouts activate your parasympathetic system. The breathing Mood Move triggers the vagus nerve, reducing cortisol within 20 minutes. You are literally training your nervous system, not just your muscles.')",
+      action: dominant === 'Stressed' ? 'Try a breathing Mood Move' : 'Do a gentle workout now',
+      actionFn: dominant === 'Stressed' ? "genWk('stressed')" : "genWk('low')"
+    });
+  }
 
-  // ── MOOD MOVES PLAN ─────────────────────────────────────────
-  html += '<div style="margin-top:20px;">';
-  html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Your Mood Moves Plan</div>';
+  // ── 6. JOURNAL HABIT ──
+  if(journalCount < 3){
+    cards.push({
+      icon:'📓', color:'#8BB8A0', bg:'#F0F8F5',
+      title: journalCount === 0 ? 'Start tracking your mind' : 'Keep journaling — you are just starting',
+      body: journalCount === 0
+        ? 'One line after a workout is enough. How do you feel now vs before? Over 4 weeks, patterns appear — most people are surprised by how much movement shifts their mood.'
+        : 'You have '+journalCount+' '+(journalCount===1?'entry':'entries')+'. People who journal after workouts stick to routines 40% longer. Keep going.',
+      learn: 'Why journaling accelerates results',
+      learnFn: "showT('Writing after workouts creates a feedback loop. You notice what works, what drains you, what lifts you. Your journal captures what no fitness tracker can — the emotional data. Over time it becomes your most valuable training tool.')",
+      action: 'Write a journal entry now',
+      actionFn: "openJournal()"
+    });
+  }
 
-  // Analyze patterns and build personalized interventions
-  var lowCount = moodCounts['low'] || 0;
-  var stressCount = moodCounts['stressed'] || 0;
-  var happyCount = moodCounts['happy'] || 0;
-  var angryCount = moodCounts['angry'] || 0;
-  var neutralCount = moodCounts['neutral'] || 0;
-  var totalMoods = history.length;
-  var lowPct = totalMoods > 0 ? Math.round((lowCount/totalMoods)*100) : 0;
-  var stressPct = totalMoods > 0 ? Math.round((stressCount/totalMoods)*100) : 0;
+  // ── 7. STREAK ──
+  if(streak < 3){
+    cards.push({
+      icon:'🔥', color:'#D4832A', bg:'#FEF3E8',
+      title: streak === 0 ? 'Start your first streak today' : 'Keep going — '+streak+' day streak',
+      body: 'The 3-day threshold is where the habit starts to feel automatic. Dopamine kicks in and the workout starts to feel like something you want, not something you have to do.',
+      learn: 'The science of habit loops',
+      learnFn: "showT('After 3 consecutive days, the brain begins associating the behavior with a dopamine reward. This is the beginning of a habit loop. The first 3 days are the hardest — after that, the urge to maintain the streak does part of the motivating for you.')",
+      action: 'Do a workout now',
+      actionFn: "genWk(S.currentMood||'neutral')"
+    });
+  }
 
-  // Build interventions based on actual patterns
-  var interventions = [];
-
-  if(totalMoods === 0){
-    interventions.push({
+  // ── 8. GOAL-SPECIFIC CARD ──
+  var goalCards = {
+    muscle: {
+      icon:'💪', color:'#D4832A', bg:'#FEF3E8',
+      title: 'Muscle goal: progressive overload is everything',
+      body: 'The single driver of muscle growth is progressive overload — a bit more weight or one more rep each session. Log your weights on each exercise card and chase that number next time.',
+      learn: 'How muscle actually grows',
+      learnFn: "showT('Muscle grows through mechanical tension — your muscles must face a challenge they have not adapted to yet. Without progressive overload, your body has no reason to build new tissue. Logging weights is what makes overload trackable and intentional.')",
+      action: 'Log a strength workout',
+      actionFn: "genWk(S.currentMood||'neutral')"
+    },
+    losefat: {
+      icon:'⚡', color:'#D4847C', bg:'#FEF0EF',
+      title: 'Fat loss: intensity days are your superpower',
+      body: 'On Happy or Angry mood days, push harder — high-intensity sessions create an afterburn effect that keeps your metabolism elevated for up to 24 hours after. These sessions do double the work.',
+      learn: 'The afterburn effect explained',
+      learnFn: "showT('EPOC (excess post-exercise oxygen consumption) means your metabolism stays elevated after intense workouts. A 45-minute high-intensity session can burn an extra 150-200 calories in the 24 hours after — on top of what you burned during. This is why mood-matched intensity matters for fat loss specifically.')",
+      action: 'Start a high-intensity workout',
+      actionFn: "genWk('angry')"
+    },
+    feelgood: {
       icon:'🌊', color:'#4BBFB5', bg:'#E8F7F5',
-      title:'Start your Mood Moves journey',
-      body:'Every workout ends with a Mood Move — a short exercise matched to your emotional state. HIIT when angry, breathing when stressed, gentle flow when low. Tap the workout button and pick your first mood.',
-      action:'Start First Workout', fn:"genWk(S.currentMood||'neutral')"
+      title: 'Feel good: mood variety builds resilience',
+      body: 'You have trained across '+moodsUsed+' of 5 moods. Training on low-energy days is especially powerful — it proves to your brain that movement helps even when everything feels hard. That belief is the goal.',
+      learn: 'Movement as mood medicine',
+      learnFn: "showT('Exercise releases BDNF — brain-derived neurotrophic factor — literally the molecule that makes your brain more adaptable. Consistent movement across different emotional states teaches your nervous system that it can handle stress. This is the neurological foundation of emotional resilience.')",
+      action: 'Train a new mood today',
+      actionFn: "goTo('moodpicker')"
+    }
+  };
+  if(goalCards[goal]) cards.push(goalCards[goal]);
+
+  // ── 9. MOOD MOVE SIGNATURE (after enough data) ──
+  if(totalMoods >= 5){
+    var inferredTypes = {};
+    history.forEach(function(w){
+      var t = w.moodMoveType || (w.mood==='angry'||w.mood==='happy'?'hiit':w.mood==='stressed'?'breathing':'flow');
+      inferredTypes[t] = (inferredTypes[t]||0)+1;
     });
-  } else {
-    // Consistently low mood
-    if(lowPct >= 30){
-      interventions.push({
-        icon:'🫁', color:'#8B75C4', bg:'#F0EDFF',
-        title:'Your go-to: Breathing Mood Moves',
-        body:'You train low-energy often (' + lowPct + '% of sessions). Your Mood Move for these days is Box Breathing — 4 counts in, hold 4, out 4, hold 4. Research shows 5 minutes of this activates your parasympathetic system and shifts cortisol within 20 minutes. Next low day: let the breathing Mood Move be the one thing you do.',
-        action:null
+    var topType = Object.entries(inferredTypes).sort(function(a,b){return b[1]-a[1];})[0];
+    var typeDescs = {
+      hiit: {label:'HIIT', desc:'You burn through intensity. You process emotion through exertion — using physical release to reset your mental state. Your strength is turning emotional energy into power.'},
+      breathing: {label:'Breathing', desc:'You regulate from the inside out. You use breath to calm your nervous system before it spirals. Your strength is self-awareness and the ability to pause.'},
+      flow: {label:'Flow', desc:'You restore through gentle movement. You give your body permission to recover while staying active. Your strength is listening to yourself.'},
+      dance: {label:'Dance', desc:'You shift energy through joy. You know that sometimes the best medicine is movement without rules. Your strength is lightness.'}
+    };
+    if(topType){
+      var td = typeDescs[topType[0]] || {label: topType[0], desc:'Your Mood Move pattern reveals how you naturally regulate emotions through movement.'};
+      cards.push({
+        icon:'💫', color:'#8B75C4', bg:'#F0EDFF',
+        title: 'Your Mood Move signature: '+td.label,
+        body: td.desc+' ('+topType[1]+' of '+totalMoods+' sessions)',
+        learn: 'Build a fuller emotional toolkit',
+        learnFn: "showT('Your signature Mood Move is not a limitation — it is your default regulation strategy. Over time, try varying your Mood Moves to build access to all four tools: HIIT for release, breathing for calm, flow for restoration, dance for joy. Each targets different neurochemical pathways.')",
+        action: 'Try a different Mood Move type',
+        actionFn: topType[0]==='hiit' ? "genWk('stressed')" : topType[0]==='breathing' ? "genWk('angry')" : "genWk('happy')"
       });
     }
+  }
 
-    // High stress
-    if(stressPct >= 25){
-      interventions.push({
-        icon:'⚡', color:'#D4832A', bg:'#FEF3E8',
-        title:'Stressed days need movement the most',
-        body:'Stressed shows up in ' + stressPct + '% of your sessions. This is actually valuable data — it means you are showing up even when life is hard. Your Mood Move on these days is 4-minute HIIT. Cortisol needs to burn somewhere — let the Mood Move be that outlet. Even 4 minutes changes your neurochemistry.',
-        action:null
-      });
-    }
+  // ── 10. REST DAY AWARENESS ──
+  cards.push({
+    icon:'🛡️', color:'#4BBFB5', bg:'#E8F7F5',
+    title: 'Rest days are part of the plan',
+    body: 'Muscle grows during recovery, not during the workout. On days you almost skip: Rest Day mode gives you 10 minutes of active recovery matched to your mood. Or choose a Low Energy workout — gentle counts too.',
+    learn: 'Why recovery builds muscle',
+    learnFn: "showT('Muscle protein synthesis peaks 24-48 hours AFTER a workout, not during it. Rest days are when the growth actually happens. Active recovery accelerates this by increasing blood flow to muscles without creating new breakdown stress.')",
+    action: 'Try Rest Day mode',
+    actionFn: "goToRD()"
+  });
 
-    // Low consistency / missed workouts
-    if(total < days * 2 && total > 0){
-      interventions.push({
-        icon:'🛡️', color:'#4BBFB5', bg:'#E8F7F5',
-        title:'On days you almost skip: use Rest Day mode',
-        body:'Missing sessions is not failure — it is information. When showing up for a full workout feels impossible, open Mood Moves and tap Rest Day instead. You get a 10-minute active recovery flow matched to your mood. Same endorphins, half the barrier. Tap it even once this week.',
-        action:'Try Rest Day Mode', fn:"goToRD()"
-      });
-    }
+  // ── BONUS CARDS: "Doing well" extras — show when conditions are good ──
+  // These appear when someone is ON TRACK and needs inspiration, not fixes
 
-    // Dominant low or neutral — recommend journaling
-    if((lowCount + neutralCount) > (happyCount + angryCount) && journalCount < 3){
-      interventions.push({
-        icon:'📓', color:'#8BB8A0', bg:'#F0F8F5',
-        title:'Journal your Mood Move moments',
-        body:'After your next Mood Move, write one sentence about how you felt before vs after. Over 4 weeks, patterns emerge — most people discover their mood shifts 15-30% after even a short Mood Move. Your journal is the tool that makes this visible.',
-        action:'Open Journal', fn:"openJournal()"
-      });
-    }
-
-    // Lots of angry/happy — high intensity recommendation
-    if((happyCount + angryCount) >= Math.floor(totalMoods * 0.4)){
-      interventions.push({
-        icon:'🔥', color:'#D4847C', bg:'#FEF0EF',
-        title:'High-energy days: max out your Mood Move',
-        body:'You have strong energy ' + Math.round(((happyCount+angryCount)/totalMoods)*100) + '% of the time. On these days your Mood Move generates the highest physiological response. Push through the full HIIT round — these sessions are doing double work: fitness AND emotional regulation.',
-        action:null
-      });
-    }
-
-    // Phase-specific Mood Move suggestion
-    if(phaseIdx === 0){
-      interventions.push({
-        icon:'🌱', color:'#4BBFB5', bg:'#E8F7F5',
-        title:'Phase 1 focus: build the Mood Moves habit',
-        body:'In Phase 1, the most important thing is not the weight — it is the ritual. Every workout ends with a Mood Move. Every time. This is what builds the mind-body connection that makes Mood Moves different from any other fitness app. ' + toNext + ' more workouts and you reach Phase 2.',
-        action:null
-      });
-    } else if(phaseIdx >= 2){
-      interventions.push({
-        icon:'🏆', color:'#E8832A', bg:'#FEF3E8',
-        title:'Advanced Mood Moves: stack the habit',
-        body:'You are in Phase ' + (phaseIdx+1) + '. Advanced users get the most from Mood Moves when they also use the rest day and journal features between sessions. The compound effect: workout + Mood Move + journal entry = 3x the emotional regulation benefit per session.',
-        action:null
-      });
-    }
-
-    // Always add general awareness card
-    interventions.push({
-      icon:'💫', color:'#4BBFB5', bg:'#E8F7F5',
-      title:'What your Mood Move is actually doing',
-      body:'Every Mood Move is calibrated to your emotional state: Low energy → gentle flow + breathing → activates serotonin. Stressed → 4-min HIIT → burns cortisol, releases endorphins. Angry → explosive movement → processes fight-or-flight safely. Happy → dance or mobility → amplifies positive neurochemistry. The 5-10 minutes after your workout is the highest ROI window for mood shift.',
-      action:null
+  // Doing well on consistency → give them a challenge
+  if(consistencyPct >= 80 && totalMoods >= 5){
+    cards.push({
+      icon:'🏆', color:'#E8832A', bg:'#FEF3E8',
+      title: 'Challenge: hit your first 7-day streak',
+      body: 'Your consistency is solid at '+consistencyPct+'%. The next level is a 7-workout streak. It rewires how your brain thinks about working out — from "I should" to "I do."',
+      learn: 'What a 7-day streak does to your brain',
+      learnFn: "showT('After 7 consecutive days, neuroimaging studies show increased activity in the basal ganglia — the brain region responsible for automatic behaviors. Your workout stops being a decision and becomes a default. That is the identity shift that changes everything.')",
+      action: 'Log workout '+streak+' of 7',
+      actionFn: "genWk(S.currentMood||'neutral')"
     });
   }
 
-  interventions.forEach(function(iv){
-    html += '<div style="background:' + iv.bg + ';border-radius:16px;padding:16px;margin-bottom:12px;border-left:3px solid ' + iv.color + ';">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
-    html += '<span style="font-size:20px;">' + iv.icon + '</span>';
-    html += '<span style="font-size:13px;font-weight:800;color:#2C2C3A;">' + iv.title + '</span>';
-    html += '</div>';
-    html += '<div style="font-size:12px;color:#5A5A6A;line-height:1.7;">' + iv.body + '</div>';
-    if(iv.action && iv.fn){
-      var bs='margin-top:10px;padding:9px 16px;background:'+iv.color+';color:white;border:none;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;';
-      html += '<button onclick="'+iv.fn+'" style="'+bs+'">'+iv.action+' →</button>';
-    }
-    html += '</div>';
+  // Good mood variety → suggest exploring rest day
+  if(moodsUsed >= 4 && totalMoods >= 8){
+    cards.push({
+      icon:'🌱', color:'#8BB8A0', bg:'#F0F8F5',
+      title: 'Explore: active recovery days',
+      body: 'You have trained across '+moodsUsed+' moods and built solid variety. The next layer is intentional recovery — not rest from laziness but strategic rest that accelerates your next session.',
+      learn: 'Active vs passive recovery',
+      learnFn: "showT('Active recovery (light movement, stretching, breathwork) increases blood flow to muscles without creating new stress, speeding protein synthesis. Studies show it reduces DOMS (delayed onset muscle soreness) by 30-40% and improves performance in the next session.')",
+      action: 'Try a Rest Day session',
+      actionFn: "goToRD()"
+    });
+  }
+
+  // Phase mastery card — when well into a phase
+  if(inPhase >= 10 && !isLast){
+    cards.push({
+      icon:'⚡', color:'#4BBFB5', bg:'#E8F7F5',
+      title: 'Almost there: '+toNext+' workouts to Phase '+(phaseIdx+2),
+      body: 'You are in the final stretch of Phase '+(phaseIdx+1)+'. This is where most people either push through or stall. You have done the hard part — finishing phase gives you access to higher intensity programming.',
+      learn: 'Why finishing a phase matters',
+      learnFn: "showT('Completing a full phase (all 15 workouts) gives your body the full adaptation cycle it needs before increasing load. Jumping phases early skips the neurological adaptation — the strength you built in Phase 1 becomes the foundation for Phase 2 gains.')",
+      action: 'Finish Phase '+(phaseIdx+1)+' now',
+      actionFn: "genWk(S.currentMood||'neutral')"
+    });
+  }
+
+  // Strong journal habit → suggest reviewing patterns
+  if(journalCount >= 5){
+    cards.push({
+      icon:'📓', color:'#8BB8A0', bg:'#F0F8F5',
+      title: 'Your journal has '+journalCount+' entries — read your patterns',
+      body: 'With '+journalCount+' entries you have enough data to start seeing patterns. Which moods gave you the best workouts? Which days were hardest? Your journal knows.',
+      learn: 'How to use your journal data',
+      learnFn: "showT('Look for correlations: which mood led to your strongest sessions? Which entries mention feeling great afterward even when you felt low before? These patterns are your personal training manual — more valuable than any generic fitness advice.')",
+      action: 'Read your journal',
+      actionFn: "openJournal()"
+    });
+  }
+
+  // Life card: sleep reminder (always shown, contextual body)
+  var sleepBody = totalMoods > 0 && (lowCount/Math.max(1,totalMoods)) > 0.4
+    ? 'You log low energy often ('+Math.round(lowCount/totalMoods*100)+'% of sessions). Sleep is the most powerful performance tool you have — it affects strength, mood, recovery, and fat loss more than any supplement.'
+    : 'Sleep is the most underrated fitness tool. 7-9 hours increases muscle synthesis by 60%, improves mood the next day, and makes every workout more effective.';
+  cards.push({
+    icon:'😴', color:'#8B75C4', bg:'#F0EDFF',
+    title: 'Sleep is your secret performance tool',
+    body: sleepBody,
+    learn: 'What sleep does for your results',
+    learnFn: "showT('During deep sleep your body releases 70% of its daily growth hormone — the primary driver of muscle repair and fat burning. One night of poor sleep reduces strength by 10-20% and increases cortisol by 37%. No workout can undo bad sleep habits.')",
+    action: null, actionFn: null
   });
 
-  html += '</div>';
-  tl.innerHTML = html;
+  // Life card: hydration (always shown)
+  cards.push({
+    icon:'💧', color:'#4BBFB5', bg:'#E8F7F5',
+    title: 'Hydration changes your workout quality',
+    body: 'Even mild dehydration (1-2%) reduces strength by up to 10% and cognitive function by 20%. Drink 500ml before your workout and keep water nearby. It is one of the highest-leverage habits.',
+    learn: 'The science of hydration and performance',
+    learnFn: "showT('Muscle is 79% water. Dehydration thickens blood, reducing oxygen delivery to muscles. Studies show 1-2% body weight loss through sweat causes measurable drops in strength, endurance, and reaction time. Most people train dehydrated without knowing it.')",
+    action: null, actionFn: null
+  });
+
+  // Life card: mindset (shown when doing well OR always as anchor)
+  if(totalMoods === 0){
+    cards.push({
+      icon:'🧠', color:'#4BBFB5', bg:'#E8F7F5',
+      title: 'The most important rep is the first one',
+      body: 'Getting to the workout is 80% of the effort. Research shows that 9 out of 10 people feel better after exercise than they expected to when they started. The hard part is just beginning.',
+      learn: 'Why starting is the hardest part',
+      learnFn: "showT('Studies on exercise motivation consistently find that people dramatically underestimate how good they will feel after a workout. The brain anticipates effort and generates resistance — but the actual experience of movement almost always overrides that resistance. Your only job is to start.')",
+      action: 'Do your first workout now',
+      actionFn: "genWk('neutral')"
+    });
+  }
+
+  // Render all cards
+  cards.forEach(function(c){
+    html_cards += '<div style="background:'+c.bg+';border-radius:16px;padding:16px;margin-bottom:12px;border-left:3px solid '+c.color+';">';
+    html_cards += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;">';
+    html_cards += '<span style="font-size:22px;flex-shrink:0;">'+c.icon+'</span>';
+    html_cards += '<div style="font-size:13px;font-weight:800;color:#2C2C3A;line-height:1.4;">'+c.title+'</div>';
+    html_cards += '</div>';
+    html_cards += '<div style="font-size:12px;color:#5A5A6A;line-height:1.7;margin-bottom:12px;">'+c.body+'</div>';
+    if(c.learn || c.action){
+      html_cards += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+      if(c.learn){
+        html_cards += '<button onclick="'+c.learnFn+'" style="padding:8px 14px;background:white;border:1.5px solid '+c.color+';border-radius:10px;color:'+c.color+';font-family:\'Nunito\',sans-serif;font-weight:800;font-size:11px;cursor:pointer;">'+c.learn+' →</button>';
+      }
+      if(c.action){
+        html_cards += '<button onclick="'+c.actionFn+'" style="padding:8px 14px;background:'+c.color+';border:none;border-radius:10px;color:white;font-family:\'Nunito\',sans-serif;font-weight:800;font-size:11px;cursor:pointer;">'+c.action+'</button>';
+      }
+      html_cards += '</div>';
+    }
+    html_cards += '</div>';
+  });
+
+  html_cards += '</div>';
+  html += html_cards;
+
+    tl.innerHTML=html;
 }
+
 
 function openProgress(){
   // Check 30-day reminder
