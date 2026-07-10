@@ -1,7 +1,7 @@
 // Mood Moves Service Worker v20260623
 // NUCLEAR CACHE BUST — clears all previous versions
 
-const APP_VERSION = 'v20260638';
+const APP_VERSION = 'v20260639';
 const CACHE_NAME = 'mood-moves-v20260634';
 
 // On install — take control immediately, don't wait
