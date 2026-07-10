@@ -835,9 +835,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260640');
+          return navigator.serviceWorker.register('/sw.js?v=20260641');
         }).then(function(reg) {
-          console.log('SW registered v20260640');
+          console.log('SW registered v20260641');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1309,7 +1309,12 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
     
-    <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges</div><div class="bg-grid" id="bg-grid"></div></div>
+    <div class="card" style="cursor:pointer;" onclick="openProgress()">
+      <div id="lottie-transform" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div>
+      <div class="ct" style="text-align:center;margin-bottom:6px;">My Transformation</div>
+      <div style="font-size:13px;color:#7A7A8C;line-height:1.6;margin-bottom:10px;">Your secret diary. Your glow up. Private, powerful, yours. 🔐</div>
+      <button type="button" style="width:100%;padding:11px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">📸 Open My Transformation Diary</button>
+    </div>
     <div class="card" style="cursor:pointer;" onclick="openJournal()">
       <div id="lottie-journal" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div>
       <div class="ct" style="text-align:center;margin-bottom:6px;">My Journal</div>
@@ -1320,12 +1325,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
       <button type="button" style="width:100%;padding:11px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">✏️ Write Today's Entry</button>
     </div>
-    <div class="card" style="cursor:pointer;" onclick="openProgress()">
-      <div id="lottie-transform" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div>
-      <div class="ct" style="text-align:center;margin-bottom:6px;">My Transformation</div>
-      <div style="font-size:13px;color:#7A7A8C;line-height:1.6;margin-bottom:10px;">Your secret diary. Your glow up. Private, powerful, yours. 🔐</div>
-      <button type="button" style="width:100%;padding:11px;background:linear-gradient(135deg,#F5A042,#E8832A);color:white;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;cursor:pointer;">📸 Open My Transformation Diary</button>
-    </div></div>
+    <div class="card anim-card" style="animation-delay:0.6s"><div id="lottie-badges" style="width:90px;height:90px;margin:0 auto 6px;display:block;"></div><div class="ct" style="text-align:center;margin-bottom:10px;">Badges</div><div class="bg-grid" id="bg-grid"></div></div></div>
     <input type="file" id="ph-inp" accept="image/*" style="display:none" onchange="handlePh(event)">
     <div style="height:12px;"></div>
   </div>
@@ -1540,7 +1540,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
       <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260640</div>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260641</div>
   </div>
 </div>
 
@@ -3207,13 +3207,15 @@ function setupHome(){window.scrollTo(0,0);
   // ── Show sticky note — first open each day (or always if from notification)
   setTimeout(function(){
     // If opened via notification, always show regardless of date
-    if(window.location.search.includes('notify=1') || window._mmForceSticky){
+    // Check both URL param (cold start) and force flag (app already open)
+    if(window.location.search.includes('notify=1') || window._mmForceSticky || sessionStorage.getItem('mm_force_sticky')==='1'){
       localStorage.removeItem('mm_sticky_date');
-      _stickyShown = false;
+      sessionStorage.removeItem('mm_force_sticky');
       window._mmForceSticky = false;
+      _stickyShown = false;
     }
     showStickyNote();
-  }, 800);
+  }, 600);
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -5243,7 +5245,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260640';
+  var deployVersion = 'v20260641';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5251,7 +5253,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260640 — sticky notification tap fix');
+    console.log('[MM] v20260641 — home reorder + video slugs + sticky cold start fix');
   }
 
   // Audio debug — shows in browser console
@@ -7324,11 +7326,11 @@ var MW_SLUGS = {
 ,
   'Tricep Dip (Chair)':'bench-dip'
 ,
-  'Door Frame Row':'bodyweight-row'
+  'Door Frame Row':'bodyweight-standing-inverted-row'
 ,
   'Prone Y Raise':'prone-y-raise'
 ,
-  'Towel Row':'bodyweight-row'
+  'Towel Row':'bodyweight-standing-inverted-row'
 ,
   'Reverse Lunge Knee Drive':'reverse-lunge'
 ,
@@ -7345,6 +7347,8 @@ var MW_SLUGS = {
   'Inchworm':'inchworm'
 ,
   'Dumbbell Skullcrusher':'dumbbell-skullcrusher'
+,
+  'Prone Y Raises':'dumbbell-prone-cobra'
 };
 
 function muscleWikiUrl(exerciseName) {
