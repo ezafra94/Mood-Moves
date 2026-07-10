@@ -1,7 +1,7 @@
 // Mood Moves Service Worker v20260623
 // NUCLEAR CACHE BUST — clears all previous versions
 
-const APP_VERSION = 'v20260640';
+const APP_VERSION = 'v20260641';
 const CACHE_NAME = 'mood-moves-v20260634';
 
 // On install — take control immediately, don't wait
@@ -77,17 +77,21 @@ self.addEventListener('push', function(e) {
 // ── NOTIFICATION CLICK ─────────────────────────────────────
 self.addEventListener('notificationclick', function(e) {
   e.notification.close();
-  var targetUrl = '/?notify=1';
+  var targetUrl = (e.notification.data && e.notification.data.url) ? e.notification.data.url : '/?notify=1';
   e.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clients) {
+      // If app already open — post message AND navigate to trigger sticky
       for (var i = 0; i < clients.length; i++) {
-        if (clients[i].url.includes(self.location.origin) && 'focus' in clients[i]) {
-          clients[i].postMessage({ type: 'SHOW_STICKY_NOTE' });
-          clients[i].navigate(targetUrl);
-          return clients[i].focus();
+        var client = clients[i];
+        if (client.url.includes(self.location.origin)) {
+          // Post message for already-open app
+          client.postMessage({ type: 'SHOW_STICKY_NOTE' });
+          // Also navigate to add ?notify=1 as backup
+          return client.navigate(targetUrl).then(function(c){ return c ? c.focus() : client.focus(); }).catch(function(){ return client.focus(); });
         }
       }
-      if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
+      // App not open — open with ?notify=1 URL (boot sequence handles sticky)
+      return self.clients.openWindow(targetUrl);
     })
   );
 });
