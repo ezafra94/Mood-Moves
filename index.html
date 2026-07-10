@@ -835,9 +835,9 @@ function makeLottie(dataVar, size) {
           return Promise.all(unregisterPromises);
         }).then(function() {
           // Now register the fresh SW
-          return navigator.serviceWorker.register('/sw.js?v=20260641');
+          return navigator.serviceWorker.register('/sw.js?v=20260642');
         }).then(function(reg) {
-          console.log('SW registered v20260641');
+          console.log('SW registered v20260642');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -848,21 +848,29 @@ function makeLottie(dataVar, size) {
               return;
             }
             if (event.data && event.data.type === 'SHOW_STICKY_NOTE') {
-              console.log('[MM] Received SHOW_STICKY_NOTE message from SW');
-              try { localStorage.removeItem('mm_sticky_date'); } catch(e){}
-              window._mmForceSticky = true; // flag read by showStickyNote itself when it's defined
-              // Defensive: wait until showStickyNote actually exists before calling it
-              var tries = 0;
-              var waitForFn = setInterval(function(){
-                tries++;
-                if (typeof showStickyNote === 'function') {
-                  clearInterval(waitForFn);
-                  if (typeof _stickyShown !== 'undefined') _stickyShown = false;
-                  showStickyNote();
-                } else if (tries > 60) {
-                  clearInterval(waitForFn); // give up after ~18s
-                }
-              }, 300);
+              console.log('[MM] Received SHOW_STICKY_NOTE from SW — forcing sticky');
+              try { 
+                localStorage.removeItem('mm_sticky_date');
+                localStorage.setItem('mm_notif_pending', '1');
+              } catch(e){}
+              window._mmForceSticky = true;
+              _stickyShown = false;
+              // Show immediately if function already exists
+              if (typeof showStickyNote === 'function') {
+                showStickyNote();
+              } else {
+                // Wait for it — cold start
+                var tries = 0;
+                var waitForFn = setInterval(function(){
+                  tries++;
+                  if (typeof showStickyNote === 'function') {
+                    clearInterval(waitForFn);
+                    _stickyShown = false;
+                    window._mmForceSticky = true;
+                    showStickyNote();
+                  } else if (tries > 60) { clearInterval(waitForFn); }
+                }, 300);
+              }
             }
           });
           // Show version badge for debugging
@@ -1540,7 +1548,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
       <button onclick="localStorage.removeItem('mm_sticky_date'); _stickyShown=false; showStickyNote();" style="display:block;width:calc(100% - 32px);margin:12px 16px 0;padding:14px;background:linear-gradient(135deg,#4BBFB5,#8BB8A0);border:none;border-radius:14px;color:white;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;cursor:pointer;">🌟 See Today's Message</button>
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260641</div>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260642</div>
   </div>
 </div>
 
@@ -3207,15 +3215,16 @@ function setupHome(){window.scrollTo(0,0);
   // ── Show sticky note — first open each day (or always if from notification)
   setTimeout(function(){
     // If opened via notification, always show regardless of date
-    // Check both URL param (cold start) and force flag (app already open)
-    if(window.location.search.includes('notify=1') || window._mmForceSticky || sessionStorage.getItem('mm_force_sticky')==='1'){
+    // Check all possible notification signals: URL param, force flag, localStorage pending
+    var notifPending = localStorage.getItem('mm_notif_pending') === '1';
+    if(window.location.search.includes('notify=1') || window._mmForceSticky || notifPending){
       localStorage.removeItem('mm_sticky_date');
-      sessionStorage.removeItem('mm_force_sticky');
+      localStorage.removeItem('mm_notif_pending');
       window._mmForceSticky = false;
       _stickyShown = false;
     }
     showStickyNote();
-  }, 600);
+  }, 400);
 }
 function getTitle(){let t=TITLES[0];for(const x of TITLES){if(S.total>=x.m)t=x;}return t;}
 function topMood(){return Object.entries(S.moodCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;}
@@ -5245,7 +5254,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260641';
+  var deployVersion = 'v20260642';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5253,7 +5262,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260641 — home reorder + video slugs + sticky cold start fix');
+    console.log('[MM] v20260642 — sticky 3-layer fix + mood moves plan');
   }
 
   // Audio debug — shows in browser console
@@ -6775,6 +6784,122 @@ function renderTransformPhases(){
   });
   html += '</div>';
 
+  // ── MOOD MOVES PLAN ─────────────────────────────────────────
+  html += '<div style="margin-top:20px;">';
+  html += '<div style="font-size:10px;font-weight:900;color:#4BBFB5;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Your Mood Moves Plan</div>';
+
+  // Analyze patterns and build personalized interventions
+  var lowCount = moodCounts['low'] || 0;
+  var stressCount = moodCounts['stressed'] || 0;
+  var happyCount = moodCounts['happy'] || 0;
+  var angryCount = moodCounts['angry'] || 0;
+  var neutralCount = moodCounts['neutral'] || 0;
+  var totalMoods = history.length;
+  var lowPct = totalMoods > 0 ? Math.round((lowCount/totalMoods)*100) : 0;
+  var stressPct = totalMoods > 0 ? Math.round((stressCount/totalMoods)*100) : 0;
+
+  // Build interventions based on actual patterns
+  var interventions = [];
+
+  if(totalMoods === 0){
+    interventions.push({
+      icon:'🌊', color:'#4BBFB5', bg:'#E8F7F5',
+      title:'Start your Mood Moves journey',
+      body:'Every workout ends with a Mood Move — a short exercise matched to your emotional state. HIIT when angry, breathing when stressed, gentle flow when low. Tap the workout button and pick your first mood.',
+      action:'Start First Workout', fn:"genWk(S.currentMood||'neutral')"
+    });
+  } else {
+    // Consistently low mood
+    if(lowPct >= 30){
+      interventions.push({
+        icon:'🫁', color:'#8B75C4', bg:'#F0EDFF',
+        title:'Your go-to: Breathing Mood Moves',
+        body:'You train low-energy often (' + lowPct + '% of sessions). Your Mood Move for these days is Box Breathing — 4 counts in, hold 4, out 4, hold 4. Research shows 5 minutes of this activates your parasympathetic system and shifts cortisol within 20 minutes. Next low day: let the breathing Mood Move be the one thing you do.',
+        action:null
+      });
+    }
+
+    // High stress
+    if(stressPct >= 25){
+      interventions.push({
+        icon:'⚡', color:'#D4832A', bg:'#FEF3E8',
+        title:'Stressed days need movement the most',
+        body:'Stressed shows up in ' + stressPct + '% of your sessions. This is actually valuable data — it means you are showing up even when life is hard. Your Mood Move on these days is 4-minute HIIT. Cortisol needs to burn somewhere — let the Mood Move be that outlet. Even 4 minutes changes your neurochemistry.',
+        action:null
+      });
+    }
+
+    // Low consistency / missed workouts
+    if(total < days * 2 && total > 0){
+      interventions.push({
+        icon:'🛡️', color:'#4BBFB5', bg:'#E8F7F5',
+        title:'On days you almost skip: use Rest Day mode',
+        body:'Missing sessions is not failure — it is information. When showing up for a full workout feels impossible, open Mood Moves and tap Rest Day instead. You get a 10-minute active recovery flow matched to your mood. Same endorphins, half the barrier. Tap it even once this week.',
+        action:'Try Rest Day Mode', fn:"goToRD()"
+      });
+    }
+
+    // Dominant low or neutral — recommend journaling
+    if((lowCount + neutralCount) > (happyCount + angryCount) && journalCount < 3){
+      interventions.push({
+        icon:'📓', color:'#8BB8A0', bg:'#F0F8F5',
+        title:'Journal your Mood Move moments',
+        body:'After your next Mood Move, write one sentence about how you felt before vs after. Over 4 weeks, patterns emerge — most people discover their mood shifts 15-30% after even a short Mood Move. Your journal is the tool that makes this visible.',
+        action:'Open Journal', fn:"openJournal()"
+      });
+    }
+
+    // Lots of angry/happy — high intensity recommendation
+    if((happyCount + angryCount) >= Math.floor(totalMoods * 0.4)){
+      interventions.push({
+        icon:'🔥', color:'#D4847C', bg:'#FEF0EF',
+        title:'High-energy days: max out your Mood Move',
+        body:'You have strong energy ' + Math.round(((happyCount+angryCount)/totalMoods)*100) + '% of the time. On these days your Mood Move generates the highest physiological response. Push through the full HIIT round — these sessions are doing double work: fitness AND emotional regulation.',
+        action:null
+      });
+    }
+
+    // Phase-specific Mood Move suggestion
+    if(phaseIdx === 0){
+      interventions.push({
+        icon:'🌱', color:'#4BBFB5', bg:'#E8F7F5',
+        title:'Phase 1 focus: build the Mood Moves habit',
+        body:'In Phase 1, the most important thing is not the weight — it is the ritual. Every workout ends with a Mood Move. Every time. This is what builds the mind-body connection that makes Mood Moves different from any other fitness app. ' + toNext + ' more workouts and you reach Phase 2.',
+        action:null
+      });
+    } else if(phaseIdx >= 2){
+      interventions.push({
+        icon:'🏆', color:'#E8832A', bg:'#FEF3E8',
+        title:'Advanced Mood Moves: stack the habit',
+        body:'You are in Phase ' + (phaseIdx+1) + '. Advanced users get the most from Mood Moves when they also use the rest day and journal features between sessions. The compound effect: workout + Mood Move + journal entry = 3x the emotional regulation benefit per session.',
+        action:null
+      });
+    }
+
+    // Always add general awareness card
+    interventions.push({
+      icon:'💫', color:'#4BBFB5', bg:'#E8F7F5',
+      title:'What your Mood Move is actually doing',
+      body:'Every Mood Move is calibrated to your emotional state: Low energy → gentle flow + breathing → activates serotonin. Stressed → 4-min HIIT → burns cortisol, releases endorphins. Angry → explosive movement → processes fight-or-flight safely. Happy → dance or mobility → amplifies positive neurochemistry. The 5-10 minutes after your workout is the highest ROI window for mood shift.',
+      action:null
+    });
+  }
+
+  interventions.forEach(function(iv){
+    html += '<div style="background:' + iv.bg + ';border-radius:16px;padding:16px;margin-bottom:12px;border-left:3px solid ' + iv.color + ';">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
+    html += '<span style="font-size:20px;">' + iv.icon + '</span>';
+    html += '<span style="font-size:13px;font-weight:800;color:#2C2C3A;">' + iv.title + '</span>';
+    html += '</div>';
+    html += '<div style="font-size:12px;color:#5A5A6A;line-height:1.7;">' + iv.body + '</div>';
+    if(iv.action && iv.fn){
+      var bs='margin-top:10px;padding:9px 16px;background:'+iv.color+';color:white;border:none;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;';
+      html += '<button onclick="'+iv.fn+'" style="'+bs+'">'+iv.action+' →</button>';
+    }
+    html += '</div>';
+  });
+
+  html += '</div>';
   tl.innerHTML = html;
 }
 
@@ -7626,6 +7751,17 @@ document.addEventListener('visibilitychange', function() {
       }
     }
 
+    // Check if notification was tapped while app was suspended
+    try {
+      if (localStorage.getItem('mm_notif_pending') === '1') {
+        localStorage.removeItem('mm_notif_pending');
+        localStorage.removeItem('mm_sticky_date');
+        _stickyShown = false;
+        window._mmForceSticky = true;
+        setTimeout(showStickyNote, 300);
+        console.log('[STICKY] Showing from visibilitychange — notification was tapped');
+      }
+    } catch(e){}
     // _ready() handles resume + waits for it — then fire onReturn
     MM_AUDIO._ready().then(onReturn).catch(onReturn);
   }
