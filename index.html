@@ -838,7 +838,7 @@ function makeLottie(dataVar, size) {
           // Now register the fresh SW
           return navigator.serviceWorker.register('/sw.js?v=20260645');
         }).then(function(reg) {
-          console.log('SW registered v20260645');
+          console.log('SW registered v20260712');
           // Listen for direct messages from SW — used so notification taps
           // can show the sticky note even without a full page reload
           navigator.serviceWorker.addEventListener('message', function(event) {
@@ -1536,7 +1536,7 @@ else{setAllLogos();setAllAvatars();}
       </div>
     </div>
       
-      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260645</div>
+      <div style="text-align:center;margin:8px 0 20px;font-size:9px;color:#D0D0D8;">App version: v20260712</div>
   </div>
 </div>
 
@@ -3212,7 +3212,7 @@ function setupHome(){window.scrollTo(0,0);
   document.getElementById('st-tot').textContent=S.total;
   document.getElementById('st-wk').textContent=S.weekW;
   const tm=topMood();document.getElementById('st-md').textContent=tm?ME[tm]:'😊';
-  setTip();buildCal();renderBadges();updateRecap();setupChallenge();
+  setTip();buildCal();renderBadges();updateRecap();setupChallenge();renderHomeRings();
   // Re-trigger card entrance animations
   setTimeout(function(){
     var cards=document.querySelectorAll('#home .anim-card');
@@ -5284,7 +5284,7 @@ function resetApp(){if(confirm('Reset all data and start over?')){
 // INIT - simple and reliable
 window.addEventListener('DOMContentLoaded',function(){
   // One-time reset — clear sticky date so everyone sees note on next open after this deploy
-  var deployVersion = 'v20260645';
+  var deployVersion = 'v20260712';
   if(localStorage.getItem('mm_deploy_reset') !== deployVersion){
     localStorage.setItem('mm_deploy_reset', deployVersion);
     localStorage.removeItem('mm_sticky_date');
@@ -5292,7 +5292,7 @@ window.addEventListener('DOMContentLoaded',function(){
     localStorage.removeItem('mm_notif_ask_date');
     localStorage.removeItem('mm_founder_letter_seen');
     _stickyShown = false;
-    console.log('[MM] v20260645 — all-split cards + life cards + doing-well cards');
+    console.log('[MM] v20260712 — all-split cards + life cards + doing-well cards');
   }
 
   // Audio debug — shows in browser console
