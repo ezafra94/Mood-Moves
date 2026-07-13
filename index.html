@@ -4278,6 +4278,54 @@ function completeWk(){
   MM_AUDIO.play('complete');
   setTimeout(completeWk_orig, 300);
 }
+function showPhaseAdvancement(phaseNum, phaseName, emoji, msg){
+  // Remove any existing
+  var ex = document.getElementById('mm-phase-popup');
+  if(ex) ex.remove();
+
+  var popup = document.createElement('div');
+  popup.id = 'mm-phase-popup';
+  popup.setAttribute('style',
+    'position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;' +
+    'background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;' +
+    'padding:20px;box-sizing:border-box;z-index:2147483646;'
+  );
+
+  var colors = ['','#4BBFB5','#8B75C4','#E8832A','#D4847C'];
+  var color  = colors[phaseNum] || '#4BBFB5';
+
+  popup.innerHTML =
+    '<div style="width:100%;max-width:340px;background:#fff;border-radius:24px;overflow:hidden;' +
+    'box-shadow:0 8px 40px rgba(0,0,0,0.2);">' +
+    // Header band
+    '<div style="background:'+color+';padding:28px 24px 20px;text-align:center;">' +
+    '<div style="font-size:52px;margin-bottom:8px;">'+emoji+'</div>' +
+    '<div style="font-size:11px;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,0.8);text-transform:uppercase;margin-bottom:4px;">You reached</div>' +
+    '<div style="font-size:28px;font-weight:900;color:white;">'+phaseName+'</div>' +
+    '</div>' +
+    // Body
+    '<div style="padding:24px;">' +
+    '<div style="font-size:14px;color:#2C2C3A;line-height:1.7;text-align:center;margin-bottom:20px;">'+msg+'</div>' +
+    '<div style="display:flex;flex-direction:column;gap:10px;">' +
+    '<button id="phase-photo-btn" type="button" style="width:100%;padding:14px;background:'+color+';border:none;border-radius:12px;color:white;font-family:\'Nunito\',sans-serif;font-weight:900;font-size:14px;cursor:pointer;">📸 Add Phase '+phaseNum+' Photo</button>' +
+    '<button id="phase-close-btn" type="button" style="width:100%;padding:12px;background:transparent;border:1.5px solid #E0E0E0;border-radius:12px;color:#7A7A8C;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:13px;cursor:pointer;">Keep going →</button>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
+
+  document.body.appendChild(popup);
+
+  document.getElementById('phase-photo-btn').addEventListener('click', function(){
+    popup.remove();
+    openProgress();
+    setTimeout(function(){ addMilestonePhoto('phase'+phaseNum); }, 400);
+  });
+  document.getElementById('phase-close-btn').addEventListener('click', function(){
+    popup.remove();
+  });
+  popup.addEventListener('click', function(e){ if(e.target===popup) popup.remove(); });
+}
+
 function completeWk_orig(){
   // Guard against double-calling (e.g. rapid double-tap on Finish/Skip)
   if(window._mmCompletingNow) return;
@@ -4287,6 +4335,22 @@ function completeWk_orig(){
   window._mmJustCompleted = Date.now(); // block cloud overwrite for next 30s
   const td=tdKey();if(!S.calData[td]){S.streak++;S.weekW++;}
   S.total++;S.moodCounts[S.currentMood]=(S.moodCounts[S.currentMood]||0)+1;
+
+  // ── PHASE ADVANCEMENT CHECK ──
+  var prevPhase = Math.min(3, Math.floor((S.total-1) / 15));
+  var newPhase  = Math.min(3, Math.floor(S.total / 15));
+  if(newPhase > prevPhase){
+    var phaseNames = ['Phase 1','Phase 2','Phase 3','Phase 4'];
+    var phaseEmoji = ['🌱','🔥','⚡','👑'];
+    var phaseMsg   = [
+      'You\'ve officially entered Phase 2! You\'re building real momentum now. Time to capture your Phase 2 photo. 📸',
+      'Welcome to Phase 3! Halfway through your transformation. Your body is changing — document it. 📸',
+      'You reached Phase 4. This is mastery. You earned this. Don\'t forget to take your Phase 4 photo. 📸'
+    ];
+    setTimeout(function(){
+      showPhaseAdvancement(newPhase, phaseNames[newPhase], phaseEmoji[newPhase], phaseMsg[newPhase-1]);
+    }, 1500); // show after post-workout screen appears
+  }
   S.calData[td]={type:'workout',emoji:ME[S.currentMood]};
   clearInterval(S.rtInterval);
 
@@ -5683,7 +5747,6 @@ window.addEventListener('DOMContentLoaded',function(){
 
   function initAllLotties() {
     initLottie('tip-robot', LOTTIE_ROBOT);
-    initLottie('lottie-restday', LOTTIE_MORNING);
     // Nav icons loaded from separate files
     loadNavIcon('nav-ic-home',      '/nav-home.json');
     loadNavIcon('nav-ic-workout',   '/nav-workout.json');
@@ -7138,14 +7201,27 @@ function renderTransformPhases(){
     if(c.action && c.actionFn){
       var fn2 = c.actionFn;
       if(fn2.indexOf('genWk') !== -1){
-        // For genWk: go home first, wait for screen, then generate workout
-        actionClick = "(function(){goTo('home');setTimeout(function(){"+fn2+";},300);})();";
+        // Extract mood arg if specific (e.g. genWk('low'))
+        var moodArg = fn2.match(/genWk\('([^']+)'\)/);
+        if(moodArg && moodArg[1] !== 'neutral'){
+          // Specific mood (low, angry, etc) — go home then generate directly
+          actionClick = "(function(){goTo('home');setTimeout(function(){"+fn2+";},200);})();";
+        } else {
+          // No specific mood — send to mood picker so user chooses their energy first
+          actionClick = "(function(){goTo('home');setTimeout(function(){goTo('moodpicker');},150);})();";
+        }
       } else if(fn2.indexOf('goToRD') !== -1){
         actionClick = "goToRD();";
       } else if(fn2.indexOf('openJournal') !== -1){
         actionClick = "openJournal();";
+      } else if(fn2.indexOf('openProgress') !== -1){
+        actionClick = "openProgress();";
+      } else if(fn2.indexOf('addMilestonePhoto') !== -1){
+        // Photo action — go to progress screen then trigger photo
+        var photoFn = fn2;
+        actionClick = "(function(){openProgress();setTimeout(function(){"+photoFn+";},400);})();";
       } else if(fn2.indexOf('goTo') !== -1){
-        actionClick = fn2;
+        actionClick = "(function(){"+fn2+"})();";
       } else {
         actionClick = "(function(){"+fn2+"})();";
       }
@@ -8305,26 +8381,173 @@ function closeStickyNote(){
   _stickyShown = false;
 }
 
+
+// ── MOOD MOVES DAILY BOOSTER — PHASE + GOAL + MOOD AWARE ──────────────────
+
+// Phase 1: Just started — encouragement, every step counts
+const MM_PHASE1 = [
+  {type:'mm', msg:'Every transformation starts exactly where you are right now. You\'re already in it.'},
+  {type:'mm', msg:'Day one energy is rare. You have it. Use it and remember this feeling.'},
+  {type:'mm', msg:'The hardest part was deciding to start. You already did that. The rest is just showing up.'},
+  {type:'mm', msg:'Your body is paying attention to every rep, every step, every choice. It\'s already responding.'},
+  {type:'mm', msg:'Small consistent effort beats occasional perfection. You\'re building something that lasts.'},
+  {type:'mm', msg:'Phase 1 is where the foundation is built. Everything you do now matters more than you know.'},
+  {type:'mm', msg:'There\'s no such thing as a bad first workout. There\'s only starting — and you did.'},
+  {type:'mm', msg:'You don\'t need to feel ready. You just need to move. The confidence comes after.'},
+  {type:'mm', msg:'Every expert was once a beginner. Today you\'re building the version of you that will look back and smile.'},
+  {type:'mm', msg:'Mood Moves is rooting for you. Not just for the workouts — for every small win on this journey.'},
+];
+
+// Phase 2: Building momentum — "you're building something real"
+const MM_PHASE2 = [
+  {type:'mm', msg:'You\'re past the beginning. That\'s not nothing — that\'s everything. Keep building.'},
+  {type:'mm', msg:'Consistency is compounding quietly in your body. You may not see it yet, but it\'s there.'},
+  {type:'mm', msg:'The middle of the journey is where most people quit. You\'re still here. That already sets you apart.'},
+  {type:'mm', msg:'Your body is adapting, your mind is strengthening, your habits are forming. This is the magic phase.'},
+  {type:'mm', msg:'Momentum is a real thing. You have it now. Guard it like it\'s precious — because it is.'},
+  {type:'mm', msg:'You\'ve moved past motivation and into discipline. That\'s a completely different level.'},
+  {type:'mm', msg:'Every workout you\'ve done is stored in your muscles, your memory, your identity. It\'s yours now.'},
+  {type:'mm', msg:'The version of you from Phase 1 would already be impressed. Keep going.'},
+  {type:'mm', msg:'When it feels like nothing is changing, remember: water boils at 100°. Not at 99°. Keep the heat on.'},
+  {type:'mm', msg:'You\'re not just working out. You\'re proving to yourself who you are. And you\'re showing up.'},
+];
+
+// Phase 3: Halfway — push through, don't stop
+const MM_PHASE3 = [
+  {type:'mm', msg:'Halfway through means one thing: you have everything it takes to finish. You already proved it.'},
+  {type:'mm', msg:'This is the phase where it gets real. Your body knows the work now. Your mind is catching up.'},
+  {type:'mm', msg:'When it feels heavy, that\'s not a sign to stop. That\'s a sign you\'re doing something that matters.'},
+  {type:'mm', msg:'You\'ve built too much to slow down now. The finish line is closer than the starting line.'},
+  {type:'mm', msg:'Phase 3 is where transformation becomes visible — to you, and to everyone around you.'},
+  {type:'mm', msg:'The discomfort you feel right now is the feeling of becoming. Lean into it.'},
+  {type:'mm', msg:'You\'re not tired. You\'re forging. There\'s a difference.'},
+  {type:'mm', msg:'Every rep in Phase 3 is worth double. Your body is primed, your habits are set. This is peak building.'},
+  {type:'mm', msg:'Don\'t negotiate with the part of you that wants to coast. You didn\'t come this far to only come this far.'},
+  {type:'mm', msg:'The hardest miles are always in the middle. You\'re running them. That takes real strength.'},
+];
+
+// Phase 4: Mastery — own it, you've transformed
+const MM_PHASE4 = [
+  {type:'mm', msg:'Look how far you\'ve come. Not just in fitness — in who you\'ve decided to be.'},
+  {type:'mm', msg:'Phase 4 isn\'t the end. It\'s proof. Proof that you can do hard things and keep going.'},
+  {type:'mm', msg:'You built this. Rep by rep, day by day, choice by choice. Own every bit of it.'},
+  {type:'mm', msg:'The transformation you\'ve made isn\'t just physical. Your relationship with yourself changed too.'},
+  {type:'mm', msg:'You are the person you were trying to become when you started. Let that land.'},
+  {type:'mm', msg:'This is what consistency looks like. This is what you look like. Remember it.'},
+  {type:'mm', msg:'You didn\'t just complete a phase. You built a lifestyle. That doesn\'t disappear.'},
+  {type:'mm', msg:'Phase 4 energy: you know what you\'re capable of now. That knowledge is permanent.'},
+  {type:'mm', msg:'The best part about getting here? You know exactly how you did it. And you can do it again.'},
+  {type:'mm', msg:'Mood Moves has been with you every step. This phase? This one\'s yours. You earned it.'},
+];
+
+// Goal: lose fat — consistency, energy, showing up beats perfection
+const MM_GOAL_FAT = [
+  {type:'mm', msg:'Fat loss isn\'t about burning yourself out. It\'s about showing up consistently, day after day.'},
+  {type:'mm', msg:'Energy begets energy. The more you move, the more you\'ll want to move. Trust the cycle.'},
+  {type:'mm', msg:'Perfection is the enemy of progress. A good workout done is infinitely better than a perfect one skipped.'},
+  {type:'mm', msg:'Your metabolism is listening to every session. Even the short ones. Even the hard days. Keep talking.'},
+  {type:'mm', msg:'The scale doesn\'t capture strength, energy, confidence, or how your clothes fit. Move for all of it.'},
+];
+
+// Goal: build muscle — strength mindset, progressive overload
+const MM_GOAL_MUSCLE = [
+  {type:'mm', msg:'Muscle is built in the moments you push past comfortable. Not the moments you stay there.'},
+  {type:'mm', msg:'Progressive overload isn\'t just a gym principle — it\'s a life principle. A little more, every time.'},
+  {type:'mm', msg:'Strength isn\'t loud. It\'s built quietly, rep by rep, in rooms nobody sees. Until they do.'},
+  {type:'mm', msg:'Your muscles grow when you rest, not just when you lift. Recovery is part of the program.'},
+  {type:'mm', msg:'Every set that felt impossible last month is warm-up weight now. That\'s not an accident. That\'s you.'},
+];
+
+// Goal: feel good — mood, mental health, joy of movement  
+const MM_GOAL_FEEL = [
+  {type:'mm', msg:'Movement is one of the most powerful mood regulators that exists. You\'re literally prescribing yourself joy.'},
+  {type:'mm', msg:'You don\'t have to earn rest. But you might find that moving makes the rest feel even sweeter.'},
+  {type:'mm', msg:'There\'s a version of exercise that doesn\'t feel like punishment. Mood Moves is built to find it with you.'},
+  {type:'mm', msg:'How you feel after a workout is data. Your body is telling you what it needs. Listen to it.'},
+  {type:'mm', msg:'Joy and effort can coexist. That\'s the whole point of moving with your mood, not against it.'},
+];
+
+// Mood-weighted: stressed / heavy energy — calm, grounding, "movement helps"
+const MM_MOOD_HEAVY = [
+  {type:'mm', msg:'When everything feels like too much, movement becomes medicine. Even five minutes changes the chemistry.'},
+  {type:'mm', msg:'You don\'t have to fix everything today. You just have to move through today. One thing at a time.'},
+  {type:'mm', msg:'A workout won\'t solve everything. But it will change how everything feels. Start there.'},
+  {type:'mm', msg:'Heavy days call for gentle movement. Not because you\'re weak — because you\'re wise enough to listen.'},
+  {type:'mm', msg:'Breathe first. Move second. The rest will follow. Your body knows how to help you reset.'},
+  {type:'mm', msg:'On the days that feel hardest, showing up is the whole workout. That counts. That always counts.'},
+];
+
+// Mood-weighted: low energy — gentle, "you still showed up"
+const MM_MOOD_LOW = [
+  {type:'mm', msg:'Low energy days aren\'t failures. They\'re information. Move gently and let your body lead.'},
+  {type:'mm', msg:'Even a slow walk, a gentle stretch, five minutes — it all adds up. You don\'t need to crush it today.'},
+  {type:'mm', msg:'Rest and movement are both part of the program. Today, do whichever one your body is asking for.'},
+  {type:'mm', msg:'You showed up even when you didn\'t want to. That\'s not weakness. That\'s the whole practice.'},
+  {type:'mm', msg:'Tired isn\'t the same as done. Be kind to yourself today and move in whatever way feels right.'},
+];
+
+// Mood-weighted: happy / energized — fuel the fire
+const MM_MOOD_HIGH = [
+  {type:'mm', msg:'That energy you\'re feeling? Channel it. Today is a great day to push a little further.'},
+  {type:'mm', msg:'Good energy is a gift. Use it intentionally today — your body is ready for something great.'},
+  {type:'mm', msg:'This is the feeling you\'ll remember on the hard days. Soak it in and give it everything.'},
+  {type:'mm', msg:'High energy days are deposits in the bank. Invest wisely — your future self will thank you.'},
+];
+
 function getDailyBooster(){
-  const day = Math.floor(Date.now() / (1000*60*60*24));
-  const types = ['quote','tip','cheer','famous','iam','quote','tip','cheer','famous','iam','cheer','tip'];
-  const type = types[day % types.length];
-  const greeting = MORNING_GREETINGS[day % MORNING_GREETINGS.length];
-  let msg;
-  if(type==='quote'){
-    msg = MOTIVATIONAL_QUOTES[(day * 7 + 3) % MOTIVATIONAL_QUOTES.length];
-  } else if(type==='tip'){
-    msg = '💡 Tip: ' + WELLNESS_TIPS[(day * 11 + 5) % WELLNESS_TIPS.length];
-  } else if(type==='famous'){
-    var fq = FAMOUS_QUOTES[(day * 9 + 2) % FAMOUS_QUOTES.length];
-    msg = '"' + fq.q + '" — ' + fq.a;
-  } else if(type==='iam'){
-    msg = IAM_AFFIRMATIONS[(day * 13 + 7) % IAM_AFFIRMATIONS.length];
+  var day = Math.floor(Date.now() / (1000*60*60*24));
+  var phase = Math.min(3, Math.floor((S.total||0) / 15)); // 0-3
+  var goal  = (S.user && S.user.goal) || 'feelgood';
+  var history = S.workoutHistory || [];
+
+  // Mood analysis — last 5 sessions
+  var recentMoods = history.slice(-5).map(function(w){ return w.mood; });
+  var stressCount  = recentMoods.filter(function(m){ return m==='stressed'||m==='angry'; }).length;
+  var lowCount     = recentMoods.filter(function(m){ return m==='low'||m==='sad'; }).length;
+  var happyCount   = recentMoods.filter(function(m){ return m==='happy'||m==='excited'; }).length;
+
+  // Build weighted candidate pool
+  var pool = [];
+
+  // Always include base rotation (famous, iam, cheers, tips, quotes)
+  var baseTypes = ['quote','tip','cheer','famous','iam','cheer','famous','iam'];
+  var baseType  = baseTypes[day % baseTypes.length];
+  if(baseType==='quote')   pool = pool.concat(MOTIVATIONAL_QUOTES.map(function(q){ return {type:'quote',msg:q}; }));
+  else if(baseType==='tip') pool = pool.concat(WELLNESS_TIPS.map(function(t){ return {type:'tip',msg:'💡 '+t}; }));
+  else if(baseType==='famous') pool = pool.concat(FAMOUS_QUOTES);
+  else if(baseType==='iam') pool = pool.concat(IAM_AFFIRMATIONS);
+  else pool = pool.concat(MORNING_CHEERS);
+
+  // Phase-specific pool — added on top (doubles weight)
+  var phasePool = [MM_PHASE1, MM_PHASE2, MM_PHASE3, MM_PHASE4][phase];
+  pool = pool.concat(phasePool).concat(phasePool); // 2x weight
+
+  // Goal-specific pool
+  var goalPool = goal==='losefat' ? MM_GOAL_FAT : goal==='muscle' ? MM_GOAL_MUSCLE : MM_GOAL_FEEL;
+  pool = pool.concat(goalPool);
+
+  // Mood weighting — speak to the feeling without naming it
+  if(stressCount >= 2)      pool = pool.concat(MM_MOOD_HEAVY).concat(MM_MOOD_HEAVY);
+  else if(lowCount >= 2)    pool = pool.concat(MM_MOOD_LOW).concat(MM_MOOD_LOW);
+  else if(happyCount >= 3)  pool = pool.concat(MM_MOOD_HIGH);
+
+  // Pick from pool using day as seed (deterministic, different each day)
+  var seed = day * 6364136223846793005 + 1442695040888963407;
+  var pick = Math.abs(seed) % pool.length;
+  var chosen = pool[pick % pool.length];
+
+  // Format message
+  var msg;
+  if(chosen.attr){
+    msg = '\u201c' + chosen.msg + '\u201d — ' + chosen.attr;
   } else {
-    msg = MORNING_CHEERS[(day * 17 + 11) % MORNING_CHEERS.length];
+    msg = chosen.msg || chosen;
   }
-  return {type, greeting, msg};
+
+  var type = chosen.type || 'cheer';
+  return {type: type, msg: msg};
 }
+
 // Daily boosters handled by combinatorial system
 
 // Workout reminder messages
